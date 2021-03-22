@@ -20,7 +20,6 @@ export const List = ({ list }) => {
     const generateItemId = () => {
         const itemId = `${list.listId}-item-${nextIdNum}`;
         setNextIdNum(prevNextIdNum => prevNextIdNum + 1);
-        console.log(nextIdNum);
         return itemId;
     }
 
