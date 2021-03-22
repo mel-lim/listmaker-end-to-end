@@ -224,8 +224,8 @@ main {
 /* UI buttons */
 
 .ui-button {
-  /*background-size: 99%;*/
-  background-size: contain;
+  background-size: 99%;
+  /*background-size: contain;*/
   /* Note to self - background-size: contain sometimes still cropping the edit button background image, but not all the time. Buggy? Not sure why. */
   background-repeat: no-repeat;
   flex-shrink: 0;
@@ -262,9 +262,10 @@ main {
 }
 
 .undo-button {
-  height: 20px;
-  width: 20px;
+  height: 20.5px;
+  width: 20.5px;
   background-image: url('./resources/icons/undo.svg');
+  margin-top: 2px;
 }
 
 /* Natural breakpoint at 820px */
