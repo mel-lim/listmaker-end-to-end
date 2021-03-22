@@ -1,38 +1,350 @@
-.App {
+/* General styles */
+
+body {
+  background-color: #f9f9f9;
+}
+
+/* Text styles and sizing */
+header, nav {
+  font-family: 'Amatic SC', cursive;
+  font-size: 2rem;
+}
+
+header a {
+  text-decoration: none;
+  color: black;
+}
+
+h1 {
+  margin-top: 0.5em;
+  margin-bottom: 0.2em;
+}
+
+nav a, nav li {
+  text-decoration: none;
+  color: hsl(0, 0%, 45%);
+}
+
+h2 {
+  font-family: 'Sue Ellen Francisco', cursive;
+  font-size: 3rem;
+  line-height: 0.2em;
+}
+
+h3 {
+  font-family: 'Sue Ellen Francisco', cursive;
+  font-size: 2rem;
+  line-height: 1.5em;
+  margin: 15px 0;
+}
+
+h4 {
+  font-family: 'Sue Ellen Francisco', cursive;
+  font-size: 2rem;
+  margin-bottom: 0.5em;
+  color: hsl(0, 0%, 45%);
+}
+
+p, figcaption, label, button, input[type=text] {
+  font-family: 'Poiret One', cursive;
+}
+
+.item-name {
+  font-weight: bolder;
+}
+
+.lighter-weight {
+  font-weight: lighter;
+}
+
+/* Header */
+header {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Navigation bar */
+
+nav li {
+  list-style-type: none; /* Remove bullets */
+  margin: 0; /* Remove margins */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+#sticky-nav {
+  padding: 0.6em 0;
+  margin: 0; /* Remove margins */
+  text-align: center;
+  position: sticky;
+  position: -webkit-sticky; /* Safari */
+  top: 0;
+  z-index: 99;
+  background-color: #f9f9f9;
 }
+/* Note to future Mel - you solved the sticky problem by taking the nav element out of the header and putting it as child of the body element. Your problem was that the nav element was sticking only within the header element, which is not what you wanted. */
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+#sticky-nav ul {
+  margin: 0;
+  padding: 0;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-wrap: wrap;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+#sticky-nav li {
+  display: inline-block;
+  padding: 0 0.3rem;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+nav a:hover {
+  color: black;
+}
+
+/* Hamburger navigation bar */
+#hamburger-navigation-panel {
+  display: none;
+}
+
+#hamburger-navigation-button {
+  display: none;
+}
+
+/* Footer */
+
+footer {
+  width: 90%;
+  text-align: center;
+  height: 55px;
+  margin: 0 5%;
+}
+
+/* Main */
+
+main {
+  text-align: center;
+}
+
+/* Tagline and questions container */
+
+#tagline-and-questions-container {
+  display: inline-block;
+  border: 1px solid black;
+  background-color: hsl(0, 0%, 95%);
+  padding-left: 2em;
+  padding-right: 2em;
+  margin: 1rem 2rem 2em 2rem;
+}
+
+#tagline {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+#tagline, .user-question {
+  align-items: baseline;
+}
+
+.user-question {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.user-question label {
+  padding-left: 0.5em;
+}
+
+.radio-buttons {
+  margin-left: 1rem;
+}
+
+/* Lists */
+
+#lists-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.list-container {
+  width: 400px;
+  border: 1px solid black;
+  padding: 15px;
+  margin: 1rem 2rem 1rem 2rem;
+  vertical-align: top;
+  background-color: hsl(0, 0%, 95%);
+  text-align: center;
+}
+
+/* List Items */
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.item-display-name {
+  margin: 0 10px;
+  text-align: right;
+}
+
+.delete-edit-buttons-container {
+  display: flex;
+  margin-top: 4px;
+}
+
+.listitem-and-checkbox-container {
+  display: flex;
+}
+
+.checkbox {
+  margin-top: 4px;
+}
+
+/* Edit pre-existing list item */
+
+.edit-item-textbox {
+  width: 250px;
+}
+
+/* Add items and undo row */
+
+.add-undo-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.text-input-form {
+  display: flex;
+}
+
+.user-input-text {
+  width: 250px;
+}
+
+/* UI buttons */
+
+.ui-button {
+  /*background-size: 99%;*/
+  background-size: contain;
+  /* Note to self - background-size: contain sometimes still cropping the edit button background image, but not all the time. Buggy? Not sure why. */
+  background-repeat: no-repeat;
+  flex-shrink: 0;
+  border: none;
+}
+
+.delete-button {
+  background-image: url('./resources/icons/016-crossed.svg');
+  height: 15px;
+  width: 15px;
+  margin-right: 9px;
+}
+
+.edit-button {
+  background-image: url('./resources/icons/053-edit.svg');
+  height: 13px;
+  width: 13px;
+}
+
+.done-button {
+  background-image: url('./resources/icons/007-check.svg');
+  height: 16px;
+  width: 16px;
+  margin-left: 9px;
+  margin-top: 4px;
+}
+
+.add-button {
+  height: 24px;
+  width: 24px;
+  background-image: url('./resources/icons/057-plus.svg');
+  margin-right: 9px;
+  margin-left: 9px;
+}
+
+.undo-button {
+  height: 20px;
+  width: 20px;
+  background-image: url('./resources/icons/undo.svg');
+}
+
+/* Natural breakpoint at 820px */
+@media only screen and (max-width: 820px) {
+}
+
+/* Next natural breakpoint is at 625px */
+@media only screen and (max-width: 625px) {
+
+  /* Navigation menu */
+  #one-line-middot {
+    display: none !important;
   }
 }
+  
+/* Mobile breakpoint */
+@media only screen and (max-width: 480px) {
+  /* Text styles and sizing */
+  h1 {
+    font-size: 1.5em;
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 2.5rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+
+  h4 {
+    font-size: 1.5rem;
+  }
+
+  /* Header and hamburger menu */
+  header {
+    position: sticky;
+    position: -webkit-sticky; /* Safari */
+    top: 0;
+    z-index: 99;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0.2em 0.45em;
+  }
+
+  #sticky-nav {
+    display: none;
+  }
+
+  #hamburger-navigation-button {
+    display: block;
+    border: transparent;
+    background-color: transparent;
+  }
+
+  #hamburger-navigation-button img {
+    width: 39px;
+  }
+
+  nav ul {
+    padding: 20px;
+    margin: 0;
+    text-align: left;
+  }
+
+  #hamburger-navigation-panel {
+    display: none;
+    position: fixed;
+    background-color: #f9f9f9;
+    top: 65px;
+    right: 0;
+  }
+
+}
+
+/* TO-DO 
+Fix responsive CSS.
+Radio buttons.
+Heading alignment
+*/

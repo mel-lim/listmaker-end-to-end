@@ -1,23 +1,36 @@
-import logo from './logo.svg';
+import React, { useState } from "react";
 import './App.css';
 
+//import { Switch, Route, Redirect, NavLink } from "react-router-dom";
+
+import { Nav } from "./components/Nav";
+import { Tagline } from "./components/Tagline";
+import { Questions } from "./components/Questions";
+import { Lists } from "./containers/Lists";
+import { Footer } from "./containers/Footer";
+
 function App() {
+  const [selected, setSelected] = useState('');
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <div>
+      <header>
+        <h1>Backcountry Listmaker</h1>
       </header>
+
+      <Nav />
+
+      <main>
+        <div id="tagline-and-questions-container">
+          <Tagline />
+          <Questions setSelected={setSelected} />
+        </div>
+
+        <Lists selected={selected} />
+
+      </main>
+
+      <Footer />
     </div>
   );
 }
