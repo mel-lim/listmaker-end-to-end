@@ -17,7 +17,7 @@ export const AddUndoRow = ({ newItemName, setNewItemName, addListItem, undoDelet
             <div className="add-undo-row">
                 <form className="text-input-form" onSubmit={handleSubmit}>
                     <input type="text" name="user-input-text" className="user-input-text" value={userInput} onChange={event => setUserInput(event.target.value)} />
-                    <input type="submit" className="add-button ui-button" value='' />
+                    <input type="submit" className="add-button ui-button" value='' title="add item"/>
                 </form>
                 <button className="undo-button ui-button" onClick={undoDelete} name="undo" title="undo delete"></button>
             </div>
