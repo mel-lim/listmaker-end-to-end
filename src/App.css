@@ -148,8 +148,14 @@ main {
   justify-content: center;
 }
 
+.user-question form {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .user-question label {
   padding-left: 0.5em;
+  line-height: 1.5;
 }
 
 .radio-buttons {
