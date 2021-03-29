@@ -45,7 +45,7 @@ h4 {
   color: hsl(0, 0%, 45%);
 }
 
-p, figcaption, label, button, input[type=text], textarea {
+p, figcaption, label, button, input[type=text], input[type=email], textarea {
   font-family: 'Poiret One', cursive;
 }
 
@@ -384,15 +384,25 @@ main {
   line-height: 1.75;
 }
 
-.user-credentials input[type=submit],  .user-credentials input[type=button][type=button] {
+.user-credentials input[type=submit],  .user-credentials input[type=button] {
   cursor: pointer;
   color: hsl(0, 0%, 30%);
+  margin: 1.2rem 0;
   padding: 5px 20px;
   border: 1.5px solid hsl(0, 0%, 30%);
   border-radius: 20px;
   background-color: #f9f9f9;
   font-weight: bolder;
   width: 150px;
+}
+
+.validation-message {
+  font-style: italic;
+  margin: 0;
+}
+
+.button-separator {
+  margin: 0;
 }
 
 .user-credentials hr {
@@ -466,7 +476,16 @@ main {
   font-weight: bolder;
 }
 
-input[type=submit]:hover {
+/* Hover styles */
+
+input[type=submit]:hover  {
   color: black;
+  background-color: white;
+  border-color: black;
+}
+
+input[type=button]:hover {
+  color: black;
+  background-color: white;
   border-color: black;
 }
