@@ -4,11 +4,30 @@ export const SignUp = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [usernameValidationMessage, setUsernameValidationMessage] = useState('');
+    const [isSuccessfulRegistration, setIsSuccessfulRegistration] = useState(false);
 
     useEffect(() => {
         const regex = new RegExp("^[a-zA-Z0-9_]*$");
         !regex.test(username) ? setUsernameValidationMessage('*Use only alphanumeric characters') : setUsernameValidationMessage('');
     }, [username]);
+
+    const postNewUser = async () => {
+        const response = await fetch(`http://localhost:4000/appusers`, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'default',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify({
+                username: username,
+                email: email
+            })
+        });
+        return response.json();
+    }
 
     const handleSubmit = event => {
         event.preventDefault();
@@ -16,7 +35,7 @@ export const SignUp = () => {
         if (username.length === 0 || email.length === 0) {
             return;
         }
-        //addListItem(userInput);
+        postNewUser();
         setUsername('');
         setEmail('');
     }
@@ -45,7 +64,6 @@ export const SignUp = () => {
                 <div>
                     <input type="button" value='Try as guest' />
                 </div>
-
             </form>
         </div>
     );
