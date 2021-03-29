@@ -1,37 +1,33 @@
-import React, { useState } from "react";
+import React from "react";
 import './App.css';
 
-//import { Switch, Route, Redirect, NavLink } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-import { Nav } from "./components/Nav";
-import { Tagline } from "./components/Tagline";
-import { Questions } from "./components/Questions";
-import { Lists } from "./containers/Lists";
-import { Footer } from "./containers/Footer";
+import { Nav } from "./containers/Nav";
+import { Home } from "./containers/Home";
+import { SignUp } from "./containers/SignUp";
+import { LogIn } from "./containers/LogIn";
+import { Contact } from "./containers/Contact";
 
 function App() {
-  const [selected, setSelected] = useState('');
 
   return (
-    <div>
-      <header>
-        <h1>Backcountry Listmaker</h1>
-      </header>
+    <Router>
 
-      <Nav />
+        <header>
+          <h1>Backcountry Listmaker</h1>
+        </header>
 
-      <main>
-        <div id="tagline-and-questions-container">
-          <Tagline />
-          <Questions setSelected={setSelected} />
-        </div>
+        <Nav />
 
-        <Lists selected={selected} />
-
-      </main>
-
-      <Footer />
-    </div>
+        <Switch>
+          <Route path="/" exact component={Home} />
+          <Route path="/signup" component={SignUp} />
+          <Route path="/login" component={LogIn} />
+          <Route path="/contact" component={Contact} />
+        </Switch>
+        
+    </Router>
   );
 }
 

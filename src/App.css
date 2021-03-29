@@ -45,7 +45,7 @@ h4 {
   color: hsl(0, 0%, 45%);
 }
 
-p, figcaption, label, button, input[type=text] {
+p, figcaption, label, button, input[type=text], textarea {
   font-family: 'Poiret One', cursive;
 }
 
@@ -350,8 +350,123 @@ main {
 
 }
 
-/* TO-DO 
-Fix responsive CSS.
-Radio buttons.
-Heading alignment
-*/
+/* Sign up and sign in pages */
+
+.user-credentials {
+  max-width: 450px;
+  border: 1px solid black;
+  padding: 0.5rem 0.5rem 1rem 0.5rem;
+  vertical-align: top;
+  background-color: hsl(0, 0%, 95%);
+  text-align: center;
+  margin: 1rem auto 2rem auto;
+}
+
+.user-credentials-form {
+  width: 94%;
+  display: block;
+  margin: auto;
+  padding: 10px 0;
+}
+
+.input-label-container {
+  text-align: left;
+  max-width: 250px;
+  margin: 0 auto 1.25rem auto;
+}
+
+.user-credentials input[type=text], .user-credentials input[type=email] {
+  padding: 5px 10px;
+  width: 250px;
+}
+
+.user-credentials label {
+  line-height: 1.75;
+}
+
+.user-credentials input[type=submit],  .user-credentials input[type=button][type=button] {
+  cursor: pointer;
+  color: hsl(0, 0%, 30%);
+  padding: 5px 20px;
+  border: 1.5px solid hsl(0, 0%, 30%);
+  border-radius: 20px;
+  background-color: #f9f9f9;
+  font-weight: bolder;
+  width: 150px;
+}
+
+.user-credentials hr {
+  display: inline-block;
+  width: 100px;
+  vertical-align: middle;
+}
+
+/* Contact */
+
+#form-container {
+  max-width: 600px;
+  border: 1px solid black;
+  padding: 0.5rem 0.5rem 1rem 0.5rem;
+  vertical-align: top;
+  background-color: hsl(0, 0%, 95%);
+  text-align: center;
+  margin: 1rem auto 2rem auto;
+}
+
+#contact-form {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.form-row {
+  width: 94%;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+#name {
+  width: 37%;
+  margin-right: 3%;
+}
+
+#email-address {
+  width: 50%;
+}
+
+#subject {
+  width: 100%;
+}
+
+#message {
+  width: 100%;
+}
+
+#contact-form input[type=text], #contact-form textarea {
+  padding: 5px 10px;
+}
+
+#contact-form textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+#submit-row {
+  justify-content: flex-end;
+}
+
+#contact-form input[type=submit] {
+  cursor: pointer;
+  color: hsl(0, 0%, 30%);
+  padding: 5px 20px;
+  border: 1.5px solid hsl(0, 0%, 30%);
+  border-radius: 20px;
+  background-color: #f9f9f9;
+  font-weight: bolder;
+}
+
+input[type=submit]:hover {
+  color: black;
+  border-color: black;
+}
