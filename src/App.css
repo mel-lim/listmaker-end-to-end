@@ -402,13 +402,15 @@ main {
 }
 
 .button-separator {
-  margin: 0;
+  margin: 0 1em;
+  display: inline-block;
 }
 
 .user-credentials hr {
   display: inline-block;
   width: 100px;
   vertical-align: middle;
+
 }
 
 /* Contact */

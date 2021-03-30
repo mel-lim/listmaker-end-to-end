@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 export const SignUpForm = ({ postNewUser }) => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [usernameValidationMessage, setUsernameValidationMessage] = useState('');
 
+    // Validate username - only want alphanumeric and no spaces, just to make things simple
     useEffect(() => {
         const regex = new RegExp("^[a-zA-Z0-9_]*$");
         !regex.test(username) ? setUsernameValidationMessage('*Use only alphanumeric characters') : setUsernameValidationMessage('');
@@ -40,11 +42,14 @@ export const SignUpForm = ({ postNewUser }) => {
                     <input type="submit" value='Sign up' />
                 </div>
 
-                <p className="button-separator"><hr></hr> or <hr></hr></p>
+                <hr></hr><p className="button-separator">or</p><hr></hr>
 
                 <div>
-                    <input type="button" value='Try as guest' />
+                    <Link to="/">
+                        <input type="button" value='Try as guest' />
+                    </Link>
                 </div>
+
             </form>
         </div>
     );

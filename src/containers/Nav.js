@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { UserContext } from "../UserContext";
 
 export const Nav = () => {
+    const {user, setUser} = useContext(UserContext);
+
     return (
         <nav id="sticky-nav">
             <ul>
@@ -11,21 +14,44 @@ export const Nav = () => {
                 </Link>
 
                 <li>&middot;</li>
-                <Link to="/signup">
-                    <li>Sign up</li>
-                </Link>
+
+                {!user ?
+                    <div>
+                        <Link to="/signup">
+                            <li>Sign up</li>
+                        </Link>
+                    </div>
+                    :
+                    <div>
+                        <Link to="/myaccount">
+                            <li>My account</li>
+                        </Link>
+                    </div>
+                }
 
                 <li id="one-line-middot">&middot;</li>
-                <div id="nav-item-pair">
-                    <Link to="/login">
-                        <li>Log in</li>
-                    </Link>
+
+                {/*div id="nav-item-pair">*/}
+
+                    {!user ?
+                        <div>
+                            <Link to="/login">
+                                <li>Log in</li>
+                            </Link>
+                        </div> :
+                        <div>
+                            <Link to="/logout">
+                                <li>Log out</li>
+                            </Link>
+                        </div>
+                    
+                }
 
                     <li>&middot;</li>
                     <Link to="/contact">
                         <li>Contact</li>
                     </Link>
-                </div>
+
             </ul>
         </nav>
     );
