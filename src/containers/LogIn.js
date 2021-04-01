@@ -1,43 +1,32 @@
 import React, { useState } from "react";
+import { LoginForm } from "../components/LoginForm";
+import { SuccessfulLogin } from "../components/SuccessfulLogin";
 
 export const LogIn = () => {
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
 
-    const handleSubmit = event => {
-        event.preventDefault();
-        if (username.length === 0 || email.length === 0) {
-            return;
+    const checkUserCredentials = async (username, email) => {
+        const response = await fetch(`http://localhost:4000/appusers`, {
+            method: 'GET',
+            mode: 'cors',
+            cache: 'default',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify({
+                username: username,
+                email: email
+            })
+        });
+        const bodyText = await response.json();
+        if (response.status === 200) {
+            console.log(bodyText.appUser[0]);
         }
-        //addListItem(userInput);
-        setUsername('');
+
     }
 
     return (
-        <div className="user-credentials sign-in">
-            <h3>Log in</h3>
-            <form className="user-credentials-form" onSubmit={handleSubmit}>
-                <div className="input-label-container">
-                    <label for="username-input" >Username</label>
-                    <input type="text" id="username-input" name="username" onChange={event => setUsername(event.target.value)} />
-                </div>
-
-                <div className="input-label-container">
-                    <label for="email-input">Email</label>
-                    <input type="email" />
-                </div>
-
-                <div>
-                    <input type="submit" value='Log in' />
-                </div>
-                
-                    <p><hr></hr> or <hr></hr></p>
-                
-                <div>
-                    <input type="button" value='Try as guest' />
-                </div>
-
-            </form>
-        </div>
+        <LoginForm checkUserCredentials={checkUserCredentials} />
     );
 }

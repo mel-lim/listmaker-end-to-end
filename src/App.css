@@ -399,6 +399,7 @@ main {
 .validation-message {
   font-style: italic;
   margin: 0;
+  font-size: 0.73rem;
 }
 
 .button-separator {
