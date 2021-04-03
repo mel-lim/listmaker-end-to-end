@@ -274,82 +274,6 @@ main {
   margin-top: 2px;
 }
 
-/* Natural breakpoint at 820px */
-@media only screen and (max-width: 820px) {
-}
-
-/* Next natural breakpoint is at 625px */
-@media only screen and (max-width: 625px) {
-
-  /* Navigation menu */
-  #one-line-middot {
-    display: none !important;
-  }
-}
-  
-/* Mobile breakpoint */
-@media only screen and (max-width: 480px) {
-  /* Text styles and sizing */
-  h1 {
-    font-size: 1.5em;
-    margin: 0;
-  }
-
-  h2 {
-    font-size: 2.5rem;
-  }
-
-  h3 {
-    font-size: 1.5rem;
-  }
-
-  h4 {
-    font-size: 1.5rem;
-  }
-
-  /* Header and hamburger menu */
-  header {
-    position: sticky;
-    position: -webkit-sticky; /* Safari */
-    top: 0;
-    z-index: 99;
-    background-color: #f9f9f9;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    padding: 0.2em 0.45em;
-  }
-
-  #sticky-nav {
-    display: none;
-  }
-
-  #hamburger-navigation-button {
-    display: block;
-    border: transparent;
-    background-color: transparent;
-  }
-
-  #hamburger-navigation-button img {
-    width: 39px;
-  }
-
-  nav ul {
-    padding: 20px;
-    margin: 0;
-    text-align: left;
-  }
-
-  #hamburger-navigation-panel {
-    display: none;
-    position: fixed;
-    background-color: #f9f9f9;
-    top: 65px;
-    right: 0;
-  }
-
-}
-
 /* Sign up and sign in pages */
 
 .user-credentials {
@@ -360,6 +284,10 @@ main {
   background-color: hsl(0, 0%, 95%);
   text-align: center;
   margin: 1rem auto 2rem auto;
+}
+
+.submission-unsuccessful-message {
+  font-weight: bolder;
 }
 
 .user-credentials-form {
@@ -375,7 +303,7 @@ main {
   margin: 0 auto 1.25rem auto;
 }
 
-.user-credentials input[type=text], .user-credentials input[type=email] {
+.user-credentials input[type=text], .user-credentials input[type=email], .user-credentials input[type=password] {
   padding: 5px 10px;
   width: 250px;
 }
@@ -491,4 +419,87 @@ input[type=button]:hover {
   color: black;
   background-color: white;
   border-color: black;
+}
+
+
+
+
+
+
+
+
+/* Natural breakpoint at 820px */
+@media only screen and (max-width: 820px) {
+}
+
+/* Next natural breakpoint is at 625px */
+@media only screen and (max-width: 625px) {
+
+  /* Navigation menu */
+  #one-line-middot {
+    display: none !important;
+  }
+}
+  
+/* Mobile breakpoint */
+@media only screen and (max-width: 480px) {
+  /* Text styles and sizing */
+  h1 {
+    font-size: 1.5em;
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 2.5rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+
+  h4 {
+    font-size: 1.5rem;
+  }
+
+  /* Header and hamburger menu */
+  header {
+    position: sticky;
+    position: -webkit-sticky; /* Safari */
+    top: 0;
+    z-index: 99;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0.2em 0.45em;
+  }
+
+  #sticky-nav {
+    display: none;
+  }
+
+  #hamburger-navigation-button {
+    display: block;
+    border: transparent;
+    background-color: transparent;
+  }
+
+  #hamburger-navigation-button img {
+    width: 39px;
+  }
+
+  nav ul {
+    padding: 20px;
+    margin: 0;
+    text-align: left;
+  }
+
+  #hamburger-navigation-panel {
+    display: none;
+    position: fixed;
+    background-color: #f9f9f9;
+    top: 65px;
+    right: 0;
+  }
+
 }

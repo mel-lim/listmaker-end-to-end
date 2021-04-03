@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { LoginForm } from "../components/LoginForm";
-import { SuccessfulLogin } from "../components/SuccessfulLogin";
+import { LoginForm } from "../components/Login/LoginForm";
+import { LoginSuccessful } from "../components/Login/LoginSuccessful";
 
 export const LogIn = () => {
 
     const checkUserCredentials = async (username, email) => {
         const response = await fetch(`http://localhost:4000/appusers`, {
-            method: 'GET',
+            method: 'POST',
             mode: 'cors',
             cache: 'default',
             headers: {

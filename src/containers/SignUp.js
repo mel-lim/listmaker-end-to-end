@@ -1,12 +1,15 @@
 import React, { useState } from "react";
-import { SignUpForm } from "../components/SignUpForm";
-import { SuccessfulSignUp } from "../components/SuccessfulSignUp";
+import { SignUpForm } from "../components/SignUp/SignUpForm";
+import { SignUpSuccessful } from "../components/SignUp/SignUpSuccessful";
 
 export const SignUp = () => {
-    const [isSuccessfulRegistration, setIsSuccessfulRegistration] = useState(false);
     const [registeredAppUser, setRegisteredAppUser] = useState(null);
+    const [attemptedAppUser, setAttemptedAppUser] = useState(null);
+    const [isSuccessfulRegistration, setIsSuccessfulRegistration] = useState(false);
+    const [isFailedRegistration, setIsFailedRegistration] = useState(false);
+    
 
-    const postNewUser = async (username, email) => {
+    const postNewUser = async (username, email, password) => {
         const response = await fetch(`http://localhost:4000/appusers`, {
             method: 'POST',
             mode: 'cors',
@@ -18,19 +21,32 @@ export const SignUp = () => {
             referrerPolicy: 'no-referrer',
             body: JSON.stringify({
                 username: username,
-                email: email
+                email: email,
+                password: password
             })
         });
         const bodyText = await response.json();
+        console.log(bodyText);
         if (response.status === 201) {
             setRegisteredAppUser(bodyText.appUser[0]);
             setIsSuccessfulRegistration(true);
+            setIsFailedRegistration(false);
+            setAttemptedAppUser(null);
+        } else if (response.status === 400) {
+            setAttemptedAppUser({
+                errorMessage: bodyText.message,
+                username: username,
+                email: email,
+                password: password
+            });
+            setIsSuccessfulRegistration(false);
+            setIsFailedRegistration(true);
         }
     }
 
     return (
         <div>
-            {isSuccessfulRegistration ? <SuccessfulSignUp registeredAppUser={registeredAppUser} setRegisteredAppUser={setRegisteredAppUser} /> : <SignUpForm postNewUser={postNewUser} />}
+            {isSuccessfulRegistration ? <SignUpSuccessful registeredAppUser={registeredAppUser} setRegisteredAppUser={setRegisteredAppUser} /> : <SignUpForm postNewUser={postNewUser} attemptedAppUser={attemptedAppUser} isFailedRegistration={isFailedRegistration} />}
         </div>
     );
 }

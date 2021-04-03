@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import { UserContext } from "../UserContext";
+import { UserContext } from "../../UserContext";
 
-export const SuccessfulSignUp = ({ registeredAppUser }) => {
+export const SignUpSuccessful = ({ registeredAppUser }) => {
 
     const { user, setUser } = useContext(UserContext);
 
