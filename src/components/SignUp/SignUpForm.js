@@ -25,6 +25,7 @@ export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration
         password === confirmPassword ? setPasswordMatchMessage('Passwords match') : setPasswordMatchMessage('Passwords do not match');
     }, [password, confirmPassword]);
 
+    // If the user submits a sign-up attempt that fails, it will repopulate the form with the previously typed inputs
     useEffect(() => {
         if (isFailedRegistration && attemptedAppUser) {
             setSubmissionUnsuccessfulMessage("** " + attemptedAppUser.errorMessage + " **");
@@ -53,6 +54,11 @@ export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration
         setSubmissionUnsuccessfulMessage('');
     }
 
+    const toggleShowPassword = event => {
+        event.preventDefault();
+        setShow(!show);
+    }
+
     return (
         <div className="user-credentials sign-up">
             <h3>Sign up</h3>
@@ -74,7 +80,7 @@ export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration
                 <div className="input-label-container">
                     <label htmlFor="password-input">Password (minimum 8 characters)</label>
                     <input type={show ? "text" : "password"} id="password-input" name="password" minLength="8" autoComplete="new-password" onChange={event => setPassword(event.target.value)} value={password} required />
-                    <button onClick={event => setShow(!show)}>{show ? "Hide" : "Show"}</button>
+                    <button onClick={toggleShowPassword} >{show ? "Hide" : "Show"} </button>
                 </div>
 
                 <div className="input-label-container">

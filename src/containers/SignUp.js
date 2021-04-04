@@ -10,7 +10,7 @@ export const SignUp = () => {
     
 
     const postNewUser = async (username, email, password) => {
-        const response = await fetch(`http://localhost:4000/appusers`, {
+        const response = await fetch(`http://localhost:4000/appusers/signup`, {
             method: 'POST',
             mode: 'cors',
             cache: 'default',
@@ -25,16 +25,17 @@ export const SignUp = () => {
                 password: password
             })
         });
-        const bodyText = await response.json();
-        console.log(bodyText);
+        const responseBodyText = await response.json();
+        console.log(responseBodyText);
         if (response.status === 201) {
-            setRegisteredAppUser(bodyText.appUser[0]);
+            setRegisteredAppUser(responseBodyText.appUser[0]);
+            console.log(responseBodyText.appUser[0]);
             setIsSuccessfulRegistration(true);
             setIsFailedRegistration(false);
             setAttemptedAppUser(null);
         } else if (response.status === 400) {
             setAttemptedAppUser({
-                errorMessage: bodyText.message,
+                errorMessage: responseBodyText.message,
                 username: username,
                 email: email,
                 password: password
@@ -46,7 +47,7 @@ export const SignUp = () => {
 
     return (
         <div>
-            {isSuccessfulRegistration ? <SignUpSuccessful registeredAppUser={registeredAppUser} setRegisteredAppUser={setRegisteredAppUser} /> : <SignUpForm postNewUser={postNewUser} attemptedAppUser={attemptedAppUser} isFailedRegistration={isFailedRegistration} />}
+            {isSuccessfulRegistration ? <SignUpSuccessful registeredAppUser={registeredAppUser} /> : <SignUpForm postNewUser={postNewUser} attemptedAppUser={attemptedAppUser} isFailedRegistration={isFailedRegistration} />}
         </div>
     );
 }
