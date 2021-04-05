@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 export const LoginForm = ({ usernameRegex, emailRegex, checkUserCredentials, attemptedAppUser, isFailedLogin }) => {
     const [userIdentity, setUserIdentity] = useState('');
@@ -53,7 +54,7 @@ export const LoginForm = ({ usernameRegex, emailRegex, checkUserCredentials, att
 
                 <div className="input-label-container">
                     <label htmlFor="user-identity-input" >Username or email</label>
-                    <input type="text" id="user-identity-input" name="userIdentity" onChange={event => setUserIdentity(event.target.value)} value={userIdentity}/>
+                    <input type="text" id="user-identity-input" name="userIdentity" onChange={event => setUserIdentity(event.target.value)} value={userIdentity} />
                 </div>
 
                 <div className="input-label-container">
@@ -65,12 +66,15 @@ export const LoginForm = ({ usernameRegex, emailRegex, checkUserCredentials, att
                 <div>
                     <input type="submit" value='Log in' />
                 </div>
-                
+
                 <hr></hr><p className="button-separator">or</p><hr></hr>
-                
-                <div>
-                    <input type="button" value='Try as guest' />
-                </div>
+
+                <Link to="/signup">
+                    <div>
+                        <input type="button" value='New user' />
+                        <input type="button" value='Try as guest' />
+                    </div>
+                </Link>
 
             </form>
         </div>

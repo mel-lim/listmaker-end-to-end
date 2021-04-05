@@ -306,6 +306,7 @@ main {
 .user-credentials input[type=text], .user-credentials input[type=email], .user-credentials input[type=password] {
   padding: 5px 10px;
   width: 250px;
+  height: 16px;
 }
 
 .user-credentials label {
