@@ -45,6 +45,13 @@ h4 {
   color: hsl(0, 0%, 45%);
 }
 
+h5 {
+  font-family: 'Helvetica', sans-serif;
+  font-size: 1.1rem;
+  font-weight: lighter;
+  margin: 1rem 0;
+}
+
 p, figcaption, label, button, input[type=text], input[type=email], textarea {
   font-family: 'Poiret One', cursive;
 }
@@ -124,7 +131,7 @@ main {
 
 /* Tagline and questions container */
 
-#tagline-and-questions-container {
+.dashboard-start-container {
   display: inline-block;
   border: 1px solid black;
   background-color: hsl(0, 0%, 95%);
@@ -133,27 +140,44 @@ main {
   margin: 1rem 2rem 2em 2rem;
 }
 
-#tagline {
+.dashboard-start-container input[type=button] {
+  cursor: pointer;
+  color: hsl(0, 0%, 30%);
+  margin: 1rem;
+  padding: 5px 20px;
+  border: 1.5px solid hsl(0, 0%, 30%);
+  border-radius: 20px;
+  background-color: #f9f9f9;
+  font-weight: bolder;
+  width: 150px;
+}
+
+.dashboard-greeting {
   margin-top: 2rem;
   text-align: center;
 }
 
-#tagline, .user-question {
-  align-items: baseline;
+.trip-questions {
+  margin-bottom: 1rem;
+  display: block;
+  justify-content: center;
 }
 
-.user-question {
-  margin-bottom: 1rem;
+.trip-questions form {
+  align-items: baseline;
+  display: flex;
+}
+
+.trip-questions h3 {
+  line-height: 1;
+}
+
+.radio-button-label-div {
   display: flex;
   justify-content: center;
 }
 
-.user-question form {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.user-question label {
+.trip-questions label {
   padding-left: 0.5em;
   line-height: 1.5;
 }
