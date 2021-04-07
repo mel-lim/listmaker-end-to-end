@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import {  } from "react-router-dom";
 import { UserContext } from "../UserContext";
-import Cookies from "js-cookie";
 
 export const LogOut = () => {
 

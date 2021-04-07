@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import './App.css';
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Cookies from "js-cookie";
 
 import { Nav } from "./containers/Nav";
 import { Dashboard } from "./containers/Dashboard";
@@ -18,6 +19,15 @@ import { ProtectedLogout } from "./routes/ProtectedLogout";
 function App() {
   const [user, setUser] = useState(null);
   const value = useMemo(() => ({ user, setUser }), [user, setUser]);
+
+  // Check if the user is logged in, and if so, set that to state
+  useEffect(() => {
+    const username = Cookies.get("username");
+    console.log(username);
+    if (username) {
+        setUser(username);
+    }
+}, []);
 
   return (
     <Router>

@@ -1,8 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { UserContext } from "../UserContext";
 import { LoginForm } from "../components/Login/LoginForm";
-import { LoginSuccessful } from "../components/Login/LoginSuccessful";
-import Cookies from "js-cookie";
+
 
 export const LogIn = () => {    
 
@@ -12,16 +11,7 @@ export const LogIn = () => {
     const { setUser } = useContext(UserContext);
 
     const [attemptedAppUser, setAttemptedAppUser] = useState(null);
-    const [isSuccessfulLogin, setIsSuccessfulLogin] = useState(false);
     const [isFailedLogin, setIsFailedLogin] = useState(false);
-
-    useEffect(() => {
-        const username = Cookies.get("username");
-        console.log(username);
-        if (username) {
-            setUser(username);
-        }
-    }, []);
 
     const checkUserCredentials = async (userIdentity, password) => {
 
@@ -55,7 +45,6 @@ export const LogIn = () => {
 
         if (response.status === 200) {
             setUser(responseBodyText.username);
-            setIsSuccessfulLogin(true);
             setIsFailedLogin(false);
             setAttemptedAppUser(null);
         } else if (response.status === 400) {
@@ -63,7 +52,6 @@ export const LogIn = () => {
                 errorMessage: responseBodyText.message,
                 userIdentity: userIdentity
             });
-            setIsSuccessfulLogin(false);
             setIsFailedLogin(true);
         }
 
@@ -71,7 +59,7 @@ export const LogIn = () => {
 
     return (
         <div>
-            {isSuccessfulLogin ? <LoginSuccessful /> : <LoginForm usernameRegex={usernameRegex} emailRegex={emailRegex} checkUserCredentials={checkUserCredentials} attemptedAppUser={attemptedAppUser} isFailedLogin={isFailedLogin} />}
+            {<LoginForm usernameRegex={usernameRegex} emailRegex={emailRegex} checkUserCredentials={checkUserCredentials} attemptedAppUser={attemptedAppUser} isFailedLogin={isFailedLogin} />}
         </div>
 
     );
