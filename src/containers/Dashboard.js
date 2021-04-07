@@ -5,7 +5,7 @@ import { Questions } from "../components/Questions";
 import { Lists } from "../components/Lists";
 import { Footer } from "../components/Footer";
 
-export const Home = () => {
+export const Dashboard = () => {
     const [selected, setSelected] = useState('');
     const {user, setUser} = useContext(UserContext);
 

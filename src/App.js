@@ -1,14 +1,19 @@
-import React, { useState, useContext, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import './App.css';
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import { Nav } from "./containers/Nav";
-import { Home } from "./containers/Home";
+import { Dashboard } from "./containers/Dashboard";
 import { SignUp } from "./containers/SignUp";
 import { LogIn } from "./containers/LogIn";
+import { LogOut } from "./containers/LogOut";
 import { Contact } from "./containers/Contact";
+
 import { UserContext } from "./UserContext";
+import { ProtectedDashboard } from "./routes/ProtectedDashboard";
+import { ProtectedLogin } from "./routes/ProtectedLogin";
+import { ProtectedLogout } from "./routes/ProtectedLogout";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -24,10 +29,11 @@ function App() {
       <UserContext.Provider value={value}>
         <Nav />
         <Switch>
-          <Route path="/" exact component={Home} />
+          {/* <Route path="/" exact component={Home} /> */}
+          <ProtectedDashboard path="/dashboard" component={Dashboard} />
           <Route path="/signup" component={SignUp} />
-          <Route path="/login" component={LogIn} />
-          <Route path="/logout" component={LogIn} />
+          <ProtectedLogin path="/login" component={LogIn} />
+          <ProtectedLogout path="/logout" component={LogOut} />
           <Route path="/contact" component={Contact} />
         </Switch>
       </UserContext.Provider>

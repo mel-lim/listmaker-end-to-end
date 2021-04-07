@@ -1,9 +1,10 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { UserContext } from "../UserContext";
 import { LoginForm } from "../components/Login/LoginForm";
 import { LoginSuccessful } from "../components/Login/LoginSuccessful";
+import Cookies from "js-cookie";
 
-export const LogIn = () => {
+export const LogIn = () => {    
 
     const usernameRegex = /^[a-zA-Z0-9_]*$/;
     const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -14,6 +15,13 @@ export const LogIn = () => {
     const [isSuccessfulLogin, setIsSuccessfulLogin] = useState(false);
     const [isFailedLogin, setIsFailedLogin] = useState(false);
 
+    useEffect(() => {
+        const username = Cookies.get("username");
+        console.log(username);
+        if (username) {
+            setUser(username);
+        }
+    }, []);
 
     const checkUserCredentials = async (userIdentity, password) => {
 
@@ -30,7 +38,7 @@ export const LogIn = () => {
         // Add the password to the body content
         requestBodyContent.password = password;
 
-        const response = await fetch(`http://localhost:4000/appusers/login`, {
+        const response = await fetch('/appusers/login', {
             method: 'POST',
             mode: 'cors',
             cache: 'default',
@@ -41,10 +49,12 @@ export const LogIn = () => {
             referrerPolicy: 'no-referrer',
             body: JSON.stringify(requestBodyContent)
         });
+
         const responseBodyText = await response.json();
+        console.log(responseBodyText.username);
+
         if (response.status === 200) {
-            setUser(responseBodyText.appUser[0]);
-            console.log(responseBodyText.appUser[0]);
+            setUser(responseBodyText.username);
             setIsSuccessfulLogin(true);
             setIsFailedLogin(false);
             setAttemptedAppUser(null);

@@ -9,8 +9,8 @@ export const Nav = () => {
         <nav id="sticky-nav">
             <ul>
 
-                <Link to="/">
-                    <li>Home</li>
+                <Link to="/dashboard">
+                    <li>Dashboard</li>
                 </Link>
 
                 <li>&middot;</li>

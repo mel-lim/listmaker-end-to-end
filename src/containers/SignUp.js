@@ -10,7 +10,7 @@ export const SignUp = () => {
     
 
     const postNewUser = async (username, email, password) => {
-        const response = await fetch(`http://localhost:4000/appusers/signup`, {
+        const response = await fetch('/appusers/signup', {
             method: 'POST',
             mode: 'cors',
             cache: 'default',
