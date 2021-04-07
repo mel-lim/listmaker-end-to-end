@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { UserContext } from "../UserContext";
-import { GreetNewUser } from "../components/GreetNewUser";
-import { Questions } from "../components/Questions";
+import { GreetNewUser } from "../components/DashboardStart/GreetNewUser";
+import { Questions } from "../components/DashboardStart/Questions";
 import { Lists } from "../components/Lists";
 import { Footer } from "../components/Footer";
 
