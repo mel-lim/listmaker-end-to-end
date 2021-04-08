@@ -140,7 +140,7 @@ main {
   margin: 1rem 2rem 2em 2rem;
 }
 
-.dashboard-start-container input[type=button] {
+.dashboard-start-container input[type=button], .dashboard-start-container input[type=submit] {
   cursor: pointer;
   color: hsl(0, 0%, 30%);
   margin: 1rem;

@@ -1,16 +1,19 @@
 import React, { useState, useContext } from "react";
 import { UserContext } from "../UserContext";
 import { GreetNewUser } from "../components/DashboardStart/GreetNewUser";
-import { Questions } from "../components/DashboardStart/Questions";
+import { NewTripQuestions } from "../components/DashboardStart/NewTripQuestions";
 import { Lists } from "../components/Lists";
 import { Footer } from "../components/Footer";
 
 export const Dashboard = () => {
     const { user, setUser } = useContext(UserContext);
+
     const [newTrip, setNewTrip] = useState(false);
-    const [selected, setSelected] = useState('');
     const [loadLists, setLoadLists] = useState(false);
+
     const [tripName, setTripName] = useState('');
+    const [tripCategory, setTripCategory] = useState('');
+    const [tripDuration, setTripDuration] = useState('');
 
     return (
         <div>
@@ -20,11 +23,11 @@ export const Dashboard = () => {
                     {
                         !newTrip ?
                             <input type="button" value='Create new trip' onClick={() => setNewTrip(true)} /> :
-                            <Questions selected={selected} setSelected={setSelected} setNewTrip={setNewTrip} setLoadLists={setLoadLists} tripName={tripName} setTripName={setTripName} />
+                            <NewTripQuestions setNewTrip={setNewTrip} setLoadLists={setLoadLists} tripName={tripName} setTripName={setTripName} tripCategory={tripCategory} setTripCategory={setTripCategory} tripDuration={tripDuration} setTripDuration={setTripDuration} />
                     }
                 </div>
 
-                {loadLists && <Lists selected={selected} />}
+                {/* {loadLists && <Lists selected={selected} />} */}
 
             </main>
 
