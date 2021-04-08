@@ -165,6 +165,7 @@ main {
 
 .trip-questions input[type=text] {
   margin-left: 1rem;
+  width: 200px;
 }
 
 .trip-question {

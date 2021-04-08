@@ -1,6 +1,6 @@
 import React from "react";
 
-export const NewTripQuestions = ({ setNewTrip, setLoadLists, tripName, setTripName, tripCategory, setTripCategory, tripDuration, setTripDuration }) => {
+export const NewTripForm = ({ setNewTrip, setLoadLists, tripName, setTripName, tripCategory, setTripCategory, tripDuration, setTripDuration, setTripId, setActiveTrip }) => {
 
     const cancelTrip = event => {
         event.preventDefault();
@@ -10,9 +10,42 @@ export const NewTripQuestions = ({ setNewTrip, setLoadLists, tripName, setTripNa
         setTripDuration('');
     }
 
+    const createTrip = async () => {
+
+        const requestBodyContent = { tripName, tripCategory, tripDuration };
+
+        const response = await fetch('/trips/newtrip', {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'default',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify(requestBodyContent)
+        });
+
+        const responseBodyText = await response.json();
+
+        if (response.status === 201) {
+            setTripId(responseBodyText.tripId);
+            const newTrip = {
+                tripId: responseBodyText.tripId,
+                tripName: tripName,
+                tripCategory: tripCategory,
+                tripDuration: tripDuration,
+            }
+            setActiveTrip(JSON.stringify(newTrip));
+        } else {
+            console.log(responseBodyText.message);
+        }
+    }
+
     const handleSubmit = event => {
         event.preventDefault();
-                
+        console.log("clicked");
+        createTrip();
     }
 
     return (
@@ -29,7 +62,7 @@ export const NewTripQuestions = ({ setNewTrip, setLoadLists, tripName, setTripNa
                     <h5 className="lighter-weight">What sort of trip?</h5>
                     <div className="radio-button-label-div">
                         <input type="radio" id="ski-touring-radio" name="ski-touring-radio" value="ski-tour" className="radio-buttons" onClick={event => setTripCategory(event.target.value)} />
-                        <label htmlFor="ski-touring-radio">Ski tour or splitboarding</label>
+                        <label htmlFor="ski-touring-radio">Ski tour/splitboarding</label>
                     </div>
                 </div>
 
@@ -47,7 +80,7 @@ export const NewTripQuestions = ({ setNewTrip, setLoadLists, tripName, setTripNa
                     </div>
                 </div>
 
-                {tripCategory && tripDuration && (<input type="submit" value='Load lists' />)}
+                {tripCategory && tripDuration && (<input type="submit" value='Create trip' />)}
 
                 <input type="button" value='Cancel trip' onClick={cancelTrip} />
 

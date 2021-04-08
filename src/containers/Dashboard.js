@@ -1,7 +1,7 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { UserContext } from "../UserContext";
 import { GreetNewUser } from "../components/DashboardStart/GreetNewUser";
-import { NewTripQuestions } from "../components/DashboardStart/NewTripQuestions";
+import { NewTripForm } from "../components/DashboardStart/NewTripForm";
 import { Lists } from "../components/Lists";
 import { Footer } from "../components/Footer";
 
@@ -15,6 +15,18 @@ export const Dashboard = () => {
     const [tripCategory, setTripCategory] = useState('');
     const [tripDuration, setTripDuration] = useState('');
 
+    const [tripId, setTripId] = useState('');
+    const [activeTrip, setActiveTrip] = useState({});
+
+    useEffect(() => {
+        const storedActiveTrip = localStorage.getItem("activeTrip") || {};
+        setActiveTrip(storedActiveTrip);
+    }, []);
+    
+    useEffect(() => {
+        localStorage.setItem("activeTrip", activeTrip)
+    }, [activeTrip]);
+
     return (
         <div>
             <main>
@@ -23,7 +35,7 @@ export const Dashboard = () => {
                     {
                         !newTrip ?
                             <input type="button" value='Create new trip' onClick={() => setNewTrip(true)} /> :
-                            <NewTripQuestions setNewTrip={setNewTrip} setLoadLists={setLoadLists} tripName={tripName} setTripName={setTripName} tripCategory={tripCategory} setTripCategory={setTripCategory} tripDuration={tripDuration} setTripDuration={setTripDuration} />
+                            <NewTripForm setNewTrip={setNewTrip} setLoadLists={setLoadLists} tripName={tripName} setTripName={setTripName} tripCategory={tripCategory} setTripCategory={setTripCategory} tripDuration={tripDuration} setTripDuration={setTripDuration} setTripId={setTripId} setActiveTrip={setActiveTrip} />
                     }
                 </div>
 
