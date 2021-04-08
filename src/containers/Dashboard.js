@@ -1,31 +1,40 @@
 import React, { useState, useContext, useEffect } from "react";
 import { UserContext } from "../UserContext";
 import { GreetNewUser } from "../components/DashboardStart/GreetNewUser";
-import { NewTripForm } from "../components/DashboardStart/NewTripForm";
+import { DashboardHeader } from "../components/DashboardStart/DashboardHeader";
 import { Lists } from "../components/Lists";
 import { Footer } from "../components/Footer";
 
 export const Dashboard = () => {
     const { user, setUser } = useContext(UserContext);
 
-    const [newTrip, setNewTrip] = useState(false);
+    const [newTripClicked, setNewTripClicked] = useState(false); // When user clicks 'new trip', this will be set to 'true' engage the 'dashboard header'
+    const [activeTrip, setActiveTrip] = useState({ tripId: '', tripName: '', tripCategory: '', tripDuration: ''}); // If the post request is successful, the active trip will be set to the values received in the response body
+
     const [loadLists, setLoadLists] = useState(false);
 
-    const [tripName, setTripName] = useState('');
-    const [tripCategory, setTripCategory] = useState('');
-    const [tripDuration, setTripDuration] = useState('');
-
-    const [tripId, setTripId] = useState('');
-    const [activeTrip, setActiveTrip] = useState({});
+    useEffect(() => {
+        const storedActiveTrip = localStorage.getItem("activeTrip");
+        console.log(storedActiveTrip);
+        if (storedActiveTrip) {
+            setActiveTrip(JSON.parse(storedActiveTrip));
+        }
+    }, []);
 
     useEffect(() => {
-        const storedActiveTrip = localStorage.getItem("activeTrip") || {};
-        setActiveTrip(storedActiveTrip);
+        const storedNewTripClicked = localStorage.getItem("newTripClicked");
+        if (storedNewTripClicked) {
+            setNewTripClicked(JSON.parse(storedNewTripClicked));
+        }
     }, []);
     
     useEffect(() => {
-        localStorage.setItem("activeTrip", activeTrip)
+        localStorage.setItem("activeTrip", JSON.stringify(activeTrip));
     }, [activeTrip]);
+
+    useEffect(() => {
+        localStorage.setItem("newTripClicked", JSON.stringify(newTripClicked));
+    }, [newTripClicked]);
 
     return (
         <div>
@@ -33,13 +42,15 @@ export const Dashboard = () => {
                 <div className="dashboard-start-container">
                     <GreetNewUser />
                     {
-                        !newTrip ?
-                            <input type="button" value='Create new trip' onClick={() => setNewTrip(true)} /> :
-                            <NewTripForm setNewTrip={setNewTrip} setLoadLists={setLoadLists} tripName={tripName} setTripName={setTripName} tripCategory={tripCategory} setTripCategory={setTripCategory} tripDuration={tripDuration} setTripDuration={setTripDuration} setTripId={setTripId} setActiveTrip={setActiveTrip} />
+                        (!newTripClicked && !activeTrip.tripId) ?
+                            
+                            <input type="button" value='Create new trip' onClick={() => setNewTripClicked(true)} /> :
+                            
+                            <DashboardHeader setNewTripClicked={setNewTripClicked} activeTrip={activeTrip} setActiveTrip={setActiveTrip} />
                     }
                 </div>
 
-                {/* {loadLists && <Lists selected={selected} />} */}
+                {/* {tripId && <Lists />} */}
 
             </main>
 

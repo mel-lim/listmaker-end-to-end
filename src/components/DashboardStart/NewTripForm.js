@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 
-export const NewTripForm = ({ setNewTrip, setLoadLists, tripName, setTripName, tripCategory, setTripCategory, tripDuration, setTripDuration, setTripId, setActiveTrip }) => {
+export const NewTripForm = ({ setNewTrip, setTripId, setActiveTrip }) => {
+
+    // These states hold the values of the user inputs (radio buttons and text) until user submits the form
+    const [tripName, setTripName] = useState('');
+    const [tripCategory, setTripCategory] = useState('');
+    const [tripDuration, setTripDuration] = useState('');
 
     const cancelTrip = event => {
         event.preventDefault();
@@ -10,7 +15,10 @@ export const NewTripForm = ({ setNewTrip, setLoadLists, tripName, setTripName, t
         setTripDuration('');
     }
 
-    const createTrip = async () => {
+    const createTrip = async (event) => {
+
+        event.preventDefault();
+        console.log("clicked");
 
         const requestBodyContent = { tripName, tripCategory, tripDuration };
 
@@ -29,30 +37,26 @@ export const NewTripForm = ({ setNewTrip, setLoadLists, tripName, setTripName, t
         const responseBodyText = await response.json();
 
         if (response.status === 201) {
-            setTripId(responseBodyText.tripId);
             const newTrip = {
                 tripId: responseBodyText.tripId,
                 tripName: tripName,
                 tripCategory: tripCategory,
                 tripDuration: tripDuration,
             }
-            setActiveTrip(JSON.stringify(newTrip));
+            setActiveTrip(newTrip); // This is going to get stored in localstorage
+            setTripName(''); // These are ephemeral states and won't persist after refresh
+            setTripCategory('');
+            setTripDuration('');
         } else {
             console.log(responseBodyText.message);
         }
-    }
-
-    const handleSubmit = event => {
-        event.preventDefault();
-        console.log("clicked");
-        createTrip();
     }
 
     return (
         <section className="trip-questions">
             <h5>Answer a couple of questions to populate your lists with some suggested items.</h5>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={createTrip}>
                 <div className="trip-question">
                     <h5>Trip name</h5>
                     <input type="text" id="trip-name-input" name="trip-name" value={tripName} onChange={event => setTripName(event.target.value)} placeholder="e.g. Rainbow Mountain" />
