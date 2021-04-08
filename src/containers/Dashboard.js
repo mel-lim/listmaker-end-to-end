@@ -10,6 +10,7 @@ export const Dashboard = () => {
     const [newTrip, setNewTrip] = useState(false);
     const [selected, setSelected] = useState('');
     const [loadLists, setLoadLists] = useState(false);
+    const [tripName, setTripName] = useState('');
 
     return (
         <div>
@@ -19,7 +20,7 @@ export const Dashboard = () => {
                     {
                         !newTrip ?
                             <input type="button" value='Create new trip' onClick={() => setNewTrip(true)} /> :
-                            <Questions selected={selected} setSelected={setSelected} setNewTrip={setNewTrip} setLoadLists={setLoadLists} />
+                            <Questions selected={selected} setSelected={setSelected} setNewTrip={setNewTrip} setLoadLists={setLoadLists} tripName={tripName} setTripName={setTripName} />
                     }
                 </div>
 

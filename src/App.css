@@ -129,7 +129,7 @@ main {
   text-align: center;
 }
 
-/* Tagline and questions container */
+/* Dashboard start container */
 
 .dashboard-start-container {
   display: inline-block;
@@ -163,7 +163,11 @@ main {
   justify-content: center;
 }
 
-.trip-questions form {
+.trip-questions input[type=text] {
+  margin-left: 1rem;
+}
+
+.trip-question {
   align-items: baseline;
   display: flex;
 }
@@ -175,6 +179,7 @@ main {
 .radio-button-label-div {
   display: flex;
   justify-content: center;
+  align-items: baseline;
 }
 
 .trip-questions label {
@@ -365,6 +370,11 @@ main {
   width: 100px;
   vertical-align: middle;
 
+}
+
+/* My account */
+.my-account {
+  text-align: center;
 }
 
 /* Contact */

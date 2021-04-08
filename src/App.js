@@ -4,17 +4,20 @@ import './App.css';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Cookies from "js-cookie";
 
+import { UserContext } from "./UserContext";
+
 import { Nav } from "./containers/Nav";
-import { Dashboard } from "./containers/Dashboard";
-import { SignUp } from "./containers/SignUp";
-import { LogIn } from "./containers/LogIn";
-import { LogOut } from "./containers/LogOut";
 import { Contact } from "./containers/Contact";
 
-import { UserContext } from "./UserContext";
-import { ProtectedDashboard } from "./routes/ProtectedDashboard";
-import { ProtectedLogin } from "./routes/ProtectedLogin";
-import { ProtectedLogout } from "./routes/ProtectedLogout";
+import { SignUp } from "./containers/SignUp";
+import { LogIn } from "./containers/LogIn";
+
+import { Dashboard } from "./containers/Dashboard";
+import { MyAccount } from "./containers/MyAccount";
+import { LogOut } from "./containers/LogOut";
+
+import { ProtectedLoggedIn } from "./routes/ProtectedLoggedIn";
+import { ProtectedLoggedOut } from "./routes/ProtectedLoggedOut";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -40,10 +43,11 @@ function App() {
         <Nav />
         <Switch>
           {/* <Route path="/" exact component={Home} /> */}
-          <ProtectedDashboard path="/dashboard" component={Dashboard} />
+          <ProtectedLoggedIn path="/dashboard" component={Dashboard} />
           <Route path="/signup" component={SignUp} />
-          <ProtectedLogin path="/login" component={LogIn} />
-          <ProtectedLogout path="/logout" component={LogOut} />
+          <ProtectedLoggedOut path="/login" component={LogIn} />
+          <Route path="/myaccount" component={MyAccount} />
+          <Route path="/logout" component={LogOut} />
           <Route path="/contact" component={Contact} />
         </Switch>
       </UserContext.Provider>

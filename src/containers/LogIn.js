@@ -41,7 +41,6 @@ export const LogIn = () => {
         });
 
         const responseBodyText = await response.json();
-        console.log(responseBodyText.username);
 
         if (response.status === 200) {
             setUser(responseBodyText.username);
