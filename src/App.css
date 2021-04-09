@@ -48,7 +48,12 @@ h4 {
 h5 {
   font-family: 'Helvetica', sans-serif;
   font-size: 1.1rem;
-  font-weight: lighter;
+  margin: 1rem 0;
+}
+
+h6 {
+  font-family: 'Helvetica', sans-serif;
+  font-size: 0.9rem;
   margin: 1rem 0;
 }
 

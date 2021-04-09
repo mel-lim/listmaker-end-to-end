@@ -10,6 +10,8 @@ export const ActivatedTripHeader = ({ activeTrip, generateLists, lists, allListI
     return (
         <div>
             <h5>Trip name: {activeTrip.tripName}</h5>
+            <h6 className="lighter-weight">Trip category: {activeTrip.tripCategory}</h6>
+            <h6 className="lighter-weight">Trip duration: {activeTrip.tripDuration}</h6>
             {!lists.length && !allListItems.length &&
                 <input type="button" value="Generate lists" onClick={handleClick} />}
         </div>
