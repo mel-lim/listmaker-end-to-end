@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { AddUndoRow } from "./AddUndoRow";
-import { ListItem } from "./ListItem";
+import { ListItem } from "./ListItem/ListItem";
 
 export const List = ({ listTitle, initialListItems }) => {
 

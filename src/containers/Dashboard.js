@@ -1,8 +1,7 @@
-import React, { useState, useContext, useEffect } from "react";
-import { UserContext } from "../UserContext";
+import React, { useState, useEffect } from "react";
 import { GreetNewUser } from "../components/DashboardStart/GreetNewUser";
 import { DashboardHeader } from "../components/DashboardStart/DashboardHeader";
-import { Lists } from "../components/Lists";
+import { Lists } from "../components/Lists/Lists";
 import { Footer } from "../components/Footer";
 
 export const Dashboard = () => {

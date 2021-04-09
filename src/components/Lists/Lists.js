@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { List } from "../components/List";
+import React from "react";
+import { List } from "./List";
 
 export const Lists = ({ lists, allListItems }) => {
 
