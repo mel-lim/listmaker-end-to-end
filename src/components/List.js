@@ -2,45 +2,35 @@ import React, { useState, useEffect } from "react";
 import { AddUndoRow } from "./AddUndoRow";
 import { ListItem } from "./ListItem";
 
-export const List = ({ listTitle }) => {
+export const List = ({ listTitle, initialListItems }) => {
 
-    /* const [listItems, setListItems] = useState([]);
     const [nextIdNum, setNextIdNum] = useState(0);
+    const [listItems, setListItems] = useState(initialListItems);
+    const [deletedListItems, setDeletedListItems] = useState([]);
 
-    useEffect(() => {
-        const suggestedListItems = [];
-        for (let i = 0; i < list.itemNames.length; i++) {
-            suggestedListItems.push({ itemId: `${list.listId}-item-${i}`, itemName: list.itemNames[i] });
-        }
-        setListItems(suggestedListItems);
-        setNextIdNum(list.itemNames.length);
-        // eslint-disable-next-line
-    }, []);
-
-    const generateItemId = () => {
-        const itemId = `${list.listId}-item-${nextIdNum}`;
+    const generateTempItemId = () => {
+        const itemId = `tempItem-${nextIdNum}`;
         setNextIdNum(prevNextIdNum => prevNextIdNum + 1);
         return itemId;
     } 
 
-    const [deletedListItems, setDeletedListItems] = useState([]);
-
     const addListItem = newItemName => {
         const newListItem = {
-            itemId: generateItemId(),
-            itemName: newItemName
+            id: generateTempItemId(),
+            name: newItemName,
+            flag: 'newItem'
         }
         setListItems(prevListItems => [...prevListItems, newListItem]);
     }
 
     const removeListItem = itemId => {
-        const index = listItems.findIndex(listItem => listItem.itemId === itemId);
+        const index = listItems.findIndex(listItem => listItem.id === itemId);
         const deletedItemWithIndex = {
             deletedItem: listItems[index],
             originalIndex: index
         };
         setDeletedListItems(prevDeletedListItems => [deletedItemWithIndex, ...prevDeletedListItems]);
-        const updatedList = listItems.filter(listItem => listItem.itemId !== itemId);
+        const updatedList = listItems.filter(listItem => listItem.id !== itemId);
         setListItems(updatedList);
     }
 
@@ -49,22 +39,20 @@ export const List = ({ listTitle }) => {
             return;
         }
         const lastDeletedItem = deletedListItems[0];
-        const undoneListItems = [...listItems];
-        undoneListItems.splice(lastDeletedItem.originalIndex, 0, lastDeletedItem.deletedItem)
-        setListItems(undoneListItems);
+        const currentListItems = [...listItems];
+        currentListItems.splice(lastDeletedItem.originalIndex, 0, lastDeletedItem.deletedItem)
+        setListItems(currentListItems);
         const updatedDeletedListItems = deletedListItems.slice(1);
         setDeletedListItems(updatedDeletedListItems);
-    } */
+    }
 
     return (
         <section className="list-container">
-        {/*data-testid={list.listId}*/}
             <h3>{listTitle}</h3>
-            {/* {listItems.map(listItem =>
-                <ListItem key={listItem.itemId} listItem={listItem} listItems={listItems} setListItems={setListItems} removeListItem={() => { removeListItem(listItem.itemId) }} />
+            {listItems.map(listItem =>
+                <ListItem key={`item-${listItem.id}`} listItem={listItem} listItems={listItems} setListItems={setListItems} removeListItem={removeListItem} />
             )}
-            <AddUndoRow addListItem={addListItem} undoDelete={undoDelete} /> */}
+            <AddUndoRow addListItem={addListItem} undoDelete={undoDelete} />
         </section>
-
     );
 }

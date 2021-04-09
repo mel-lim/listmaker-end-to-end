@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 
-export const NewTripForm = ({ setNewTrip, setTripId, setActiveTrip }) => {
+export const NewTripForm = ({ setNewTripClicked, setActiveTrip }) => {
 
     // These states hold the values of the user inputs (radio buttons and text) until user submits the form
     const [tripName, setTripName] = useState('');
     const [tripCategory, setTripCategory] = useState('');
     const [tripDuration, setTripDuration] = useState('');
 
-    const cancelTrip = event => {
-        event.preventDefault();
-        setNewTrip(false);
+    const cancelTrip = () => {
+        setNewTripClicked(false);
         setTripName('');
         setTripCategory('');
         setTripDuration('');

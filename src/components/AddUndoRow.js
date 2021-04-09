@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export const AddUndoRow = ({ newItemName, setNewItemName, addListItem, undoDelete }) => {
+export const AddUndoRow = ({ addListItem, undoDelete }) => {
 
     const [userInput, setUserInput] = useState('');
     

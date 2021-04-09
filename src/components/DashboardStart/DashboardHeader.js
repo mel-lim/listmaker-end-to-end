@@ -2,7 +2,7 @@ import React from "react";
 import { NewTripForm } from './NewTripForm';
 import { ActivatedTripHeader } from './ActivatedTripHeader';
 
-export const DashboardHeader = ({ setNewTrip, activeTrip, setActiveTrip, setLists }) => {
+export const DashboardHeader = ({ setNewTrip, activeTrip, setActiveTrip, generateLists }) => {
 
     return (
         <div>
@@ -10,7 +10,7 @@ export const DashboardHeader = ({ setNewTrip, activeTrip, setActiveTrip, setList
 
                 <NewTripForm setNewTrip={setNewTrip} setActiveTrip={setActiveTrip} /> :
 
-                <ActivatedTripHeader activeTrip={activeTrip} setLists={setLists} />
+                <ActivatedTripHeader activeTrip={activeTrip} generateLists={generateLists} />
             }
         </div>
     );
