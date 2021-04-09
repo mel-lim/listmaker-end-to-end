@@ -11,7 +11,6 @@ export const Dashboard = () => {
     const [newTripClicked, setNewTripClicked] = useState(false); // When user clicks 'new trip', this will be set to 'true' engage the 'dashboard header'
     const [activeTrip, setActiveTrip] = useState({ tripId: '', tripName: '', tripCategory: '', tripDuration: ''}); // If the post request is successful, the active trip will be set to the values received in the response body
 
-    const [loadLists, setLoadLists] = useState(false);
     const [lists, setLists] = useState([]);
 
     useEffect(() => {
@@ -51,7 +50,7 @@ export const Dashboard = () => {
                     }
                 </div>
 
-                {/* {tripId && <Lists />} */}
+                {lists.length && <Lists lists={lists} />}
 
             </main>
 

@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { AddUndoRow } from "./AddUndoRow";
 import { ListItem } from "./ListItem";
 
-export const List = ({ list }) => {
+export const List = ({ listTitle }) => {
 
-    const [listItems, setListItems] = useState([]);
+    /* const [listItems, setListItems] = useState([]);
     const [nextIdNum, setNextIdNum] = useState(0);
 
     useEffect(() => {
@@ -21,7 +21,7 @@ export const List = ({ list }) => {
         const itemId = `${list.listId}-item-${nextIdNum}`;
         setNextIdNum(prevNextIdNum => prevNextIdNum + 1);
         return itemId;
-    }
+    } 
 
     const [deletedListItems, setDeletedListItems] = useState([]);
 
@@ -54,15 +54,16 @@ export const List = ({ list }) => {
         setListItems(undoneListItems);
         const updatedDeletedListItems = deletedListItems.slice(1);
         setDeletedListItems(updatedDeletedListItems);
-    }
+    } */
 
     return (
-        <section className="list-container" data-testid={list.listId} >
-            <h3>{list.listTitle}</h3>
-            {listItems.map(listItem =>
+        <section className="list-container">
+        {/*data-testid={list.listId}*/}
+            <h3>{listTitle}</h3>
+            {/* {listItems.map(listItem =>
                 <ListItem key={listItem.itemId} listItem={listItem} listItems={listItems} setListItems={setListItems} removeListItem={() => { removeListItem(listItem.itemId) }} />
             )}
-            <AddUndoRow addListItem={addListItem} undoDelete={undoDelete} />
+            <AddUndoRow addListItem={addListItem} undoDelete={undoDelete} /> */}
         </section>
 
     );

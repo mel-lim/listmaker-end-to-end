@@ -2,11 +2,9 @@ import React, { useState, useEffect } from "react";
 import { List } from "../components/List";
 import { gearList, clothingList, dayFoodList, overnightFoodList, campingList } from "../resources/ListData";
 
-export const Lists = ({ selected }) => {
+export const Lists = ({ lists }) => {
 
-    const [lists, setLists] = useState([]);
-
-    useEffect(() => {
+  /*   useEffect(() => {
         if (selected.length === 0) {
             return;
         } else if (selected === "day-trip") {
@@ -14,11 +12,11 @@ export const Lists = ({ selected }) => {
         } else if (selected === "overnight") {
             setLists([gearList, clothingList, overnightFoodList, campingList]);
         }
-      }, [selected]);
+      }, [selected]); */
 
     return (
         <article id="lists-container">
-            {lists.map(list => <List key={list.listId} list={list} />)}
+            {lists.map(list => <List listTitle={list.title} />)}
         </article>
     );
 }
