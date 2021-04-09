@@ -7,11 +7,26 @@ import { Footer } from "../components/Footer";
 export const Dashboard = () => {
 
     const [newTripClicked, setNewTripClicked] = useState(false); // When user clicks 'new trip', this will be set to 'true' engage the 'dashboard header'
-    const [activeTrip, setActiveTrip] = useState({ tripId: '', tripName: '', tripCategory: '', tripDuration: ''}); // If the post request is successful, the active trip will be set to the values received in the response body
+    const [activeTrip, setActiveTrip] = useState({ tripId: '', tripName: '', tripCategory: '', tripDuration: '' }); // If the post request to create a new trip is successful, the activeTrip variable will contain the details of the new trip provided in the response
 
-    const [lists, setLists] = useState([]);
-    const [allListItems, setAllListItems] = useState([]);
+    const [lists, setLists] = useState([]); // This will sit empty until the data is fetched from the server
+    const [allListItems, setAllListItems] = useState([]); // This will sit empty until the data is fetched from the server
+    const [allDeletedItems, setAllDeletedItems] = useState([]); // This will sit empty until the user starts deleting items from their lists
 
+    // This will persist the state of the newTripClicked variable past refresh
+    useEffect(() => {
+        const storedNewTripClicked = localStorage.getItem("newTripClicked");
+        if (storedNewTripClicked) {
+            setNewTripClicked(JSON.parse(storedNewTripClicked));
+        }
+    }, []);
+
+    // Once the user clicks the 'new trip' button and changes the state of the newTripClicked variable, the result is stored in localStorage
+    useEffect(() => {
+        localStorage.setItem("newTripClicked", JSON.stringify(newTripClicked));
+    }, [newTripClicked]);
+
+    // Upon browser refresh, this will get the activeTrip data that we stored in localstorage, so we can persist the activeTrip state
     useEffect(() => {
         const storedActiveTrip = localStorage.getItem("activeTrip");
         console.log(storedActiveTrip);
@@ -20,22 +35,52 @@ export const Dashboard = () => {
         }
     }, []);
 
-    useEffect(() => {
-        const storedNewTripClicked = localStorage.getItem("newTripClicked");
-        if (storedNewTripClicked) {
-            setNewTripClicked(JSON.parse(storedNewTripClicked));
-        }
-    }, []);
-    
+    // Once the activeTrip variable is loaded with the details of the trip that has been created, we store in localstorage for safekeeping
     useEffect(() => {
         localStorage.setItem("activeTrip", JSON.stringify(activeTrip));
     }, [activeTrip]);
 
+    // Upon browser refresh, this will get the lists data that we stored in localstorage, so we can persist it
     useEffect(() => {
-        localStorage.setItem("newTripClicked", JSON.stringify(newTripClicked));
-    }, [newTripClicked]);
-    
+        const storedLists = localStorage.getItem("lists");
+        console.log(storedLists);
+        if (storedLists) {
+            setLists(JSON.parse(storedLists));
+        }
+    }, []);
 
+    // Once the lists variable are loaded with the data fetched from our db, we store in localstorage for safekeeping
+    useEffect(() => {
+        localStorage.setItem("lists", JSON.stringify(lists));
+    }, [lists]);
+
+    // Upon browser refresh, this will get the allListItems data that we stored in localstorage, so we can persist it
+    useEffect(() => {
+        const storedAllListItems = localStorage.getItem("allListItems");
+        if (storedAllListItems) {
+            setAllListItems(JSON.parse(storedAllListItems));
+        }
+    }, []);
+
+    // Once the allListItems variable are loaded with the data fetched from our db, we store in localstorage for safekeeping
+    useEffect(() => {
+        localStorage.setItem("allListItems", JSON.stringify(allListItems));
+    }, [allListItems]);
+
+    // Upon browser refresh, this will get the allDeletedItems data that we stored in localstorage, so we can persist it
+    useEffect(() => {
+        const storedAllDeletedItems = localStorage.getItem("allDeletedItems");
+        if (storedAllDeletedItems) {
+            setAllDeletedItems(JSON.parse(storedAllDeletedItems));
+        }
+    }, []);
+
+    // Once the allDeletedItems variable initialised with its array of empty arrays, we store in localstorage for safekeeping
+    useEffect(() => {
+        localStorage.setItem("allDeletedItems", JSON.stringify(allDeletedItems));
+    }, [allDeletedItems]);
+
+    // This fetch request will get data from the database and fill the lists and allListItems variables with the data
     const generateLists = async () => {
 
         const response = await fetch(`/trips/generatenewlists/${activeTrip.tripId}?requestTemplate=true`, {
@@ -50,14 +95,20 @@ export const Dashboard = () => {
         });
 
         const responseBodyText = await response.json();
-        console.log(response.status);
 
         if (response.status === 200 || response.status === 304) {
-            console.log("we have 200");
+            // Set the lists and allListItems to their initial values provided by our get request
             setLists(responseBodyText.lists);
             setAllListItems(responseBodyText.allListItems);
-            console.log(responseBodyText.lists);
-            console.log(responseBodyText.allListItems);
+
+            // Set the initial value of our allDeletedItems variable to be an array of the same length as the number of lists we have. Each element in that array is itself an empty array.
+            const numOfLists = responseBodyText.lists.length;
+            let initialAllDeletedItems = [];
+            for (let i = 0; i < numOfLists; i++) {
+                initialAllDeletedItems.push([]);
+            }
+            setAllDeletedItems(initialAllDeletedItems);
+
         } else {
             console.log(responseBodyText.message);
         }
@@ -70,14 +121,14 @@ export const Dashboard = () => {
                     <GreetNewUser />
                     {
                         (!newTripClicked && !activeTrip.tripId) ?
-                            
+
                             <input type="button" value='Create new trip' onClick={() => setNewTripClicked(true)} /> :
-                            
-                            <DashboardHeader setNewTripClicked={setNewTripClicked} activeTrip={activeTrip} setActiveTrip={setActiveTrip} setLists={setLists} generateLists={generateLists} />
+
+                            <DashboardHeader setNewTripClicked={setNewTripClicked} activeTrip={activeTrip} setActiveTrip={setActiveTrip} setLists={setLists} generateLists={generateLists} lists={lists} allListItems={allListItems} />
                     }
                 </div>
 
-                {lists.length && allListItems.length && <Lists lists={lists} allListItems={allListItems} />}
+                {lists.length && allListItems.length && <Lists lists={lists} allListItems={allListItems} setAllListItems={setAllListItems} allDeletedItems={allDeletedItems} setAllDeletedItems={setAllDeletedItems} />}
 
             </main>
 
