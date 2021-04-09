@@ -12,6 +12,7 @@ export const Dashboard = () => {
     const [activeTrip, setActiveTrip] = useState({ tripId: '', tripName: '', tripCategory: '', tripDuration: ''}); // If the post request is successful, the active trip will be set to the values received in the response body
 
     const [loadLists, setLoadLists] = useState(false);
+    const [lists, setLists] = useState([]);
 
     useEffect(() => {
         const storedActiveTrip = localStorage.getItem("activeTrip");
@@ -46,7 +47,7 @@ export const Dashboard = () => {
                             
                             <input type="button" value='Create new trip' onClick={() => setNewTripClicked(true)} /> :
                             
-                            <DashboardHeader setNewTripClicked={setNewTripClicked} activeTrip={activeTrip} setActiveTrip={setActiveTrip} />
+                            <DashboardHeader setNewTripClicked={setNewTripClicked} activeTrip={activeTrip} setActiveTrip={setActiveTrip} setLists={setLists} />
                     }
                 </div>
 

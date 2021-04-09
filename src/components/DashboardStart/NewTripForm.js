@@ -74,7 +74,7 @@ export const NewTripForm = ({ setNewTrip, setTripId, setActiveTrip }) => {
                 <div className="trip-question">
                     <h5 className="lighter-weight">Day trip or overnight trip?</h5>
                     <div className="radio-button-label-div">
-                        <input type="radio" id="day-trip-radio" name="day-or-overnight-radio" value="day-trip" className="radio-buttons" onClick={event => setTripDuration(event.target.value)} />
+                        <input type="radio" id="day-trip-radio" name="day-or-overnight-radio" value="day" className="radio-buttons" onClick={event => setTripDuration(event.target.value)} />
                         <label htmlFor="day-trip-radio">Day trip</label>
                     </div>
                     <div className="radio-button-label-div">
