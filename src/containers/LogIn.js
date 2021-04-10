@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { UserContext } from "../UserContext";
 import { LoginForm } from "../components/Login/LoginForm";
 

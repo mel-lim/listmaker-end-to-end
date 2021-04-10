@@ -13,6 +13,8 @@ export const Dashboard = () => {
     const [allListItems, setAllListItems] = useState([]); // This will sit empty until the data is fetched from the server
     const [allDeletedItems, setAllDeletedItems] = useState([]); // This will sit empty until the user starts deleting items from their lists
 
+    const [saveAttemptMessage, setSaveAttemptMessage] = useState('');
+
     // This will persist the state of the newTripClicked variable past refresh
     useEffect(() => {
         const storedNewTripClicked = localStorage.getItem("newTripClicked");
@@ -80,10 +82,10 @@ export const Dashboard = () => {
         localStorage.setItem("allDeletedItems", JSON.stringify(allDeletedItems));
     }, [allDeletedItems]);
 
-    // This fetch request will get data from the database and fill the lists and allListItems variables with the data
+    // Fetch data from the db and fill the lists and allListItems variables with the data
     const generateLists = async () => {
 
-        const response = await fetch(`/trips/generatenewlists/${activeTrip.tripId}?requestTemplate=true`, {
+        const response = await fetch(`/trips/${activeTrip.tripId}/generatenewlists?requestTemplate=true`, {
             method: 'GET',
             mode: 'cors',
             cache: 'default',
@@ -114,6 +116,27 @@ export const Dashboard = () => {
         }
     }
 
+    // Post data to db to save the users changes
+    const saveChanges = async () => {
+        const requestBodyContent = { lists, allListItems };
+
+        const response = await fetch(`/trips/${activeTrip.tripId}/lists/savelists`, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'default',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify(requestBodyContent)
+        });
+
+        const responseBodyText = await response.json();
+        setSaveAttemptMessage(responseBodyText.message);
+        console.log(responseBodyText.message);
+        }
+
     return (
         <div>
             <main>
@@ -124,11 +147,27 @@ export const Dashboard = () => {
 
                             <input type="button" value='Create new trip' onClick={() => setNewTripClicked(true)} /> :
 
-                            <DashboardHeader setNewTripClicked={setNewTripClicked} activeTrip={activeTrip} setActiveTrip={setActiveTrip} setLists={setLists} generateLists={generateLists} lists={lists} allListItems={allListItems} />
+                            <DashboardHeader 
+                                setNewTripClicked={setNewTripClicked} 
+                                activeTrip={activeTrip} 
+                                setActiveTrip={setActiveTrip} 
+                                setLists={setLists}  
+                                lists={lists} 
+                                allListItems={allListItems} 
+                                generateLists={generateLists} 
+                                saveChanges={saveChanges}
+                                saveAttemptMessage={saveAttemptMessage} />
                     }
                 </div>
 
-                {lists.length && allListItems.length && <Lists lists={lists} allListItems={allListItems} setAllListItems={setAllListItems} allDeletedItems={allDeletedItems} setAllDeletedItems={setAllDeletedItems} />}
+                {lists.length && allListItems.length ? 
+                    <Lists 
+                        lists={lists} 
+                        allListItems={allListItems} 
+                        setAllListItems={setAllListItems} 
+                        allDeletedItems={allDeletedItems} 
+                        setAllDeletedItems={setAllDeletedItems} /> : 
+                    null}
 
             </main>
 

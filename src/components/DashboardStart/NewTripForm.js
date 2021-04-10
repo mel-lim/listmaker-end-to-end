@@ -53,7 +53,7 @@ export const NewTripForm = ({ setNewTripClicked, setActiveTrip }) => {
 
     return (
         <section className="trip-questions">
-            <h5>Answer a couple of questions to populate your lists with some suggested items.</h5>
+            <h5 className="lighter-weight">Answer a couple of questions to populate your lists with some suggested items.</h5>
 
             <form onSubmit={createTrip}>
                 <div className="trip-question">

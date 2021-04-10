@@ -2,15 +2,23 @@ import React from "react";
 import { NewTripForm } from './NewTripForm';
 import { ActivatedTripHeader } from './ActivatedTripHeader';
 
-export const DashboardHeader = ({ setNewTrip, activeTrip, setActiveTrip, generateLists, lists, allListItems }) => {
+export const DashboardHeader = ({ setNewTrip, activeTrip, setActiveTrip, lists, allListItems, generateLists, saveChanges, saveAttemptMessage }) => {
 
     return (
         <div>
             {!activeTrip.tripId ?
 
-                <NewTripForm setNewTrip={setNewTrip} setActiveTrip={setActiveTrip} /> :
+                <NewTripForm 
+                    setNewTrip={setNewTrip} 
+                    setActiveTrip={setActiveTrip} /> :
 
-                <ActivatedTripHeader activeTrip={activeTrip} generateLists={generateLists} lists={lists} allListItems={allListItems} />
+                <ActivatedTripHeader 
+                    activeTrip={activeTrip} 
+                    lists={lists} 
+                    allListItems={allListItems}
+                    generateLists={generateLists} 
+                    saveChanges={saveChanges}
+                    saveAttemptMessage={saveAttemptMessage} />
             }
         </div>
     );

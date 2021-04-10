@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { UserContext } from "../UserContext";
 
 export const Nav = () => {
-    const {user, setUser} = useContext(UserContext);
+    const {user} = useContext(UserContext);
 
     return (
         <nav id="sticky-nav">
