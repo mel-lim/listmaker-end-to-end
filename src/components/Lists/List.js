@@ -10,6 +10,7 @@ export const List = ({ listTitle, index, allListItems, setAllListItems, allDelet
 
     // Every time we edit our listItems state, we pass on the change to the allListItems variable and push that up to localstorage for safekeeping
     useEffect(() => {
+        console.log("useEffect being called")
         const currentAllListItems = allListItems;
         currentAllListItems.splice(index, 1, listItems);
         setAllListItems(currentAllListItems);
@@ -19,7 +20,7 @@ export const List = ({ listTitle, index, allListItems, setAllListItems, allDelet
 
     // Every time we edit our deletedItems state, we pass on the change to the allDeletedItems variable and push that up to localstorage for safekeeping
     useEffect(() => {
-         const currentAllDeletedItems = allDeletedItems;
+        const currentAllDeletedItems = allDeletedItems;
         currentAllDeletedItems.splice(index, 1, deletedListItems);
         setAllDeletedItems(currentAllDeletedItems);
         localStorage.setItem("allDeletedItems", JSON.stringify(allDeletedItems)); 
@@ -49,7 +50,12 @@ export const List = ({ listTitle, index, allListItems, setAllListItems, allDelet
             deletedItem: listItems[index],
             originalIndex: index
         };
-        setDeletedListItems(prevDeletedListItems => [deletedItemWithIndex, ...prevDeletedListItems]);
+        if (!deletedListItems) {
+            setDeletedListItems([deletedItemWithIndex]);
+        } else {
+            setDeletedListItems(prevDeletedListItems => [deletedItemWithIndex, ...prevDeletedListItems]);
+        }
+        
         const updatedList = listItems.filter(listItem => listItem.id !== itemId);
         setListItems(updatedList);
     }

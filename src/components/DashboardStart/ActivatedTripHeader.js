@@ -1,6 +1,6 @@
 import React from "react";
 
-export const ActivatedTripHeader = ({ activeTrip, lists, allListItems, generateLists, saveChanges, saveAttemptMessage }) => {
+export const ActivatedTripHeader = ({ activeTrip, lists, allListItems, generateLists, saveChanges, saveAttemptMessage, fetchLists }) => {
 
     const handleClickGenerate = event => {
         event.preventDefault();
@@ -10,6 +10,11 @@ export const ActivatedTripHeader = ({ activeTrip, lists, allListItems, generateL
     const handleClickSave = event => {
         event.preventDefault();
         saveChanges(); // This posts data to the server - the code can be found in Dashboard.js
+    }
+
+    const handleClickFetch = event => {
+        event.preventDefault();
+        fetchLists(); // This posts data to the server - the code can be found in Dashboard.js
     }
 
     return (
@@ -27,9 +32,12 @@ export const ActivatedTripHeader = ({ activeTrip, lists, allListItems, generateL
                     null}
 
                 {lists.length && allListItems.length ?
-                    <input type="button" value="Save changes" onClick={handleClickSave} /> :
+                    (<div>
+                        <input type="button" value="Save changes" onClick={handleClickSave} />
+                        <input type="button" value="Fetch data (temp)" onClick={handleClickFetch} />
+                    </div>) :
                     null}
-                
+
                 <p>{saveAttemptMessage}</p>
 
             </div>
