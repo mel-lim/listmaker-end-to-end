@@ -7,6 +7,7 @@ export const LogOut = () => {
     const { setUser } = useContext(UserContext);
 
     const deleteCookies = async () => {
+        // The cookie containing the JWT can only be deleted server-side because it is a http only cookie
         const response = await fetch('/appusers/logout', {
             method: 'GET',
             mode: 'cors',
@@ -26,8 +27,13 @@ export const LogOut = () => {
         }
     }
 
+    const deleteLocalStorage = () => {
+        localStorage.clear();
+    }
+
     const handleClick = (event) => {
         event.preventDefault();
+        deleteLocalStorage();
         deleteCookies();        
     }
 
