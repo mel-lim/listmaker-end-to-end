@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 
-export const LoadListsDropdown = ({ newTripClicked, setNewTripClicked, fetchLists, setActiveTrip }) => {
+export const LoadListsDropdown = ({ newTripCreated, fetchLists, setActiveTrip }) => {
 
     const [allTrips, setAllTrips] = useState([]);
 
     useEffect(() => {
         fetchTrips();
-    }, []);
+    }, [newTripCreated]);
 
     // FETCH ALL TRIPS FOR THIS USER
     const fetchTrips = async () => {
@@ -37,9 +37,13 @@ export const LoadListsDropdown = ({ newTripClicked, setNewTripClicked, fetchList
             return;
         } else {
             const selectedTripId = parseInt(event.target.value);
+
             const selectedTrip = allTrips.filter(trip => trip.id === selectedTripId)[0];
+
             console.log(selectedTrip);
+
             setActiveTrip({ tripId: selectedTripId, tripName: selectedTrip.name, tripCategory: selectedTrip.category, tripDuration: selectedTrip.duration });
+            
             fetchLists(selectedTripId);
         }
     }

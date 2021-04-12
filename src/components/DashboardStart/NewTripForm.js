@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 
-export const NewTripForm = ({ newTripClicked, setNewTripClicked, setActiveTrip, setNewTripCreated }) => {
+export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProcessing, setNewTripCreated, setActiveTrip, configureLists }) => {
 
-    // These states hold the values of the user inputs (radio buttons and text) until user submits the form
+    // Dynamic user inputs for the form
     const [tripName, setTripName] = useState('');
     const [tripCategory, setTripCategory] = useState('');
     const [tripDuration, setTripDuration] = useState('');
+    const [requestTemplate, setRequestTemplate] = useState('');
+
     const [submissionErrorMessage, setSubmissionErrorMessage] = useState('');
 
     // CANCEL FORM
@@ -16,15 +18,17 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setActiveTrip, 
         setTripDuration('');
     }
 
-    // CREATE NEW TRIP
+    // CREATE NEW TRIP AND GENERATE NEW LISTS
     const createTrip = async () => {
         
-        if (!tripCategory || !tripDuration) {
+        if (!tripCategory || !tripDuration || !requestTemplate) {
             setSubmissionErrorMessage('** Please select a response for all questions **');
             return;
         }
 
-        const requestBodyContent = { tripName, tripCategory, tripDuration };
+        setIsFetchProcessing(true);
+
+        const requestBodyContent = { tripName, tripCategory, tripDuration, requestTemplate };
 
         const response = await fetch('/trips/newtrip', {
             method: 'POST',
@@ -40,20 +44,32 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setActiveTrip, 
 
         const responseBodyText = await response.json();
 
-        if (response.status === 201) {
-            const newTrip = {
-                tripId: responseBodyText.tripId,
-                tripName: tripName,
-                tripCategory: tripCategory,
-                tripDuration: tripDuration,
-            }
+            // Update the states that govern render-logic
             setNewTripClicked(false);
             setNewTripCreated(true);
+
+            if (response.status === 201) {
+                const newTrip = {
+                    tripId: responseBodyText.tripId,
+                    tripName: tripName,
+                    tripCategory: tripCategory,
+                    tripDuration: tripDuration,
+                    requestTemplate: requestTemplate
+                }
+
+            // Activates a trip - this will display the trip details in the active trip console
             setActiveTrip(newTrip); // This is going to get stored in localstorage
-            setTripName(''); // These are ephemeral states and won't persist after refresh
+
+            // Sets the states that govern the lists rendered
+            // Function is declared in Dashboard.js
+            configureLists(responseBodyText.lists, responseBodyText.allListItems);
+
+            // Reset the local states that records the values inputted by the user into the new trip form
+            setTripName('');
             setTripCategory('');
             setTripDuration('');
             setSubmissionErrorMessage('');
+
         } else {
             console.log(responseBodyText.message);
         }
@@ -112,6 +128,19 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setActiveTrip, 
                                     <input type="radio" id="overnight-trip-radio" name="day-or-overnight-radio" value="overnight"
                                         className="radio-buttons" onClick={event => setTripDuration(event.target.value)} />
                                     <label htmlFor="overnight-trip-radio">Overnight trip</label>
+                                </div>
+                            </div>
+
+                            <div className="trip-question">
+                                <h5 className="lighter-weight">Generate lists with suggested list items?</h5>
+                                <div className="radio-button-label-div">
+                                    <input type="radio" id="request-template-radio-true" name="request-template" value="yes" className="radio-buttons" onClick={event => setRequestTemplate(event.target.value)} />
+                                    <label htmlFor="request-template-radio-true">Yes</label>
+                                </div>
+                                <div className="radio-button-label-div">
+                                    <input type="radio" id="request-template-radio-false" name="request-template" value="no"
+                                        className="radio-buttons" onClick={event => setRequestTemplate(event.target.value)} />
+                                    <label htmlFor="request-template-radio-false">No</label>
                                 </div>
                             </div>
 

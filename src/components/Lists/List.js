@@ -10,7 +10,6 @@ export const List = ({ listTitle, index, allListItems, setAllListItems, allDelet
 
     // Every time we edit our listItems state, we pass on the change to the allListItems variable and push that up to localstorage for safekeeping
     useEffect(() => {
-        console.log("useEffect being called")
         const currentAllListItems = allListItems;
         currentAllListItems.splice(index, 1, listItems);
         setAllListItems(currentAllListItems);

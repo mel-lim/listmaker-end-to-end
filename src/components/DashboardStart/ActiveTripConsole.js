@@ -1,13 +1,6 @@
 import React from "react";
 
-export const ActiveTripConsole = ({ activeTrip, lists, allListItems, generateLists, saveChanges, saveAttemptMessage, fetchLists, newTripCreated, setNewTripCreated, newListsGenerated, setNewListsGenerated, isFetchProcessing }) => {
-
-    const handleClickGenerate = event => {
-        event.preventDefault();
-        setNewTripCreated(false);
-        setNewListsGenerated(true);
-        generateLists(); // This fetches data from server using a get request - the code can be found in Dashboard.js
-    }
+export const ActiveTripConsole = ({ activeTrip, lists, allListItems, saveChanges, saveAttemptMessage, fetchLists }) => {
 
     const handleClickSave = event => {
         event.preventDefault();
@@ -28,13 +21,9 @@ export const ActiveTripConsole = ({ activeTrip, lists, allListItems, generateLis
                 <h6 className="lighter-weight">Trip duration: {activeTrip.tripDuration}</h6>
             </div>
 
-            <div className="generate-save-button-container">
+            <div className="save-button-container">
 
-                {newTripCreated && !newListsGenerated && !isFetchProcessing ?
-                    <input type="button" value="Generate lists" onClick={handleClickGenerate} /> :
-                    null}
-
-                {!newTripCreated && lists.length && allListItems.length && !isFetchProcessing ?
+                {lists.length && allListItems.length ?
                     (<div className="save-fetch-button-container">
                         <div>
                             <input type="button" value="Save changes" onClick={handleClickSave} />

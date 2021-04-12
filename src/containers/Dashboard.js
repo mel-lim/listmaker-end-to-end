@@ -87,49 +87,29 @@ export const Dashboard = () => {
         localStorage.setItem("allDeletedItems", JSON.stringify(allDeletedItems));
     }, [allDeletedItems]);
 
-    // Fetch data from the db and fill the lists and allListItems variables with the data
-    const generateLists = async () => {
+    // 
+    const configureLists = (listsConfig, allListsConfig) => {
+        // Set the lists and allListItems to their initial values provided by our get request
+        setLists(listsConfig);
+        setAllListItems(allListsConfig);
 
-        // This will ensure that the render function doesn't race past the completion of the fetch request. 
-        // While this is true, the renderer will render "Loading...". We will set it back to false at the end of the request to re-render the updated lists as fetched from the db.
-        setIsFetchProcessing(true);
-
-        const response = await fetch(`/trips/${activeTrip.tripId}/generatenewlists?requestTemplate=true`, {
-            method: 'GET',
-            mode: 'cors',
-            cache: 'default',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer'
-        });
-
-        const responseBodyText = await response.json();
-
-        if (response.status === 200 || response.status === 304) {
-            // Set the lists and allListItems to their initial values provided by our get request
-            setLists(responseBodyText.lists);
-            setAllListItems(responseBodyText.allListItems);
-
-            // Set the initial value of our allDeletedItems variable to be an array of the same length as the number of lists we have. Each element in that array is itself an empty array.
-            const numOfLists = responseBodyText.lists.length;
-            let initialAllDeletedItems = [];
-            for (let i = 0; i < numOfLists; i++) {
-                initialAllDeletedItems.push([]);
-            }
-            setAllDeletedItems(initialAllDeletedItems);
-            
-            saveChanges();
-            
-
-        } else {
-            console.log(responseBodyText.message);
+        // Set the initial value of our allDeletedItems variable to be an array of the same length as the number of lists we have. Each element in that array is itself an empty array.
+        const numOfLists = listsConfig.length;
+        let initialAllDeletedItems = [];
+        for (let i = 0; i < numOfLists; i++) {
+            initialAllDeletedItems.push([]);
         }
+        setAllDeletedItems(initialAllDeletedItems);
+
+        setIsFetchProcessing(false);
     }
 
     // Post data to db to save the users changes
     const saveChanges = async () => {
+
+        if (!lists) {
+            return;
+        }
 
         const requestBodyContent = { lists, allListItems };
 
@@ -153,11 +133,12 @@ export const Dashboard = () => {
 
     // Fetch list data from the db and sync to page
     const fetchLists = async (tripId) => {
+        console.log("fetch lists called");
         // This will ensure that the render function doesn't race past the completion of the fetch request. 
         // While this is true, the renderer will render "Loading...". We will set it back to false at the end of the request to re-render the updated lists as fetched from the db.
         setIsFetchProcessing(true);
 
-        const response = await fetch(`/trips/${tripId}/lists/fetchlists`, {
+            const response = await fetch(`/trips/${tripId}/lists/fetchlists`, {
             method: 'GET',
             mode: 'cors',
             cache: 'default',
@@ -169,20 +150,12 @@ export const Dashboard = () => {
         });
 
         const responseBodyText = await response.json();
+        console.log(responseBodyText);
 
         if (response.status === 200 || response.status === 304) {
-            // Set the lists and allListItems to their initial values provided by our get request
-            setLists(responseBodyText.lists);
-            setAllListItems(responseBodyText.allListItems);
 
-            // Set the initial value of our allDeletedItems variable to be an array of the same length as the number of lists we have. Each element in that array is itself an empty array.
-            const numOfLists = responseBodyText.lists.length;
-            let initialAllDeletedItems = [];
-            for (let i = 0; i < numOfLists; i++) {
-                initialAllDeletedItems.push([]);
-            }
-            setAllDeletedItems(initialAllDeletedItems);
-            setIsFetchProcessing(false);
+            // Configure the list and allListItems states
+            await configureLists(responseBodyText.lists, responseBodyText.allListItems);
 
         } else {
             console.log(responseBodyText.message);
@@ -195,34 +168,28 @@ export const Dashboard = () => {
                 <div className="dashboard-start-container">
                     <GreetUser />
                     <LoadListsDropdown
-                        newTripClicked={newTripClicked}
-                        setNewTripClicked={setNewTripClicked}
+                        newTripCreated={newTripCreated}
                         fetchLists={fetchLists}
                         setActiveTrip={setActiveTrip}
                     />
                     <NewTripForm
                         newTripClicked={newTripClicked}
                         setNewTripClicked={setNewTripClicked}
+                        setIsFetchProcessing={setIsFetchProcessing}
                         setActiveTrip={setActiveTrip}
-                        setNewTripCreated={setNewTripCreated} />
+                        setNewTripCreated={setNewTripCreated} 
+                        configureLists={configureLists}
+                        />
                     {
                         (activeTrip.tripId && !isFetchProcessing) ?
 
                             <ActiveTripConsole setNewTripClicked={setNewTripClicked}
                                 activeTrip={activeTrip}
-                                setActiveTrip={setActiveTrip}
-                                setLists={setLists}
                                 lists={lists}
                                 allListItems={allListItems}
-                                generateLists={generateLists}
                                 saveChanges={saveChanges}
                                 saveAttemptMessage={saveAttemptMessage}
-                                fetchLists={fetchLists}
-                                newTripCreated={newTripCreated}
-                                setNewTripCreated={setNewTripCreated}
-                                newListsGenerated={newListsGenerated}
-                                setNewListsGenerated={setNewListsGenerated}
-                                isFetchProcessing={isFetchProcessing} />
+                                fetchLists={fetchLists} />
 
                             : null
                     }
