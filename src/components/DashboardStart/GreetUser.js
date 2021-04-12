@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { UserContext } from "../../UserContext";
 
-export const GreetNewUser = () => {
+export const GreetUser = () => {
 
     const { user } = useContext(UserContext);
     

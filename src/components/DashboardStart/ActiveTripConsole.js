@@ -1,9 +1,11 @@
 import React from "react";
 
-export const ActivatedTripHeader = ({ activeTrip, lists, allListItems, generateLists, saveChanges, saveAttemptMessage, fetchLists }) => {
+export const ActiveTripConsole = ({ activeTrip, lists, allListItems, generateLists, saveChanges, saveAttemptMessage, fetchLists, newTripCreated, setNewTripCreated, newListsGenerated, setNewListsGenerated, isFetchProcessing }) => {
 
     const handleClickGenerate = event => {
         event.preventDefault();
+        setNewTripCreated(false);
+        setNewListsGenerated(true);
         generateLists(); // This fetches data from server using a get request - the code can be found in Dashboard.js
     }
 
@@ -14,11 +16,12 @@ export const ActivatedTripHeader = ({ activeTrip, lists, allListItems, generateL
 
     const handleClickFetch = event => {
         event.preventDefault();
-        fetchLists(); // This posts data to the server - the code can be found in Dashboard.js
+        fetchLists(activeTrip.tripId); // This posts data to the server - the code can be found in Dashboard.js
     }
 
     return (
-        <div className="activated-trip-header">
+        <div className="active-trip-console">
+        <div className="section-separator">*************</div>
             <div>
                 <h5>Trip name: {activeTrip.tripName}</h5>
                 <h6 className="lighter-weight">Trip category: {activeTrip.tripCategory}</h6>
@@ -27,14 +30,18 @@ export const ActivatedTripHeader = ({ activeTrip, lists, allListItems, generateL
 
             <div className="generate-save-button-container">
 
-                {!lists.length && !allListItems.length ?
+                {newTripCreated && !newListsGenerated && !isFetchProcessing ?
                     <input type="button" value="Generate lists" onClick={handleClickGenerate} /> :
                     null}
 
-                {lists.length && allListItems.length ?
-                    (<div>
-                        <input type="button" value="Save changes" onClick={handleClickSave} />
-                        <input type="button" value="Fetch data (temp)" onClick={handleClickFetch} />
+                {!newTripCreated && lists.length && allListItems.length && !isFetchProcessing ?
+                    (<div className="save-fetch-button-container">
+                        <div>
+                            <input type="button" value="Save changes" onClick={handleClickSave} />
+                        </div>
+                        <div>
+                            <input type="button" value="Fetch data (temp)" onClick={handleClickFetch} />
+                        </div>
                     </div>) :
                     null}
 

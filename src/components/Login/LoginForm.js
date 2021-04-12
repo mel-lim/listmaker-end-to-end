@@ -60,7 +60,7 @@ export const LoginForm = ({ usernameRegex, emailRegex, checkUserCredentials, att
                 <div className="input-label-container">
                     <label htmlFor="password-input">Password</label>
                     <input type={show ? "text" : "password"} id="password-input" name="password" minLength="8" autoComplete="current-password" onChange={event => setPassword(event.target.value)} value={password} required />
-                    <button onClick={toggleShowPassword} >{show ? "Hide" : "Show"} </button>
+                    <button type="button" onClick={toggleShowPassword} >{show ? "Hide" : "Show"}</button>
                 </div>
 
                 <div>

@@ -162,24 +162,45 @@ main {
   text-align: center;
 }
 
-.trip-questions {
+.trip-buttons p, .trip-questions p {
+  margin: 0;
+}
+
+.trip-dropdown {
+  margin: 1rem 0 1.5rem 0;
+}
+
+.trip-dropdown label {
+  margin-right: 0.5rem;
+}
+
+.trip-dropdown select {
+  margin-top: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.new-trip-form {
   margin-bottom: 1rem;
   display: block;
   justify-content: center;
 }
 
-.trip-questions input[type=text] {
+.new-trip-form input[type=text] {
   margin-left: 1rem;
   width: 200px;
+}
+
+.new-trip-form input[type=button] {
+  margin: 0rem;
+}
+
+.new-trip-form h3 {
+  line-height: 1;
 }
 
 .trip-question {
   align-items: baseline;
   display: flex;
-}
-
-.trip-questions h3 {
-  line-height: 1;
 }
 
 .radio-button-label-div {
@@ -197,14 +218,27 @@ main {
   margin-left: 1rem;
 }
 
-.activated-trip-header {
-  display: flex;
+.active-trip-console {
   margin: 1rem 0;
   justify-content: space-around;
 }
 
+.section-separator {
+  text-align: center;
+  margin: auto;
+}
+
 .generate-save-button-container {
   margin: auto 0;
+}
+
+.save-fetch-button-container {
+  height: 110px;
+  margin: 10px 0;
+}
+
+.save-fetch-button-container input[type=button] {
+  margin: 10px 0;
 }
 
 /* Lists */
