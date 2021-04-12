@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { GreetUser } from "../components/DashboardStart/GreetUser";
-import { LoadListsDropdown } from "../components/DashboardStart/LoadListsDropdown";
-import { NewTripForm } from "../components/DashboardStart/NewTripForm";
-import { ActiveTripConsole } from "../components/DashboardStart/ActiveTripConsole";
+import { GreetUser } from "../components/Dashboard/GreetUser";
+import { LoadListsDropdown } from "../components/Dashboard/LoadListsDropdown";
+import { NewTripForm } from "../components/Dashboard/NewTripForm";
+import { ActiveTripConsole } from "../components/Dashboard/ActiveTripConsole";
 import { Lists } from "../components/Lists/Lists";
 import { Footer } from "../components/Footer";
 
