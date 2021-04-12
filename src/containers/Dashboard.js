@@ -10,7 +10,6 @@ export const Dashboard = () => {
 
     const [newTripClicked, setNewTripClicked] = useState(false); // When user clicks 'new trip', this will be set to 'true' engage the form for the user to input the settings to create a new trip
     const [newTripCreated, setNewTripCreated] = useState(false);
-    const [newListsGenerated, setNewListsGenerated] = useState(false);
     const [activeTrip, setActiveTrip] = useState({ tripId: '', tripName: '', tripCategory: '', tripDuration: '' }); // If the post request to create a new trip is successful, the activeTrip variable will contain the details of the new trip provided in the response
 
     const [lists, setLists] = useState([]); // This will sit empty until the data is fetched from the server
@@ -111,9 +110,10 @@ export const Dashboard = () => {
             return;
         }
 
+        const tripId = activeTrip.tripId;
         const requestBodyContent = { lists, allListItems };
 
-        const response = await fetch(`/trips/${activeTrip.tripId}/lists/savelists`, {
+        const response = await fetch(`/trips/${tripId}/lists/savelists`, {
             method: 'POST',
             mode: 'cors',
             cache: 'default',
@@ -126,9 +126,11 @@ export const Dashboard = () => {
         });
 
         const responseBodyText = await response.json();
+        if (response.status === 201) {
+            fetchLists(tripId);
+        }
         setSaveAttemptMessage(responseBodyText.message);
         console.log(responseBodyText.message);
-        setIsFetchProcessing(false);
     }
 
     // Fetch list data from the db and sync to page
@@ -155,7 +157,7 @@ export const Dashboard = () => {
         if (response.status === 200 || response.status === 304) {
 
             // Configure the list and allListItems states
-            await configureLists(responseBodyText.lists, responseBodyText.allListItems);
+            configureLists(responseBodyText.lists, responseBodyText.allListItems);
 
         } else {
             console.log(responseBodyText.message);

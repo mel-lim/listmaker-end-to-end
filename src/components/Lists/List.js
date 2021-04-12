@@ -14,7 +14,7 @@ export const List = ({ listTitle, index, allListItems, setAllListItems, allDelet
         currentAllListItems.splice(index, 1, listItems);
         setAllListItems(currentAllListItems);
         localStorage.setItem("allListItems", JSON.stringify(allListItems));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [listItems]);
 
     // Every time we edit our deletedItems state, we pass on the change to the allDeletedItems variable and push that up to localstorage for safekeeping
@@ -22,16 +22,16 @@ export const List = ({ listTitle, index, allListItems, setAllListItems, allDelet
         const currentAllDeletedItems = allDeletedItems;
         currentAllDeletedItems.splice(index, 1, deletedListItems);
         setAllDeletedItems(currentAllDeletedItems);
-        localStorage.setItem("allDeletedItems", JSON.stringify(allDeletedItems)); 
+        localStorage.setItem("allDeletedItems", JSON.stringify(allDeletedItems));
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [deletedListItems]);
 
     const generateTempItemId = () => {
         const itemId = `tempItem-${nextIdNum}`;
         setNextIdNum(prevNextIdNum => prevNextIdNum + 1);
         return itemId;
-    } 
+    }
 
     const addListItem = newItemName => {
         const newListItem = {
@@ -39,7 +39,11 @@ export const List = ({ listTitle, index, allListItems, setAllListItems, allDelet
             name: newItemName,
             flag: 'newItem'
         }
-        setListItems(prevListItems => [...prevListItems, newListItem]);
+        if (!listItems) {
+            setListItems([newListItem]);
+        } else {
+            setListItems(prevListItems => [...prevListItems, newListItem]);
+        }
     }
 
     const removeListItem = itemId => {
@@ -54,7 +58,7 @@ export const List = ({ listTitle, index, allListItems, setAllListItems, allDelet
         } else {
             setDeletedListItems(prevDeletedListItems => [deletedItemWithIndex, ...prevDeletedListItems]);
         }
-        
+
         const updatedList = listItems.filter(listItem => listItem.id !== itemId);
         setListItems(updatedList);
     }
@@ -74,9 +78,13 @@ export const List = ({ listTitle, index, allListItems, setAllListItems, allDelet
     return (
         <section className="list-container">
             <h3>{listTitle}</h3>
-            {listItems.map(listItem =>
-                <ListItem key={`item-${listItem.id}`} listItem={listItem} listItems={listItems} setListItems={setListItems} removeListItem={removeListItem} />
-            )}
+            {
+                listItems ?
+                    listItems.map(listItem =>
+                        <ListItem key={`item-${listItem.id}`} listItem={listItem} listItems={listItems} setListItems={setListItems} removeListItem={removeListItem} />
+                    ) :
+                    null
+            }
             <AddUndoRow addListItem={addListItem} undoDelete={undoDelete} />
         </section>
     );

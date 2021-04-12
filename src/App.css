@@ -229,16 +229,15 @@ main {
 }
 
 .save-button-container {
-  margin: auto 0;
-}
-
-.save-fetch-button-container {
-  height: 110px;
   margin: 10px 0;
 }
 
-.save-fetch-button-container input[type=button] {
+.save-button-container input[type=button] {
   margin: 10px 0;
+}
+
+.save-button-container p {
+  margin: 0.5rem;
 }
 
 /* Lists */
