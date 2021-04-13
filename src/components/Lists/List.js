@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { AddUndoRow } from "./AddUndoRow";
 import { ListItem } from "./ListItem/ListItem";
 
-export const List = ({ listTitle, index, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems }) => {
+export const List = ({ listTitle, index, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems, setHasChangedSinceLastSave }) => {
 
     const [nextIdNum, setNextIdNum] = useState(0);
     const [listItems, setListItems] = useState(allListItems[index]);
@@ -44,6 +44,7 @@ export const List = ({ listTitle, index, allListItems, setAllListItems, allDelet
         } else {
             setListItems(prevListItems => [...prevListItems, newListItem]);
         }
+        setHasChangedSinceLastSave(true);
     }
 
     const removeListItem = itemId => {
@@ -58,6 +59,7 @@ export const List = ({ listTitle, index, allListItems, setAllListItems, allDelet
         } else {
             setDeletedListItems(prevDeletedListItems => [deletedItemWithIndex, ...prevDeletedListItems]);
         }
+        setHasChangedSinceLastSave(true);
 
         const updatedList = listItems.filter(listItem => listItem.id !== itemId);
         setListItems(updatedList);
@@ -81,7 +83,7 @@ export const List = ({ listTitle, index, allListItems, setAllListItems, allDelet
             {
                 listItems ?
                     listItems.map(listItem =>
-                        <ListItem key={`item-${listItem.id}`} listItem={listItem} listItems={listItems} setListItems={setListItems} removeListItem={removeListItem} />
+                        <ListItem key={`item-${listItem.id}`} listItem={listItem} listItems={listItems} setListItems={setListItems} removeListItem={removeListItem} setHasChangedSinceLastSave={setHasChangedSinceLastSave} />
                     ) :
                     null
             }

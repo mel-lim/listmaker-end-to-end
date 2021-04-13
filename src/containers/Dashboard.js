@@ -16,6 +16,8 @@ export const Dashboard = () => {
     const [allListItems, setAllListItems] = useState([]); // This will sit empty until the data is fetched from the server
     const [allDeletedItems, setAllDeletedItems] = useState([]); // This will sit empty until the user starts deleting items from their lists
 
+    const [needManualSave, setNeedManualSave ] = useState(false); 
+    const [hasChangedSinceLastSave, setHasChangedSinceLastSave] = useState(false); // This is set to true when the user adds, edits or deletes a list item and reset to false upon a successful save
     const [saveAttemptMessage, setSaveAttemptMessage] = useState('');
     const [isFetchProcessing, setIsFetchProcessing] = useState(false);
 
@@ -86,7 +88,28 @@ export const Dashboard = () => {
         localStorage.setItem("allDeletedItems", JSON.stringify(allDeletedItems));
     }, [allDeletedItems]);
 
-    // 
+    // MANUAL SAVE HOOK
+    useEffect(() => {
+        if (needManualSave && lists.length && allListItems.length ) {
+            saveChanges();
+            setNeedManualSave(false);
+        }
+        return;        
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [needManualSave, lists, allListItems]);
+
+    // AUTOSAVE HOOK
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (hasChangedSinceLastSave) {
+                saveChanges();
+            }
+        }, 10*60*1000); // 10 minutes
+        return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [hasChangedSinceLastSave]);
+
+    // Reuseable block to set the lists and allListItems state, and initialise the allDeletedItems state
     const configureLists = (listsConfig, allListsConfig) => {
         // Set the lists and allListItems to their initial values provided by our get request
         setLists(listsConfig);
@@ -105,11 +128,25 @@ export const Dashboard = () => {
 
     // Post data to db to save the users changes
     const saveChanges = async () => {
-
         if (!lists) {
             return;
         }
 
+        // At the moment, any empty lists causes the server to crash, so for now, we are preventing the saving of any empty lists
+        let isEmptyList;
+        allListItems.forEach(listItems => {
+            if (!listItems.length) {
+                isEmptyList = true;
+                return;
+            }
+        });
+
+        if (isEmptyList) {
+            setSaveAttemptMessage('Unable to save: please add at least one item to each list before saving');
+            return;
+        }
+
+        console.log("save getting called");
         const tripId = activeTrip.tripId;
         const requestBodyContent = { lists, allListItems };
 
@@ -128,7 +165,9 @@ export const Dashboard = () => {
         const responseBodyText = await response.json();
         if (response.status === 201) {
             fetchLists(tripId);
+            setHasChangedSinceLastSave(false);
         }
+
         setSaveAttemptMessage(responseBodyText.message);
         console.log(responseBodyText.message);
     }
@@ -181,6 +220,7 @@ export const Dashboard = () => {
                         setActiveTrip={setActiveTrip}
                         setNewTripCreated={setNewTripCreated} 
                         configureLists={configureLists}
+                        setNeedManualSave={setNeedManualSave}
                         />
                     {
                         (activeTrip.tripId && !isFetchProcessing) ?
@@ -203,7 +243,8 @@ export const Dashboard = () => {
                         allListItems={allListItems}
                         setAllListItems={setAllListItems}
                         allDeletedItems={allDeletedItems}
-                        setAllDeletedItems={setAllDeletedItems} /> :
+                        setAllDeletedItems={setAllDeletedItems}
+                        setHasChangedSinceLastSave={setHasChangedSinceLastSave} /> :
                     null}
 
             </main>

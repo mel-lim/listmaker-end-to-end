@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-export const EditItemForm = ({ listItem, listItems, setListItems, toggleEdit }) => {
+export const EditItemForm = ({ listItem, listItems, setListItems, toggleEdit, setHasChangedSinceLastSave }) => {
     const [editedItemName, setEditedItemName] = useState(listItem.name);
 
     const handleSubmit = event => {
@@ -10,6 +10,7 @@ export const EditItemForm = ({ listItem, listItems, setListItems, toggleEdit }) 
         let editedListItems = [...listItems];
         editedListItems[index].name = editedItemName;
         setListItems(editedListItems);
+        setHasChangedSinceLastSave(true);
     }
 
     return (

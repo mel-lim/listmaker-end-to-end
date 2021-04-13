@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { SettledItem } from "./SettledItem";
 import { EditItemForm } from "./EditItemForm";
 
-export const ListItem = ({ listItem, listItems, setListItems, removeListItem }) => {
+export const ListItem = ({ listItem, listItems, setListItems, removeListItem, setHasChangedSinceLastSave }) => {
     const [isEditing, setIsEditing] = useState(false);
 
     const toggleEdit = () => {
@@ -23,7 +23,7 @@ export const ListItem = ({ listItem, listItems, setListItems, removeListItem }) 
                 </div>
                 {!isEditing ?
                 <SettledItem listItem={listItem} /> :
-                <EditItemForm listItem={listItem} listItems={listItems} setListItems={setListItems} toggleEdit={toggleEdit} />
+                <EditItemForm listItem={listItem} listItems={listItems} setListItems={setListItems} toggleEdit={toggleEdit} setHasChangedSinceLastSave={setHasChangedSinceLastSave} />
                 }
             </div>
             <hr />

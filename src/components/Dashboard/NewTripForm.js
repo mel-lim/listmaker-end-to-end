@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProcessing, setNewTripCreated, setActiveTrip, configureLists }) => {
+export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProcessing, setNewTripCreated, setActiveTrip, configureLists, setNeedManualSave }) => {
 
     // Dynamic user inputs for the form
     const [tripName, setTripName] = useState('');
@@ -20,7 +20,7 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
 
     // CREATE NEW TRIP AND GENERATE NEW LISTS
     const createTrip = async () => {
-        
+
         if (!tripCategory || !tripDuration || !requestTemplate) {
             setSubmissionErrorMessage('** Please select a response for all questions **');
             return;
@@ -44,18 +44,18 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
 
         const responseBodyText = await response.json();
 
-            // Update the states that govern render-logic
-            setNewTripClicked(false);
-            setNewTripCreated(true);
+        // Update the states that govern render-logic
+        setNewTripClicked(false);
+        setNewTripCreated(true);
 
-            if (response.status === 201) {
-                const newTrip = {
-                    tripId: responseBodyText.tripId,
-                    tripName: tripName,
-                    tripCategory: tripCategory,
-                    tripDuration: tripDuration,
-                    requestTemplate: requestTemplate
-                }
+        if (response.status === 201) {
+            const newTrip = {
+                tripId: responseBodyText.tripId,
+                tripName: tripName,
+                tripCategory: tripCategory,
+                tripDuration: tripDuration,
+                requestTemplate: requestTemplate
+            }
 
             // Activates a trip - this will display the trip details in the active trip console
             setActiveTrip(newTrip); // This is going to get stored in localstorage
@@ -69,6 +69,9 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
             setTripCategory('');
             setTripDuration('');
             setSubmissionErrorMessage('');
+
+            // Call for the newly generated lists and items to be saved
+            setNeedManualSave(true);
 
         } else {
             console.log(responseBodyText.message);
@@ -148,7 +151,7 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
                             <p>{submissionErrorMessage}</p>
                         </form>
                     </div>
-                    
+
                     : null
             }
         </section>
