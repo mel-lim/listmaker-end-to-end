@@ -68,7 +68,9 @@ export const Dashboard = () => {
             console.log(confirmCredentialsTime);
 
             const confirmCredentialsTimer = setTimeout(() => {
+
                 console.log("confirmCredentialsTimer is working");
+
                 setOpenModal(true); // This will open the ConfirmCredentialsModal
             }, confirmCredentialsTime);
 
@@ -76,13 +78,12 @@ export const Dashboard = () => {
             const autoLogoutTime = timeUntilExpiry - parseInt(configData.AUTOLOGOUT_BUFFER_INTERVAL);
             console.log(autoLogoutTime);
             const autoLogoutTimer = setTimeout(() => {
-                console.log("autoLogoutTimer is working");
-                // Delete the username cookie
-                Cookies.remove('username');
 
+                console.log("autoLogoutTimer is working");
+
+                Cookies.remove('username'); // Delete the username cookie
                 localStorage.clear(); // Delete localStorage data
                 setUser(null); // Clear user context
-
                 setRedirectOnLogout(true); // Redirect to the login page
 
                 // We won't be able to delete the JWT cookie without making an API call because it is HTTP only, but it will delete by itself, when it expires in one minute
