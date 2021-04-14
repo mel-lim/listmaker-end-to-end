@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { UserContext, CookieExpiryContext } from "../UserContext";
+
+import configData from "../config.json";
+
 import dayjs from "dayjs";
 
 import { GreetUser } from "../components/Dashboard/GreetUser";
@@ -139,8 +142,9 @@ export const Dashboard = () => {
         const timer = setTimeout(() => {
             if (hasChangedSinceLastSave) {
                 saveChanges();
+                console.log("autosaved");
             }
-        }, 10*60*1000); // 10 minutes
+        }, parseInt(configData.AUTOSAVE_INTERVAL)); // 10 minutes
         return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hasChangedSinceLastSave]);
