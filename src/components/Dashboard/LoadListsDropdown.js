@@ -3,9 +3,13 @@ import React, { useState, useEffect } from "react";
 export const LoadListsDropdown = ({ newTripCreated, fetchLists, setActiveTrip }) => {
 
     const [allTrips, setAllTrips] = useState([]);
+    const isMounted = true;
 
     useEffect(() => {
-        fetchTrips();
+        if (isMounted) {
+            fetchTrips();
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [newTripCreated]);
 
     // FETCH ALL TRIPS FOR THIS USER
@@ -43,7 +47,7 @@ export const LoadListsDropdown = ({ newTripCreated, fetchLists, setActiveTrip })
             console.log(selectedTrip);
 
             setActiveTrip({ tripId: selectedTripId, tripName: selectedTrip.name, tripCategory: selectedTrip.category, tripDuration: selectedTrip.duration });
-            
+
             fetchLists(selectedTripId);
         }
     }

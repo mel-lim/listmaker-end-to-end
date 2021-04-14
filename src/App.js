@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import './App.css';
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+
 import Cookies from "js-cookie";
 
 import { UserContext, CookieExpiryContext } from "./UserContext";
@@ -10,7 +11,7 @@ import { Nav } from "./containers/Nav";
 import { Contact } from "./containers/Contact";
 
 import { SignUp } from "./containers/SignUp";
-import { LogIn } from "./containers/LogIn";
+import { Login } from "./containers/Login";
 
 import { Dashboard } from "./containers/Dashboard";
 import { MyAccount } from "./containers/MyAccount";
@@ -50,7 +51,7 @@ function App() {
             {/* <Route path="/" exact component={Home} /> */}
             <ProtectedLoggedIn path="/dashboard" component={Dashboard} />
             <Route path="/signup" component={SignUp} />
-            <ProtectedLoggedOut path="/login" component={LogIn} />
+            <ProtectedLoggedOut path="/login" component={Login} />
             <Route path="/myaccount" component={MyAccount} />
             <ProtectedLoggedIn path="/logout" component={LogOut} />
             <Route path="/contact" component={Contact} />

@@ -1,5 +1,8 @@
-// Import react and hooks
+// Import libraries
 import React, { useState, useEffect, useContext } from "react";
+import { Redirect } from "react-router-dom";
+import dayjs from "dayjs";
+import Cookies from "js-cookie";
 
 // Import contexts
 import { UserContext, CookieExpiryContext } from "../UserContext";
@@ -7,10 +10,7 @@ import { UserContext, CookieExpiryContext } from "../UserContext";
 // Import config data
 import configData from "../config.json";
 
-// Import js libraries
-import dayjs from "dayjs";
-
-// Import custom components
+// Import components
 import { GreetUser } from "../components/Dashboard/GreetUser";
 import { LoadListsDropdown } from "../components/Dashboard/LoadListsDropdown";
 import { NewTripForm } from "../components/Dashboard/NewTripForm";
@@ -32,10 +32,13 @@ export const Dashboard = () => {
     const [allListItems, setAllListItems] = useState([]); // This will sit empty until the data is fetched from the server
     const [allDeletedItems, setAllDeletedItems] = useState([]); // This will sit empty until the user starts deleting items from their lists
 
-    const [needManualSave, setNeedManualSave ] = useState(false); 
+    const [needManualSave, setNeedManualSave] = useState(false);
     const [hasChangedSinceLastSave, setHasChangedSinceLastSave] = useState(false); // This is set to true when the user adds, edits or deletes a list item and reset to false upon a successful save
     const [saveAttemptMessage, setSaveAttemptMessage] = useState('');
     const [isFetchProcessing, setIsFetchProcessing] = useState(false);
+
+    const [openModal, setOpenModal] = useState(false);
+    const [redirectOnLogout, setRedirectOnLogout] = useState(false);
 
     // PERSIST STATE OF COOKIE EXPIRY PAST REFRESH
     useEffect(() => {
@@ -43,7 +46,7 @@ export const Dashboard = () => {
         if (storedCookieExpiry) {
             setCookieExpiry(JSON.parse(storedCookieExpiry));
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // When the user successfully logs in, cookieExpiry state will be set / changed, and this will be called 
@@ -54,17 +57,42 @@ export const Dashboard = () => {
             return;
         }
         else {
-            console.log("cookie is not empty");
             localStorage.setItem("cookieExpiry", JSON.stringify(cookieExpiry)); // Save the cookie expiry into localStorage
-            // Set a timer to prevent the user from accessing the logged in protected routes until they log in again, once their cookie expires
+
             const now = dayjs();
             const timeUntilExpiry = dayjs(cookieExpiry).diff(now);
             console.log(timeUntilExpiry);
-            const logOutTimer = setTimeout(() => {
-                console.log("timeOut is working");
-                // FUNCTIONALITY NEEDS TO GO IN HERE
-            }, timeUntilExpiry);
-            return (() => clearTimeout(logOutTimer));
+
+            // Set a timer to prompt the user to confirm their credentials and refresh their token before it expires
+            const confirmCredentialsTime = timeUntilExpiry - parseInt(configData.CONFIRM_CREDENTIAL_INTERVAL); // 5 minutes before the JWT expires
+            console.log(confirmCredentialsTime);
+
+            const confirmCredentialsTimer = setTimeout(() => {
+                console.log("confirmCredentialsTimer is working");
+                setOpenModal(true); // This will open the ConfirmCredentialsModal
+            }, confirmCredentialsTime);
+
+            // Set a timer to auto-logout upon the expiry of the token
+            const autoLogoutTime = timeUntilExpiry - parseInt(configData.AUTOLOGOUT_BUFFER_INTERVAL);
+            console.log(autoLogoutTime);
+            const autoLogoutTimer = setTimeout(() => {
+                console.log("autoLogoutTimer is working");
+                // Delete the username cookie
+                Cookies.remove('username');
+
+                localStorage.clear(); // Delete localStorage data
+                setUser(null); // Clear user context
+
+                setRedirectOnLogout(true); // Redirect to the login page
+
+                // We won't be able to delete the JWT cookie without making an API call because it is HTTP only, but it will delete by itself, when it expires in one minute
+
+            }, autoLogoutTime);
+
+            return (() => { // Clear timer on unmount (dismount?)
+                clearTimeout(confirmCredentialsTimer);
+                clearTimeout(autoLogoutTimer);
+            });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [cookieExpiry]);
@@ -136,12 +164,12 @@ export const Dashboard = () => {
 
     // MANUAL SAVE HOOK
     useEffect(() => {
-        if (needManualSave && lists.length && allListItems.length ) {
+        if (needManualSave && lists.length && allListItems.length) {
             saveChanges();
             setNeedManualSave(false);
         }
-        return;        
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        return;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [needManualSave, lists, allListItems]);
 
     // AUTOSAVE HOOK
@@ -153,7 +181,7 @@ export const Dashboard = () => {
             }
         }, parseInt(configData.AUTOSAVE_INTERVAL)); // 10 minutes
         return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hasChangedSinceLastSave]);
 
     // Reuseable block to set the lists and allListItems state, and initialise the allDeletedItems state
@@ -226,7 +254,7 @@ export const Dashboard = () => {
         // While this is true, the renderer will render "Loading...". We will set it back to false at the end of the request to re-render the updated lists as fetched from the db.
         setIsFetchProcessing(true);
 
-            const response = await fetch(`/trips/${tripId}/lists/fetchlists`, {
+        const response = await fetch(`/trips/${tripId}/lists/fetchlists`, {
             method: 'GET',
             mode: 'cors',
             cache: 'default',
@@ -251,6 +279,8 @@ export const Dashboard = () => {
     }
 
     return (
+        redirectOnLogout ? 
+        <Redirect to="/login" /> :
         <div>
             <main>
                 <div className="dashboard-start-container">
@@ -265,10 +295,10 @@ export const Dashboard = () => {
                         setNewTripClicked={setNewTripClicked}
                         setIsFetchProcessing={setIsFetchProcessing}
                         setActiveTrip={setActiveTrip}
-                        setNewTripCreated={setNewTripCreated} 
+                        setNewTripCreated={setNewTripCreated}
                         configureLists={configureLists}
                         setNeedManualSave={setNeedManualSave}
-                        />
+                    />
                     {
                         (activeTrip.tripId && !isFetchProcessing) ?
 
@@ -284,7 +314,7 @@ export const Dashboard = () => {
                     }
                 </div>
 
-                <ConfirmCredentialsModal />
+                <ConfirmCredentialsModal openModal={openModal} setOpenModal={setOpenModal} />
 
                 {lists.length && allListItems.length && !isFetchProcessing ?
                     <Lists
