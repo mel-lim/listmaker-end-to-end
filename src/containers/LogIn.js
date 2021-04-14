@@ -47,6 +47,7 @@ export const LogIn = () => {
         if (response.status === 200) {
             setUser(responseBodyText.username);
             setCookieExpiry(responseBodyText.cookieExpiry);
+            console.log("login sucessful");
 
         } else if (response.status === 400) {
             setAttemptedAppUser({

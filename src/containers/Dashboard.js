@@ -1,16 +1,23 @@
+// Import react and hooks
 import React, { useState, useEffect, useContext } from "react";
+
+// Import contexts
 import { UserContext, CookieExpiryContext } from "../UserContext";
 
+// Import config data
 import configData from "../config.json";
 
+// Import js libraries
 import dayjs from "dayjs";
 
+// Import custom components
 import { GreetUser } from "../components/Dashboard/GreetUser";
 import { LoadListsDropdown } from "../components/Dashboard/LoadListsDropdown";
 import { NewTripForm } from "../components/Dashboard/NewTripForm";
 import { ActiveTripConsole } from "../components/Dashboard/ActiveTripConsole";
 import { Lists } from "../components/Lists/Lists";
 import { Footer } from "../components/Footer";
+import { ConfirmCredentialsModal } from "../components/Dashboard/ConfirmCredentialsModal";
 
 export const Dashboard = () => {
 
@@ -30,7 +37,7 @@ export const Dashboard = () => {
     const [saveAttemptMessage, setSaveAttemptMessage] = useState('');
     const [isFetchProcessing, setIsFetchProcessing] = useState(false);
 
-    // This will persist the state of the cookieExpiry variable past refresh
+    // PERSIST STATE OF COOKIE EXPIRY PAST REFRESH
     useEffect(() => {
         const storedCookieExpiry = localStorage.getItem("cookieExpiry");
         if (storedCookieExpiry) {
@@ -62,7 +69,7 @@ export const Dashboard = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [cookieExpiry]);
 
-    // This will persist the state of the newTripClicked variable past refresh
+    // PERSIST STATE OF newTripClicked PAST REFRESH
     useEffect(() => {
         const storedNewTripClicked = localStorage.getItem("newTripClicked");
         if (storedNewTripClicked) {
@@ -276,6 +283,8 @@ export const Dashboard = () => {
                             : null
                     }
                 </div>
+
+                <ConfirmCredentialsModal />
 
                 {lists.length && allListItems.length && !isFetchProcessing ?
                     <Lists

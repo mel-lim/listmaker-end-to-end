@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export const LoginForm = ({ usernameRegex, emailRegex, checkUserCredentials, attemptedAppUser, isFailedLogin }) => {
+    
     const [userIdentity, setUserIdentity] = useState('');
     const [password, setPassword] = useState('');
     const [show, setShow] = useState(false);

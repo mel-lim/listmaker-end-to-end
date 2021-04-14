@@ -1,5 +1,5 @@
 {
     "USERNAME_REGEX": "^[a-zA-Z0-9_]*$",
     "EMAIL_REGEX": "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$",
-    "AUTOSAVE_INTERVAL": ""
+    "AUTOSAVE_INTERVAL": "600000"
 }
