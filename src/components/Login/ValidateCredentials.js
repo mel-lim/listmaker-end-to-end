@@ -25,7 +25,7 @@ export const ValidateCredentials = ({ context, setOpenModal }) => {
         if (context === "confirmCredentials") {
             setUserIdentity(user);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // If the user submits a login attempt that fails, it will repopulate the form with previously typed inputs
@@ -67,12 +67,22 @@ export const ValidateCredentials = ({ context, setOpenModal }) => {
         });
 
         const responseBodyText = await response.json();
+        const username = responseBodyText.username;
 
         if (response.status === 200) {
-            if (context === "confirmCredentials") {
+            if (context === "login") {
+                const lastUser = localStorage.getItem("lastUser");
+
+                // If the user that just logged in was not the last user, clear the local storage (if there is anything there)
+                if (username !== lastUser) {
+                    localStorage.clear();
+                }
+            } else if (context === "confirmCredentials") {
+
+                // Once the user successfully confirms their credentials, close the modal and let the user continue using the dashboard
                 setOpenModal(false);
             }
-            setUser(responseBodyText.username);
+            setUser(username);
             setCookieExpiry(responseBodyText.cookieExpiry);
             console.log("login sucessful");
 
@@ -109,61 +119,60 @@ export const ValidateCredentials = ({ context, setOpenModal }) => {
         console.log("submit clicked");
     }
 
-const toggleShowPassword = event => {
-    event.preventDefault();
-    setShow(!show);
-}
+    const toggleShowPassword = event => {
+        event.preventDefault();
+        setShow(!show);
+    }
 
-return (
-    <div className="user-credentials login">
+    return (
+        <div className="user-credentials login">
 
-        <h3>{context === "login" ? "Log In" : "Refresh my token"}</h3>
+            <h3>{context === "login" ? "Log In" : "Refresh my token"}</h3>
 
-        <p className="submission-unsuccessful-message">{submissionUnsuccessfulMessage}</p>
+            <p className="submission-unsuccessful-message">{submissionUnsuccessfulMessage}</p>
 
-        <form className="user-credentials-form" onSubmit={handleSubmit}>
+            <form className="user-credentials-form" onSubmit={handleSubmit}>
 
-            <div className="input-label-container">
-                <label htmlFor="user-identity-input" >Username or email</label>
-                {context === "login" ?
-                    <input type="text" id="user-identity-input" name="userIdentity" onChange={event => setUserIdentity(event.target.value)} value={userIdentity} /> :
-                    <input type="text" id="user-identity-input" name="userIdentity" value={userIdentity} readOnly />
-                }
-            </div>
-
-            <div className="input-label-container">
-                <label htmlFor="password-input">Password</label>
-                <input type={show ? "text" : "password"} id="password-input" name="password" minLength="8" autoComplete="current-password" onChange={event => setPassword(event.target.value)} value={password} required />
-                <button type="button" onClick={toggleShowPassword} >{show ? "Hide" : "Show"}</button>
-            </div>
-
-            <div>
-                <input type="submit" value={context === "login" ? 'Log in' : 'Confirm details'} />
-                {
-                    context === "confirmCredentials" ?
-                        <Link to="/logout">
-                            <input type="button" value='Logout now' />
-                        </Link>
-                        : null
-                }
-            </div>
-
-        </form>
-
-        {
-            context === "login" ?
-                <div>
-                    <hr></hr><p className="button-separator">or</p><hr></hr>
-
-                    <Link to="/signup">
-                        <div>
-                            <input type="button" value='Sign up' />
-                        </div>
-                    </Link>
+                <div className="input-label-container">
+                    <label htmlFor="user-identity-input" >Username or email</label>
+                    {context === "login" ?
+                        <input type="text" id="user-identity-input" name="userIdentity" onChange={event => setUserIdentity(event.target.value)} value={userIdentity} /> :
+                        <input type="text" id="user-identity-input" name="userIdentity" value={userIdentity} readOnly />
+                    }
                 </div>
-                : null
-        }
 
-    </div>
-);
+                <div className="input-label-container">
+                    <label htmlFor="password-input">Password</label>
+                    <input type={show ? "text" : "password"} id="password-input" name="password" minLength="8" autoComplete="current-password" onChange={event => setPassword(event.target.value)} value={password} required />
+                    <button type="button" onClick={toggleShowPassword} >{show ? "Hide" : "Show"}</button>
+                </div>
+
+                <div>
+                    <input type="submit" value={context === "login" ? 'Log in' : 'Confirm details'} />
+                    {
+                        context === "confirmCredentials" ?
+                            <Link to="/logout">
+                                <input type="button" value='Logout now' />
+                            </Link>
+                            : null
+                    }
+                </div>
+
+            </form>
+
+            {
+                context === "login" ?
+                    <div>
+                        <hr></hr><p className="button-separator">or</p><hr></hr>
+
+                        <Link to="/signup">
+                            <div>
+                                <input type="button" value='Sign up' />
+                            </div>
+                        </Link>
+                    </div>
+                    : null
+            }
+        </div>
+    );
 }

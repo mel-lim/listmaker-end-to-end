@@ -32,6 +32,7 @@ function App() {
     console.log(username);
     if (username) {
       setUser(username);
+      localStorage.setItem("lastUser", JSON.stringify(username)); // Keep track of the last user - if the user didn't get logged out at the end of the session, this should still be there - we will want to check this against a newly logged in user and delete the localStorage if it is a different user
     }
   }, [user]);
 
