@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-export const LoginForm = ({ usernameRegex, emailRegex, checkUserCredentials, attemptedAppUser, isFailedLogin }) => {
+export const ConfirmCredentials = ({ usernameRegex, emailRegex, checkUserCredentials, attemptedAppUser, isFailedLogin }) => {
     const [userIdentity, setUserIdentity] = useState('');
     const [password, setPassword] = useState('');
     const [show, setShow] = useState(false);
@@ -69,11 +69,9 @@ export const LoginForm = ({ usernameRegex, emailRegex, checkUserCredentials, att
 
                 <hr></hr><p className="button-separator">or</p><hr></hr>
 
-                <Link to="/signup">
-                    <div>
-                        <input type="button" value='Sign up' />
-                    </div>
-                </Link>
+                <div>
+                    <input type="button" value='Log out now' />
+                </div>
 
             </form>
         </div>

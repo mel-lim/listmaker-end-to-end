@@ -4,7 +4,7 @@ import './App.css';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Cookies from "js-cookie";
 
-import { UserContext } from "./UserContext";
+import { UserContext, CookieExpiryContext } from "./UserContext";
 
 import { Nav } from "./containers/Nav";
 import { Contact } from "./containers/Contact";
@@ -21,16 +21,18 @@ import { ProtectedLoggedOut } from "./routes/ProtectedLoggedOut";
 
 function App() {
   const [user, setUser] = useState(null);
-  const value = useMemo(() => ({ user, setUser }), [user, setUser]);
+  const [cookieExpiry, setCookieExpiry] = useState(null);
+  const userValue = useMemo(() => ({ user, setUser }), [user, setUser]);
+  const cookieExpiryValue = useMemo(() => ({ cookieExpiry, setCookieExpiry }), [cookieExpiry, setCookieExpiry]);
 
   // Check if the user is logged in, and if so, set that to state
   useEffect(() => {
     const username = Cookies.get("username");
     console.log(username);
     if (username) {
-        setUser(username);
+      setUser(username);
     }
-}, []);
+  }, [user]);
 
   return (
     <Router>
@@ -39,19 +41,22 @@ function App() {
         <h1>Backcountry Listmaker</h1>
       </header>
 
-      <UserContext.Provider value={value}>
-        <Nav />
-        <Switch>
-          {/* <Route path="/" exact component={Home} /> */}
-          <ProtectedLoggedIn path="/dashboard" component={Dashboard} />
-          <Route path="/signup" component={SignUp} />
-          <ProtectedLoggedOut path="/login" component={LogIn} />
-          <Route path="/myaccount" component={MyAccount} />
-          <Route path="/logout" component={LogOut} />
-          <Route path="/contact" component={Contact} />
-        </Switch>
-      </UserContext.Provider>
+      <UserContext.Provider value={userValue}>
+        <CookieExpiryContext.Provider value={cookieExpiryValue}>
 
+
+          <Nav />
+          <Switch>
+            {/* <Route path="/" exact component={Home} /> */}
+            <ProtectedLoggedIn path="/dashboard" component={Dashboard} />
+            <Route path="/signup" component={SignUp} />
+            <ProtectedLoggedOut path="/login" component={LogIn} />
+            <Route path="/myaccount" component={MyAccount} />
+            <ProtectedLoggedIn path="/logout" component={LogOut} />
+            <Route path="/contact" component={Contact} />
+          </Switch>
+        </CookieExpiryContext.Provider>
+      </UserContext.Provider>
     </Router>
   );
 }

@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext, CookieExpiryContext } from "../UserContext";
+import dayjs from "dayjs";
+
 import { GreetUser } from "../components/Dashboard/GreetUser";
 import { LoadListsDropdown } from "../components/Dashboard/LoadListsDropdown";
 import { NewTripForm } from "../components/Dashboard/NewTripForm";
@@ -7,6 +10,9 @@ import { Lists } from "../components/Lists/Lists";
 import { Footer } from "../components/Footer";
 
 export const Dashboard = () => {
+
+    const { setUser } = useContext(UserContext);
+    const { cookieExpiry, setCookieExpiry } = useContext(CookieExpiryContext);
 
     const [newTripClicked, setNewTripClicked] = useState(false); // When user clicks 'new trip', this will be set to 'true' engage the form for the user to input the settings to create a new trip
     const [newTripCreated, setNewTripCreated] = useState(false);
@@ -20,6 +26,38 @@ export const Dashboard = () => {
     const [hasChangedSinceLastSave, setHasChangedSinceLastSave] = useState(false); // This is set to true when the user adds, edits or deletes a list item and reset to false upon a successful save
     const [saveAttemptMessage, setSaveAttemptMessage] = useState('');
     const [isFetchProcessing, setIsFetchProcessing] = useState(false);
+
+    // This will persist the state of the cookieExpiry variable past refresh
+    useEffect(() => {
+        const storedCookieExpiry = localStorage.getItem("cookieExpiry");
+        if (storedCookieExpiry) {
+            setCookieExpiry(JSON.parse(storedCookieExpiry));
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // When the user successfully logs in, cookieExpiry state will be set / changed, and this will be called 
+    useEffect(() => {
+        console.log("useEffect called");
+        console.log(cookieExpiry);
+        if (!cookieExpiry) {
+            return;
+        }
+        else {
+            console.log("cookie is not empty");
+            localStorage.setItem("cookieExpiry", JSON.stringify(cookieExpiry)); // Save the cookie expiry into localStorage
+            // Set a timer to prevent the user from accessing the logged in protected routes until they log in again, once their cookie expires
+            const now = dayjs();
+            const timeUntilExpiry = dayjs(cookieExpiry).diff(now);
+            console.log(timeUntilExpiry);
+            const logOutTimer = setTimeout(() => {
+                console.log("timeOut is working");
+                // FUNCTIONALITY NEEDS TO GO IN HERE
+            }, timeUntilExpiry);
+            return (() => clearTimeout(logOutTimer));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [cookieExpiry]);
 
     // This will persist the state of the newTripClicked variable past refresh
     useEffect(() => {
@@ -37,7 +75,6 @@ export const Dashboard = () => {
     // Upon browser refresh, this will get the activeTrip data that we stored in localstorage, so we can persist the activeTrip state
     useEffect(() => {
         const storedActiveTrip = localStorage.getItem("activeTrip");
-        console.log(storedActiveTrip);
         if (storedActiveTrip) {
             setActiveTrip(JSON.parse(storedActiveTrip));
         }
@@ -51,7 +88,6 @@ export const Dashboard = () => {
     // Upon browser refresh, this will get the lists data that we stored in localstorage, so we can persist it
     useEffect(() => {
         const storedLists = localStorage.getItem("lists");
-        console.log(storedLists);
         if (storedLists) {
             setLists(JSON.parse(storedLists));
         }

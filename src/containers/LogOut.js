@@ -1,40 +1,39 @@
 import React, { useContext } from "react";
-import {  } from "react-router-dom";
 import { UserContext } from "../UserContext";
+
 
 export const LogOut = () => {
 
     const { setUser } = useContext(UserContext);
 
-    const deleteCookies = async () => {
-        // The cookie containing the JWT can only be deleted server-side because it is a http only cookie
+    const logOut = async () => {
+        // Delete the cookies
+        // Note, the cookie containing the JWT can only be deleted server-side because it is a http only cookie
         const response = await fetch('/appusers/logout', {
-            method: 'GET',
-            mode: 'cors',
-            cache: 'default',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer'
+          method: 'GET',
+          mode: 'cors',
+          cache: 'default',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          redirect: 'follow',
+          referrerPolicy: 'no-referrer'
         });
-
+    
         const responseBodyText = await response.json();
         console.log(responseBodyText);
-
+    
         if (response.status === 200) {
-            setUser(null);
+          setUser(null);
         }
-    }
-
-    const deleteLocalStorage = () => {
+    
+        // Clear the localStorage
         localStorage.clear();
-    }
-
-    const handleClick = (event) => {
+      }
+    
+    const handleClick = event => {
         event.preventDefault();
-        deleteLocalStorage();
-        deleteCookies();        
+        logOut();
     }
 
     return (

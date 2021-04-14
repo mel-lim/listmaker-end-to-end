@@ -8,6 +8,7 @@ export const SignUpSuccessful = ({ registeredAppUser }) => {
 
     const handleClick = event => {
         setUser(registeredAppUser);
+        //TO DO - RIGHT NOW THIS DOESNT REALLY LOG THE USER IN, IT JUST FAKES IT
     }
 
     return (
@@ -22,7 +23,7 @@ export const SignUpSuccessful = ({ registeredAppUser }) => {
                 </div> :
                 <div>
                     <h3>Welcome {user.username}!</h3>
-                    <Link to="/">
+                    <Link to="/dashboard">
                         <input type="button" value="Start listmaking" />
                     </Link>
                 </div>

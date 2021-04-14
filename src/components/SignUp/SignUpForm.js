@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
+import configData from "../../config.json";
+
 export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration }) => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -13,7 +15,7 @@ export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration
 
     // Validate username - only want alphanumeric and no spaces, just to make things simple
     useEffect(() => {
-        const regex = new RegExp("^[a-zA-Z0-9_]*$");
+        const regex = new RegExp(configData.USERNAME_REGEX);
         !regex.test(username) ? setUsernameValidationMessage('*Use only alphanumeric characters') : setUsernameValidationMessage('');
     }, [username]);
 
@@ -99,6 +101,7 @@ export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration
                 <div>
                     <Link to="/">
                         <input type="button" value='Try as guest' />
+                        {/* TO DO - DOESN'T REALLY DO ANYTHING RIGHT NOW - HAVE A THINK ABOUT HOW THE USER CAN REALLY TRY AS A GUEST */}
                     </Link>
                 </div>
 

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { SignUpForm } from "../components/SignUp/SignUpForm";
 import { SignUpSuccessful } from "../components/SignUp/SignUpSuccessful";
 
+
+
 export const SignUp = () => {
     const [registeredAppUser, setRegisteredAppUser] = useState(null);
     const [attemptedAppUser, setAttemptedAppUser] = useState(null);

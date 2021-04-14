@@ -1,14 +1,16 @@
 import React, { useState, useContext } from "react";
-import { UserContext } from "../UserContext";
+import { UserContext, CookieExpiryContext } from "../UserContext";
 import { LoginForm } from "../components/Login/LoginForm";
 
+import configData from "../config.json";
 
-export const LogIn = () => {    
+export const LogIn = () => {
 
-    const usernameRegex = /^[a-zA-Z0-9_]*$/;
-    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    const usernameRegex = new RegExp(configData.USERNAME_REGEX);
+    const emailRegex = new RegExp(configData.EMAIL_REGEX);
 
     const { setUser } = useContext(UserContext);
+    const { setCookieExpiry } = useContext(CookieExpiryContext);
 
     const [attemptedAppUser, setAttemptedAppUser] = useState(null);
     const [isFailedLogin, setIsFailedLogin] = useState(false);
@@ -44,8 +46,8 @@ export const LogIn = () => {
 
         if (response.status === 200) {
             setUser(responseBodyText.username);
-            setIsFailedLogin(false);
-            setAttemptedAppUser(null);
+            setCookieExpiry(responseBodyText.cookieExpiry);
+
         } else if (response.status === 400) {
             setAttemptedAppUser({
                 errorMessage: responseBodyText.message,
