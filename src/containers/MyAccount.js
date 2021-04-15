@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export const MyAccount = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
+
+    useEffect(() => {
+        getAccountDetails();
+    })
 
     const getAccountDetails = async () => {
 
@@ -26,20 +30,16 @@ export const MyAccount = () => {
         }
     }
 
-    const handleClick = event => {
-        event.preventDefault();
-        getAccountDetails();
-    }
     return (
         <div className="my-account">
             {
-                !username ?
-                    (<input type="button" value="Get my details" onClick={handleClick} />) :
+                username ?
                     (<div>
                         <h3>Account Details</h3>
                         <p>Username: {username}</p>
                         <p>Email: {email}</p>
                     </div>)
+                    : null
             }
         </div>
     );
