@@ -127,7 +127,7 @@ export const ValidateCredentials = ({ context, setOpenModal }) => {
     return (
         <div className="user-credentials login">
 
-            <h3>{context === "login" ? "Log In" : "Refresh my token"}</h3>
+            <h3>{context === "login" ? "Log in" : "Refresh my token"}</h3>
 
             <p className="submission-unsuccessful-message">{submissionUnsuccessfulMessage}</p>
 

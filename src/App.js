@@ -1,12 +1,13 @@
 import React, { useState, useMemo, useEffect } from "react";
 import './App.css';
 
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 import Cookies from "js-cookie";
 
 import { UserContext, CookieExpiryContext } from "./UserContext";
 
+import { Home } from "./containers/Home";
 import { Nav } from "./containers/Nav";
 import { Contact } from "./containers/Contact";
 
@@ -39,9 +40,15 @@ function App() {
   return (
     <Router>
 
-      <header>
-        <h1>Backcountry Listmaker</h1>
+
+      <header className="website-name">
+        <Link to="/">
+          <h1>Collaberie</h1>
+        </Link>
       </header>
+
+
+
 
       <UserContext.Provider value={userValue}>
         <CookieExpiryContext.Provider value={cookieExpiryValue}>
@@ -49,7 +56,7 @@ function App() {
 
           <Nav />
           <Switch>
-            {/* <Route path="/" exact component={Home} /> */}
+            <Route path="/" exact component={Home} />
             <ProtectedLoggedIn path="/dashboard" component={Dashboard} />
             <Route path="/signup" component={SignUp} />
             <ProtectedLoggedOut path="/login" component={Login} />

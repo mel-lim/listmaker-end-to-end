@@ -34,7 +34,6 @@ export const Contact = () => {
     }
 
     return (
-
         <div id="form-container">
             <h3>Send a note</h3>
             <form id="contact-form" onSubmit={handleSubmit}>
