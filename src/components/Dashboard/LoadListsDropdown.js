@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export const LoadListsDropdown = ({ newTripCreated, fetchLists, setActiveTrip }) => {
+export const LoadListsDropdown = ({ newTripCreated, setNewTripCreated, updatedTripDetailsSaved, setUpdatedTripDetailsSaved, fetchLists, setActiveTrip }) => {
 
     const [allTrips, setAllTrips] = useState([]);
     const isMounted = true;
@@ -8,9 +8,15 @@ export const LoadListsDropdown = ({ newTripCreated, fetchLists, setActiveTrip })
     useEffect(() => {
         if (isMounted) {
             fetchTrips();
+            if (newTripCreated) {
+                setNewTripCreated(false);
+            }
+            if (updatedTripDetailsSaved) {
+                setUpdatedTripDetailsSaved(false);
+            }
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [newTripCreated]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [newTripCreated, updatedTripDetailsSaved]);
 
     // FETCH ALL TRIPS FOR THIS USER
     const fetchTrips = async () => {

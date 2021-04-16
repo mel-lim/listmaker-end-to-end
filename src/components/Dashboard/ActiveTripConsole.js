@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { SettledTripName } from "./SettledTripName";
 import { EditTripNameForm } from "./EditTripNameForm";
 
-export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, saveChanges, saveTripDetails, saveTripMessage, saveAttemptMessage, setTripDetailsHaveChangedSinceLastSave }) => {
+export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, saveChanges, saveTripDetails, saveTripDetailsMessage, saveAttemptMessage, setTripDetailsHaveChangedSinceLastSave }) => {
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -43,7 +43,7 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
                     :
                     null}
 
-                <p>{saveTripMessage}</p>
+                <p>{saveTripDetailsMessage}</p>
                 <p>{saveAttemptMessage}</p>
 
             </div>

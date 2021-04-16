@@ -24,19 +24,22 @@ export const Dashboard = () => {
     const { setUser } = useContext(UserContext);
     const { cookieExpiry, setCookieExpiry } = useContext(CookieExpiryContext);
 
-    const [newTripClicked, setNewTripClicked] = useState(false); // When user clicks 'new trip', this will be set to 'true' engage the form for the user to input the settings to create a new trip
-    const [newTripCreated, setNewTripCreated] = useState(false);
     const [activeTrip, setActiveTrip] = useState({ tripId: '', tripName: '', tripCategory: '', tripDuration: '' }); // If the post request to create a new trip is successful, the activeTrip variable will contain the details of the new trip provided in the response
 
     const [lists, setLists] = useState([]); // This will sit empty until the data is fetched from the server
     const [allListItems, setAllListItems] = useState([]); // This will sit empty until the data is fetched from the server
     const [allDeletedItems, setAllDeletedItems] = useState([]); // This will sit empty until the user starts deleting items from their lists
 
-    const [newTripNeedsSaving, setNewTripNeedsSaving] = useState(false);
-    const [hasChangedSinceLastSave, setHasChangedSinceLastSave] = useState(false); // This is set to true when the user adds, edits or deletes a list item and reset to false upon a successful save
+    const [newTripClicked, setNewTripClicked] = useState(false); // When user clicks 'new trip', this will be set to 'true' engage the form for the user to input the settings to create a new trip
+    const [newTripCreated, setNewTripCreated] = useState(false);
+    const [newTripNeedsSaving, setNewTripNeedsSaving] = useState(false); // When a new trip is created and this will get set to true, and activate a hook to call saveChanges to save the new lists, once the new lists and allListItems states have resolved
     const [tripDetailsHaveChangedSinceLastSave, setTripDetailsHaveChangedSinceLastSave] = useState(false); // This will be set to true if the user edits the trip name
+    const [saveTripDetailsMessage, setSaveTripDetailsMessage] = useState('');
+    const [updatedTripDetailsSaved, setUpdatedTripDetailsSaved] = useState(false); // When an updated trip name is saved, this will get set to true, and activate a hook to fetch all trips so that the drop down list will reflect the new trip name
+
+    const [listItemsHaveChangedSinceLastSave, setListItemsHaveChangedSinceLastSave] = useState(false); // This is set to true when the user adds, edits or deletes a list item and reset to false upon a successful save
     const [saveAttemptMessage, setSaveAttemptMessage] = useState('');
-    const [saveTripMessage, setSaveTripMessage] = useState('');
+    
     const [isFetchProcessing, setIsFetchProcessing] = useState(false);
 
     const [openModal, setOpenModal] = useState(false);
@@ -167,9 +170,9 @@ export const Dashboard = () => {
 
     // NEW TRIP SAVE HOOK
     useEffect(() => {
+        console.log("new trip save hook triggered");
         if (newTripNeedsSaving && lists.length && allListItems.length) {
-            saveChanges();
-            setNewTripNeedsSaving(false);
+            saveChanges(); // If successful, the saveChanges block will set the newTripNeedsSaving state to false
             console.log("new trip lists saved");
         }
         return;
@@ -178,6 +181,7 @@ export const Dashboard = () => {
 
     // AUTOSAVE HOOK
     useEffect(() => {
+        console.log("autosave hook triggered");
         const timer = setTimeout(() => {
             saveTripDetails();
             saveChanges();
@@ -185,7 +189,7 @@ export const Dashboard = () => {
         }, parseInt(configData.AUTOSAVE_INTERVAL)); // 10 minutes
         return () => clearTimeout(timer);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [hasChangedSinceLastSave, tripDetailsHaveChangedSinceLastSave]);
+    }, [listItemsHaveChangedSinceLastSave, tripDetailsHaveChangedSinceLastSave]);
 
     // Reuseable block to set the lists and allListItems state, and initialise the allDeletedItems state
     const configureLists = (listsConfig, allListsConfig) => {
@@ -216,7 +220,7 @@ export const Dashboard = () => {
 
         // If the trip name is blank / empty
         if (!tripName || !tripName.length) {
-            setSaveTripMessage("Unable to save edited trip name: trip name can't be blank");
+            setSaveTripDetailsMessage("Unable to save edited trip name: trip name can't be blank");
         }
 
         console.log("save trip request starting");
@@ -237,11 +241,12 @@ export const Dashboard = () => {
         });
 
         const responseBodyText = await response.json();
-        setSaveTripMessage(responseBodyText.message);   
+        setSaveTripDetailsMessage(responseBodyText.message);   
         
         if (response.status === 200 || 304) {
             console.log("response status is 200 or 304");
             setTripDetailsHaveChangedSinceLastSave(false); // Reset to false once saved
+            setUpdatedTripDetailsSaved(true); // This will trigger the hook to re-fetch the all trips data and re-populate the drop down list with the updated trip name
         }
     }
 
@@ -249,7 +254,7 @@ export const Dashboard = () => {
     const saveChanges = async () => {
         
         // If the lists have not changed since the last save, exit
-        if (!hasChangedSinceLastSave) {
+        if (!newTripNeedsSaving && !listItemsHaveChangedSinceLastSave) {
             return;
         }
 
@@ -291,7 +296,10 @@ export const Dashboard = () => {
         const responseBodyText = await response.json();
         if (response.status === 201) {
             fetchLists(tripId);
-            setHasChangedSinceLastSave(false);
+            setListItemsHaveChangedSinceLastSave(false);
+            if (newTripNeedsSaving) {
+                setNewTripNeedsSaving(false); // This will be reset to false once the new lists are successfully saved for the first time
+            }
         }
 
         setSaveAttemptMessage(responseBodyText.message);
@@ -337,8 +345,12 @@ export const Dashboard = () => {
                     <GreetUser />
                     <LoadListsDropdown
                         newTripCreated={newTripCreated}
+                        setNewTripCreated={setNewTripCreated}
+                        updatedTripDetailsSaved={updatedTripDetailsSaved}
+                        setUpdatedTripDetailsSaved={setUpdatedTripDetailsSaved}
                         fetchLists={fetchLists}
                         setActiveTrip={setActiveTrip}
+
                     />
                     <NewTripForm
                         newTripClicked={newTripClicked}
@@ -360,9 +372,10 @@ export const Dashboard = () => {
                                 allListItems={allListItems}
                                 saveChanges={saveChanges}
                                 saveTripDetails={saveTripDetails}
-                                saveTripMessage={saveTripMessage}
+                                saveTripDetailsMessage={saveTripDetailsMessage}
                                 saveAttemptMessage={saveAttemptMessage}
                                 setTripDetailsHaveChangedSinceLastSave={setTripDetailsHaveChangedSinceLastSave}
+                                setUpdatedTripDetailsSaved={setUpdatedTripDetailsSaved}
                                  />
                             : null
                     }
@@ -377,7 +390,7 @@ export const Dashboard = () => {
                         setAllListItems={setAllListItems}
                         allDeletedItems={allDeletedItems}
                         setAllDeletedItems={setAllDeletedItems}
-                        setHasChangedSinceLastSave={setHasChangedSinceLastSave} /> :
+                        setListItemsHaveChangedSinceLastSave={setListItemsHaveChangedSinceLastSave} /> :
                     null}
 
             </main>
