@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { SettledTripName } from "./SettledTripName";
 import { EditTripNameForm } from "./EditTripNameForm";
 
-export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, saveChanges, saveTripDetails, saveTripDetailsMessage, saveAttemptMessage, setTripDetailsHaveChangedSinceLastSave }) => {
+export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, saveListChanges, saveTripDetails, saveTripDetailsMessage, saveListsMessage, setTripDetailsHaveChangedSinceLastSave }) => {
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -12,7 +12,7 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
 
     const handleClickSave = event => {
         event.preventDefault();
-        saveChanges(); // This calls the savelists request to the server - the code can be found in Dashboard.js
+        saveListChanges(); // This calls the savelists request to the server - the code can be found in Dashboard.js
         saveTripDetails(); // This calls the savetripdetails request to the server - the code can be found in Dashboard.js
     }
 
@@ -44,7 +44,7 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
                     null}
 
                 <p>{saveTripDetailsMessage}</p>
-                <p>{saveAttemptMessage}</p>
+                <p>{saveListsMessage}</p>
 
             </div>
         </div>

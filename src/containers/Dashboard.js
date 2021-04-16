@@ -32,13 +32,13 @@ export const Dashboard = () => {
 
     const [newTripClicked, setNewTripClicked] = useState(false); // When user clicks 'new trip', this will be set to 'true' engage the form for the user to input the settings to create a new trip
     const [newTripCreated, setNewTripCreated] = useState(false);
-    const [newTripNeedsSaving, setNewTripNeedsSaving] = useState(false); // When a new trip is created and this will get set to true, and activate a hook to call saveChanges to save the new lists, once the new lists and allListItems states have resolved
+    const [newTripNeedsSaving, setNewTripNeedsSaving] = useState(false); // When a new trip is created and this will get set to true, and activate a hook to call saveListChanges to save the new lists, once the new lists and allListItems states have resolved
     const [tripDetailsHaveChangedSinceLastSave, setTripDetailsHaveChangedSinceLastSave] = useState(false); // This will be set to true if the user edits the trip name
     const [saveTripDetailsMessage, setSaveTripDetailsMessage] = useState('');
     const [updatedTripDetailsSaved, setUpdatedTripDetailsSaved] = useState(false); // When an updated trip name is saved, this will get set to true, and activate a hook to fetch all trips so that the drop down list will reflect the new trip name
 
     const [listItemsHaveChangedSinceLastSave, setListItemsHaveChangedSinceLastSave] = useState(false); // This is set to true when the user adds, edits or deletes a list item and reset to false upon a successful save
-    const [saveAttemptMessage, setSaveAttemptMessage] = useState('');
+    const [saveListsMessage, setSaveListsMessage] = useState('');
     
     const [isFetchProcessing, setIsFetchProcessing] = useState(false);
 
@@ -172,7 +172,7 @@ export const Dashboard = () => {
     useEffect(() => {
         console.log("new trip save hook triggered");
         if (newTripNeedsSaving && lists.length && allListItems.length) {
-            saveChanges(); // If successful, the saveChanges block will set the newTripNeedsSaving state to false
+            saveListChanges(); // If successful, the saveListChanges block will set the newTripNeedsSaving state to false
             console.log("new trip lists saved");
         }
         return;
@@ -184,7 +184,7 @@ export const Dashboard = () => {
         console.log("autosave hook triggered");
         const timer = setTimeout(() => {
             saveTripDetails();
-            saveChanges();
+            saveListChanges();
             console.log("autosave function run");
         }, parseInt(configData.AUTOSAVE_INTERVAL)); // 10 minutes
         return () => clearTimeout(timer);
@@ -251,7 +251,7 @@ export const Dashboard = () => {
     }
 
     // Post data to db to save the users changes
-    const saveChanges = async () => {
+    const saveListChanges = async () => {
         
         // If the lists have not changed since the last save, exit
         if (!newTripNeedsSaving && !listItemsHaveChangedSinceLastSave) {
@@ -272,7 +272,7 @@ export const Dashboard = () => {
         });
 
         if (isEmptyList) {
-            setSaveAttemptMessage('Unable to save: please add at least one item to each list before saving');
+            setSaveListsMessage('Unable to save: please add at least one item to each list before saving');
             return;
         }
 
@@ -302,7 +302,7 @@ export const Dashboard = () => {
             }
         }
 
-        setSaveAttemptMessage(responseBodyText.message);
+        setSaveListsMessage(responseBodyText.message);
         console.log(responseBodyText.message);
     }
 
@@ -370,10 +370,10 @@ export const Dashboard = () => {
                                 setActiveTrip={setActiveTrip}
                                 lists={lists}
                                 allListItems={allListItems}
-                                saveChanges={saveChanges}
+                                saveListChanges={saveListChanges}
                                 saveTripDetails={saveTripDetails}
                                 saveTripDetailsMessage={saveTripDetailsMessage}
-                                saveAttemptMessage={saveAttemptMessage}
+                                saveListsMessage={saveListsMessage}
                                 setTripDetailsHaveChangedSinceLastSave={setTripDetailsHaveChangedSinceLastSave}
                                 setUpdatedTripDetailsSaved={setUpdatedTripDetailsSaved}
                                  />
