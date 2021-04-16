@@ -34,7 +34,9 @@ export const Dashboard = () => {
 
     const [needManualSave, setNeedManualSave] = useState(false);
     const [hasChangedSinceLastSave, setHasChangedSinceLastSave] = useState(false); // This is set to true when the user adds, edits or deletes a list item and reset to false upon a successful save
+    const [tripDetailsHaveChangedSinceLastSave, setTripDetailsHaveChangedSinceLastSave] = useState(false); // This will be set to true if the user edits the trip name
     const [saveAttemptMessage, setSaveAttemptMessage] = useState('');
+    const [saveTripMessage, setSaveTripMessage] = useState('');
     const [isFetchProcessing, setIsFetchProcessing] = useState(false);
 
     const [openModal, setOpenModal] = useState(false);
@@ -176,14 +178,13 @@ export const Dashboard = () => {
     // AUTOSAVE HOOK
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (hasChangedSinceLastSave) {
-                saveChanges();
-                console.log("autosaved");
-            }
+            saveTripDetails();
+            saveChanges();
+            console.log("autosave function run");
         }, parseInt(configData.AUTOSAVE_INTERVAL)); // 10 minutes
         return () => clearTimeout(timer);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [hasChangedSinceLastSave]);
+    }, [hasChangedSinceLastSave, tripDetailsHaveChangedSinceLastSave]);
 
     // Reuseable block to set the lists and allListItems state, and initialise the allDeletedItems state
     const configureLists = (listsConfig, allListsConfig) => {
@@ -199,12 +200,59 @@ export const Dashboard = () => {
         }
         setAllDeletedItems(initialAllDeletedItems);
 
+        // This tells the lists component that it is ready to be re-rendered
         setIsFetchProcessing(false);
+    }
+
+    const saveTripDetails = async () => {
+
+        // If the trip name has not been changed since the last save, exit
+        if (!tripDetailsHaveChangedSinceLastSave) {
+            return;
+        }
+
+        const tripName = activeTrip.tripName;
+
+        // If the trip name is blank / empty
+        if (!tripName || !tripName.length) {
+            setSaveTripMessage("Unable to save edited trip name: trip name can't be blank");
+        }
+
+        console.log("save trip request starting");
+        const tripId = activeTrip.tripId;
+        const requestBodyContent = { tripName };
+
+        const response = await fetch(`/trips/${tripId}/savetripdetails`, {
+            method: 'PUT',
+            mode: 'cors',
+            cache: 'default',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify(requestBodyContent)
+        });
+
+        const responseBodyText = await response.json();
+        setSaveTripMessage(responseBodyText.message);   
+        
+        if (response.status === 200 || 304) {
+            console.log("response status is 200 or 304");
+            setTripDetailsHaveChangedSinceLastSave(false); // Reset to false once saved
+        }
     }
 
     // Post data to db to save the users changes
     const saveChanges = async () => {
-        if (!lists) {
+        
+        // If the lists have not changed since the last save, exit
+        if (!hasChangedSinceLastSave) {
+            return;
+        }
+
+        if (!lists) { // Not quite sure that this would ever happen in the current version of our app, but let's leave this for now.
             return;
         }
 
@@ -231,7 +279,8 @@ export const Dashboard = () => {
             mode: 'cors',
             cache: 'default',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             redirect: 'follow',
             referrerPolicy: 'no-referrer',
@@ -267,7 +316,6 @@ export const Dashboard = () => {
         });
 
         const responseBodyText = await response.json();
-        console.log(responseBodyText);
 
         if (response.status === 200 || response.status === 304) {
 
@@ -301,16 +349,20 @@ export const Dashboard = () => {
                         setNeedManualSave={setNeedManualSave}
                     />
                     {
-                        (activeTrip.tripId && !isFetchProcessing) ?
+                        (activeTrip.tripId) ? // I removed the condition && !isFetchProcessing - if it stays in, everytime we save the lists we get this blinky, glitchy effect. I think it's uncessary - the only thing in active trip console that requires on the fetch request is the save attempt message, and it seems to work fine. Keep and eye on this though. There might have been an edge case error that I put the condition in to address originally. 
 
-                            <ActiveTripConsole setNewTripClicked={setNewTripClicked}
+                            <ActiveTripConsole 
+                                setNewTripClicked={setNewTripClicked}
                                 activeTrip={activeTrip}
+                                setActiveTrip={setActiveTrip}
                                 lists={lists}
                                 allListItems={allListItems}
                                 saveChanges={saveChanges}
+                                saveTripDetails={saveTripDetails}
+                                saveTripMessage={saveTripMessage}
                                 saveAttemptMessage={saveAttemptMessage}
-                                fetchLists={fetchLists} />
-
+                                setTripDetailsHaveChangedSinceLastSave={setTripDetailsHaveChangedSinceLastSave}
+                                 />
                             : null
                     }
                 </div>

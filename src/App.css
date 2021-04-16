@@ -152,7 +152,7 @@ main {
   margin: 1rem 2rem 2em 2rem;
 }
 
-.dashboard-start-container input[type=button], .dashboard-start-container input[type=submit] {
+.save-button-container input[type=button], .new-trip-form input[type=button], .new-trip-form input[type=submit] {
   cursor: pointer;
   color: hsl(0, 0%, 30%);
   margin: 1rem;
@@ -228,6 +228,22 @@ main {
 .active-trip-console {
   margin: 1rem 0;
   justify-content: space-around;
+}
+
+.trip-name-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.trip-name-container button {
+  margin-left: 14px;
+}
+
+.edit-trip-name-container input[type=text] {
+  font-size: 1.1rem;
+  margin: 0.85rem 0;
+  width: 230px;
 }
 
 .section-separator {
