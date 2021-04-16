@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProcessing, setNewTripCreated, setActiveTrip, configureLists, setNeedManualSave }) => {
+export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProcessing, setNewTripCreated, setActiveTrip, configureLists, setNewTripNeedsSaving }) => {
 
     // Dynamic user inputs for the form
     const [tripName, setTripName] = useState('');
@@ -71,7 +71,7 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
             setSubmissionErrorMessage('');
 
             // Call for the newly generated lists and items to be saved
-            setNeedManualSave(true);
+            setNewTripNeedsSaving(true);
 
         } else {
             console.log(responseBodyText.message);

@@ -32,7 +32,7 @@ export const Dashboard = () => {
     const [allListItems, setAllListItems] = useState([]); // This will sit empty until the data is fetched from the server
     const [allDeletedItems, setAllDeletedItems] = useState([]); // This will sit empty until the user starts deleting items from their lists
 
-    const [needManualSave, setNeedManualSave] = useState(false);
+    const [newTripNeedsSaving, setNewTripNeedsSaving] = useState(false);
     const [hasChangedSinceLastSave, setHasChangedSinceLastSave] = useState(false); // This is set to true when the user adds, edits or deletes a list item and reset to false upon a successful save
     const [tripDetailsHaveChangedSinceLastSave, setTripDetailsHaveChangedSinceLastSave] = useState(false); // This will be set to true if the user edits the trip name
     const [saveAttemptMessage, setSaveAttemptMessage] = useState('');
@@ -165,15 +165,16 @@ export const Dashboard = () => {
         localStorage.setItem("allDeletedItems", JSON.stringify(allDeletedItems));
     }, [allDeletedItems]);
 
-    // MANUAL SAVE HOOK
+    // NEW TRIP SAVE HOOK
     useEffect(() => {
-        if (needManualSave && lists.length && allListItems.length) {
+        if (newTripNeedsSaving && lists.length && allListItems.length) {
             saveChanges();
-            setNeedManualSave(false);
+            setNewTripNeedsSaving(false);
+            console.log("new trip lists saved");
         }
         return;
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [needManualSave, lists, allListItems]);
+    }, [newTripNeedsSaving, lists, allListItems]); // This hook will get called everytime the newTripNeedsSaving state is updated (i.e. when a new trip is created) and everytime the lists or list items change (in case this is called before the lists or allListItems are defined, then get subsequently defined)
 
     // AUTOSAVE HOOK
     useEffect(() => {
@@ -346,7 +347,7 @@ export const Dashboard = () => {
                         setActiveTrip={setActiveTrip}
                         setNewTripCreated={setNewTripCreated}
                         configureLists={configureLists}
-                        setNeedManualSave={setNeedManualSave}
+                        setNewTripNeedsSaving={setNewTripNeedsSaving}
                     />
                     {
                         (activeTrip.tripId) ? // I removed the condition && !isFetchProcessing - if it stays in, everytime we save the lists we get this blinky, glitchy effect. I think it's uncessary - the only thing in active trip console that requires on the fetch request is the save attempt message, and it seems to work fine. Keep and eye on this though. There might have been an edge case error that I put the condition in to address originally. 
