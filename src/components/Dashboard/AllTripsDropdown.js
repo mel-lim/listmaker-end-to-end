@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export const AllTripsDropdown = ({ updatedTripDetailsSaved, setUpdatedTripDetailsSaved, fetchLists, setActiveTrip, toggleRefreshAllTripDropdown }) => {
+export const AllTripsDropdown = ({ updatedTripDetailsSaved, setUpdatedTripDetailsSaved, fetchLists, setActiveTrip, toggleRefreshAllTripsDropdown }) => {
 
     const [allTrips, setAllTrips] = useState([]);
     const isMounted = true;
@@ -13,7 +13,7 @@ export const AllTripsDropdown = ({ updatedTripDetailsSaved, setUpdatedTripDetail
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [updatedTripDetailsSaved, toggleRefreshAllTripDropdown]);
+    }, [updatedTripDetailsSaved, toggleRefreshAllTripsDropdown]);
 
     // FETCH ALL TRIPS FOR THIS USER
     const fetchTrips = async () => {

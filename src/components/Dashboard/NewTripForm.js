@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProcessing, toggleRefreshAllTripDropdown, setToggleRefreshAllTripDropdown, setActiveTrip, configureLists, setNewTripNeedsSaving }) => {
+export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProcessing, toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown, setActiveTrip, configureLists, setNewTripNeedsSaving }) => {
 
     // Dynamic user inputs for the form
     const [tripName, setTripName] = useState('');
@@ -46,7 +46,7 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
 
         // Update the states that govern render-logic
         setNewTripClicked(false);
-        setToggleRefreshAllTripDropdown(!toggleRefreshAllTripDropdown);
+        setToggleRefreshAllTripsDropdown(!toggleRefreshAllTripsDropdown);
 
         if (response.status === 201) {
             const newTrip = {
