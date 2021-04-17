@@ -32,13 +32,12 @@ export const Dashboard = () => {
 
     const [newTripClicked, setNewTripClicked] = useState(false); // When user clicks 'new trip', this will be set to 'true' engage the form for the user to input the settings to create a new trip
 
-    const [toggleRefreshAllTripDropdown, setToggleRefreshAllTripDropdown] = useState(false); // When a trip is deleted, this will get set to true and activate the hook to fetch all trips.
-    const [newTripCreated, setNewTripCreated] = useState(false);
+    const [toggleRefreshAllTripDropdown, setToggleRefreshAllTripDropdown] = useState(false); // When a trip is created or deleted, this will get toggled and activate the hook to re-fetch all trips and show the updated list of all trips in the dropdown.
+
     const [newTripNeedsSaving, setNewTripNeedsSaving] = useState(false); // When a new trip is created and this will get set to true, and activate a hook to call saveListChanges to save the new lists, once the new lists and allListItems states have resolved
     const [tripDetailsHaveChangedSinceLastSave, setTripDetailsHaveChangedSinceLastSave] = useState(false); // This will be set to true if the user edits the trip name
     const [saveTripDetailsMessage, setSaveTripDetailsMessage] = useState('');
     const [updatedTripDetailsSaved, setUpdatedTripDetailsSaved] = useState(false); // When an updated trip name is saved, this will get set to true, and activate a hook to fetch all trips so that the drop down list will reflect the new trip name
-    const [tripDeleted, setTripDeleted] = useState(false); // When a trip is deleted, this will get set to true and activate the hook to fetch all trips.
 
     const [listItemsHaveChangedSinceLastSave, setListItemsHaveChangedSinceLastSave] = useState(false); // This is set to true when the user adds, edits or deletes a list item and reset to false upon a successful save
     const [saveListsMessage, setSaveListsMessage] = useState('');
@@ -347,14 +346,10 @@ export const Dashboard = () => {
                 <div className="dashboard-start-container">
                     <GreetUser />
                     <AllTripsDropdown
-                        newTripCreated={newTripCreated}
-                        setNewTripCreated={setNewTripCreated}
                         updatedTripDetailsSaved={updatedTripDetailsSaved}
                         setUpdatedTripDetailsSaved={setUpdatedTripDetailsSaved}
                         fetchLists={fetchLists}
                         setActiveTrip={setActiveTrip}
-                        tripDeleted={tripDeleted}
-                        setTripDeleted={setTripDeleted}
                         toggleRefreshAllTripDropdown={toggleRefreshAllTripDropdown}
                     />
                     <NewTripForm
@@ -362,7 +357,8 @@ export const Dashboard = () => {
                         setNewTripClicked={setNewTripClicked}
                         setIsFetchProcessing={setIsFetchProcessing}
                         setActiveTrip={setActiveTrip}
-                        setNewTripCreated={setNewTripCreated}
+                        toggleRefreshAllTripDropdown={toggleRefreshAllTripDropdown}
+                        setToggleRefreshAllTripDropdown={setToggleRefreshAllTripDropdown}
                         configureLists={configureLists}
                         setNewTripNeedsSaving={setNewTripNeedsSaving}
                     />
@@ -381,7 +377,6 @@ export const Dashboard = () => {
                                 saveListsMessage={saveListsMessage}
                                 setTripDetailsHaveChangedSinceLastSave={setTripDetailsHaveChangedSinceLastSave}
                                 setUpdatedTripDetailsSaved={setUpdatedTripDetailsSaved}
-                                setTripDeleted={setTripDeleted}
                                 toggleRefreshAllTripDropdown={toggleRefreshAllTripDropdown}
                                 setToggleRefreshAllTripDropdown={setToggleRefreshAllTripDropdown}
                                  />

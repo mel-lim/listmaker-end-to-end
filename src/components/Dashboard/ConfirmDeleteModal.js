@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Popup from 'reactjs-popup';
 
-export const ConfirmDeleteModal = ({ activeTrip, setTripDeleted, toggleRefreshAllTripDropdown, setToggleRefreshAllTripDropdown }) => {
+export const ConfirmDeleteModal = ({ activeTrip, toggleRefreshAllTripDropdown, setToggleRefreshAllTripDropdown }) => {
 
     const [deleteSuccessful, setDeleteSuccessful] = useState(false);
 

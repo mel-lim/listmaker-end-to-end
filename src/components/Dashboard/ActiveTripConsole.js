@@ -3,7 +3,7 @@ import { SettledTripName } from "./SettledTripName";
 import { EditTripNameForm } from "./EditTripNameForm";
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 
-export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, saveListChanges, saveTripDetails, saveTripDetailsMessage, saveListsMessage, setTripDetailsHaveChangedSinceLastSave, setTripDeleted, toggleRefreshAllTripDropdown, setToggleRefreshAllTripDropdown }) => {
+export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, saveListChanges, saveTripDetails, saveTripDetailsMessage, saveListsMessage, setTripDetailsHaveChangedSinceLastSave, toggleRefreshAllTripDropdown, setToggleRefreshAllTripDropdown }) => {
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -40,7 +40,6 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
             <div className="save-button-container">
                 <ConfirmDeleteModal
                     activeTrip={activeTrip}
-                    setTripDeleted={setTripDeleted}
                     toggleRefreshAllTripDropdown={toggleRefreshAllTripDropdown}
                     setToggleRefreshAllTripDropdown={setToggleRefreshAllTripDropdown} />
 
