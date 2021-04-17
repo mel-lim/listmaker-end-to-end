@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { SettledTripName } from "./SettledTripName";
 import { EditTripNameForm } from "./EditTripNameForm";
+import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 
 export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, saveListChanges, saveTripDetails, saveTripDetailsMessage, saveListsMessage, setTripDetailsHaveChangedSinceLastSave }) => {
 
@@ -22,13 +23,13 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
             <div>
                 <div>
                     {!isEditing ?
-                        <SettledTripName 
-                            activeTrip={activeTrip} 
+                        <SettledTripName
+                            activeTrip={activeTrip}
                             toggleEdit={toggleEdit} />
-                        : <EditTripNameForm 
-                            activeTrip={activeTrip} 
-                            setActiveTrip={setActiveTrip} 
-                            toggleEdit={toggleEdit} 
+                        : <EditTripNameForm
+                            activeTrip={activeTrip}
+                            setActiveTrip={setActiveTrip}
+                            toggleEdit={toggleEdit}
                             setTripDetailsHaveChangedSinceLastSave={setTripDetailsHaveChangedSinceLastSave} />
                     }
                 </div>
@@ -37,6 +38,7 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
             </div>
 
             <div className="save-button-container">
+                <ConfirmDeleteModal />
 
                 {lists.length && allListItems.length ?
                     <input type="button" value="Save changes" onClick={handleClickSave} />

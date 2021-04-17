@@ -263,6 +263,20 @@ main {
   margin: 0.5rem;
 }
 
+/* Modals */
+
+.confirm-delete-modal {
+  text-align: center;
+}
+
+.modal-header {
+  margin: 0.75rem 0 1rem 0;
+}
+
+.confirm-delete-modal input[type=button] {
+  margin: 0 0.2rem 0.75rem 0.2rem;
+}
+
 /* Lists */
 
 #lists-container {
