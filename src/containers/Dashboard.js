@@ -37,6 +37,7 @@ export const Dashboard = () => {
     const [newTripNeedsSaving, setNewTripNeedsSaving] = useState(false); // When a new trip is created and this will get set to true, and activate a hook to call saveListChanges to save the new lists, once the new lists and allListItems states have resolved
     const [tripDetailsHaveChangedSinceLastSave, setTripDetailsHaveChangedSinceLastSave] = useState(false); // This will be set to true if the user edits the trip name
     const [saveTripDetailsMessage, setSaveTripDetailsMessage] = useState('');
+
     const [updatedTripDetailsSaved, setUpdatedTripDetailsSaved] = useState(false); // When an updated trip name is saved, this will get set to true, and activate a hook to fetch all trips so that the drop down list will reflect the new trip name
 
     const [listItemsHaveChangedSinceLastSave, setListItemsHaveChangedSinceLastSave] = useState(false); // This is set to true when the user adds, edits or deletes a list item and reset to false upon a successful save
@@ -248,7 +249,7 @@ export const Dashboard = () => {
         if (response.status === 200 || 304) {
             console.log("response status is 200 or 304");
             setTripDetailsHaveChangedSinceLastSave(false); // Reset to false once saved
-            setUpdatedTripDetailsSaved(true); // This will trigger the hook to re-fetch the all trips data and re-populate the drop down list with the updated trip name
+            setToggleRefreshAllTripsDropdown(!toggleRefreshAllTripsDropdown); // This will trigger the hook to re-fetch the all trips data and re-populate the drop down list with the updated trip name
         }
     }
 
@@ -346,8 +347,6 @@ export const Dashboard = () => {
                 <div className="dashboard-start-container">
                     <GreetUser />
                     <AllTripsDropdown
-                        updatedTripDetailsSaved={updatedTripDetailsSaved}
-                        setUpdatedTripDetailsSaved={setUpdatedTripDetailsSaved}
                         fetchLists={fetchLists}
                         setActiveTrip={setActiveTrip}
                         toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
@@ -376,7 +375,6 @@ export const Dashboard = () => {
                                 saveTripDetailsMessage={saveTripDetailsMessage}
                                 saveListsMessage={saveListsMessage}
                                 setTripDetailsHaveChangedSinceLastSave={setTripDetailsHaveChangedSinceLastSave}
-                                setUpdatedTripDetailsSaved={setUpdatedTripDetailsSaved}
                                 toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
                                 setToggleRefreshAllTripsDropdown={setToggleRefreshAllTripsDropdown}
                                  />
