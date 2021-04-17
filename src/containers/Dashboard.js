@@ -12,7 +12,7 @@ import configData from "../config.json";
 
 // Import components
 import { GreetUser } from "../components/Dashboard/GreetUser";
-import { LoadListsDropdown } from "../components/Dashboard/LoadListsDropdown";
+import { AllTripsDropdown } from "../components/Dashboard/AllTripsDropdown";
 import { NewTripForm } from "../components/Dashboard/NewTripForm";
 import { ActiveTripConsole } from "../components/Dashboard/ActiveTripConsole";
 import { Lists } from "../components/Lists/Lists";
@@ -31,11 +31,14 @@ export const Dashboard = () => {
     const [allDeletedItems, setAllDeletedItems] = useState([]); // This will sit empty until the user starts deleting items from their lists
 
     const [newTripClicked, setNewTripClicked] = useState(false); // When user clicks 'new trip', this will be set to 'true' engage the form for the user to input the settings to create a new trip
+
+    const [toggleRefreshAllTripDropdown, setToggleRefreshAllTripDropdown] = useState(false); // When a trip is deleted, this will get set to true and activate the hook to fetch all trips.
     const [newTripCreated, setNewTripCreated] = useState(false);
     const [newTripNeedsSaving, setNewTripNeedsSaving] = useState(false); // When a new trip is created and this will get set to true, and activate a hook to call saveListChanges to save the new lists, once the new lists and allListItems states have resolved
     const [tripDetailsHaveChangedSinceLastSave, setTripDetailsHaveChangedSinceLastSave] = useState(false); // This will be set to true if the user edits the trip name
     const [saveTripDetailsMessage, setSaveTripDetailsMessage] = useState('');
     const [updatedTripDetailsSaved, setUpdatedTripDetailsSaved] = useState(false); // When an updated trip name is saved, this will get set to true, and activate a hook to fetch all trips so that the drop down list will reflect the new trip name
+    const [tripDeleted, setTripDeleted] = useState(false); // When a trip is deleted, this will get set to true and activate the hook to fetch all trips.
 
     const [listItemsHaveChangedSinceLastSave, setListItemsHaveChangedSinceLastSave] = useState(false); // This is set to true when the user adds, edits or deletes a list item and reset to false upon a successful save
     const [saveListsMessage, setSaveListsMessage] = useState('');
@@ -343,14 +346,16 @@ export const Dashboard = () => {
             <main>
                 <div className="dashboard-start-container">
                     <GreetUser />
-                    <LoadListsDropdown
+                    <AllTripsDropdown
                         newTripCreated={newTripCreated}
                         setNewTripCreated={setNewTripCreated}
                         updatedTripDetailsSaved={updatedTripDetailsSaved}
                         setUpdatedTripDetailsSaved={setUpdatedTripDetailsSaved}
                         fetchLists={fetchLists}
                         setActiveTrip={setActiveTrip}
-
+                        tripDeleted={tripDeleted}
+                        setTripDeleted={setTripDeleted}
+                        toggleRefreshAllTripDropdown={toggleRefreshAllTripDropdown}
                     />
                     <NewTripForm
                         newTripClicked={newTripClicked}
@@ -376,6 +381,9 @@ export const Dashboard = () => {
                                 saveListsMessage={saveListsMessage}
                                 setTripDetailsHaveChangedSinceLastSave={setTripDetailsHaveChangedSinceLastSave}
                                 setUpdatedTripDetailsSaved={setUpdatedTripDetailsSaved}
+                                setTripDeleted={setTripDeleted}
+                                toggleRefreshAllTripDropdown={toggleRefreshAllTripDropdown}
+                                setToggleRefreshAllTripDropdown={setToggleRefreshAllTripDropdown}
                                  />
                             : null
                     }
