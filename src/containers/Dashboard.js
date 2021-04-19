@@ -24,7 +24,8 @@ export const Dashboard = () => {
     const { setUser } = useContext(UserContext);
     const { cookieExpiry, setCookieExpiry } = useContext(CookieExpiryContext);
 
-    const [activeTrip, setActiveTrip] = useState({ tripId: '', tripName: '', tripCategory: '', tripDuration: '' }); // If the post request to create a new trip is successful, the activeTrip variable will contain the details of the new trip provided in the response
+    const initialActiveTripState = { tripId: '', tripName: '', tripCategory: '', tripDuration: '' };
+    const [activeTrip, setActiveTrip] = useState(initialActiveTripState); // If the post request to create a new trip is successful, the activeTrip variable will contain the details of the new trip provided in the response
 
     const [lists, setLists] = useState([]); // This will sit empty until the data is fetched from the server
     const [allListItems, setAllListItems] = useState([]); // This will sit empty until the data is fetched from the server
@@ -32,21 +33,19 @@ export const Dashboard = () => {
 
     const [newTripClicked, setNewTripClicked] = useState(false); // When user clicks 'new trip', this will be set to 'true' engage the form for the user to input the settings to create a new trip
 
-    const [toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown] = useState(false); // When a trip is created or deleted, this will get toggled and activate the hook to re-fetch all trips and show the updated list of all trips in the dropdown.
+    const [toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown] = useState(false); // When a trip is created or deleted, or the trip name is updated and saved, this will get toggled and activate the hook to re-fetch all trips and show the updated list of all trips in the dropdown.
 
     const [newTripNeedsSaving, setNewTripNeedsSaving] = useState(false); // When a new trip is created and this will get set to true, and activate a hook to call saveListChanges to save the new lists, once the new lists and allListItems states have resolved
     const [tripDetailsHaveChangedSinceLastSave, setTripDetailsHaveChangedSinceLastSave] = useState(false); // This will be set to true if the user edits the trip name
     const [saveTripDetailsMessage, setSaveTripDetailsMessage] = useState('');
-
-    const [updatedTripDetailsSaved, setUpdatedTripDetailsSaved] = useState(false); // When an updated trip name is saved, this will get set to true, and activate a hook to fetch all trips so that the drop down list will reflect the new trip name
 
     const [listItemsHaveChangedSinceLastSave, setListItemsHaveChangedSinceLastSave] = useState(false); // This is set to true when the user adds, edits or deletes a list item and reset to false upon a successful save
     const [saveListsMessage, setSaveListsMessage] = useState('');
     
     const [isFetchProcessing, setIsFetchProcessing] = useState(false);
 
-    const [openModal, setOpenModal] = useState(false);
-    const [redirectOnLogout, setRedirectOnLogout] = useState(false);
+    const [openModal, setOpenModal] = useState(false); // This is to open and close the ConfirmCredentialsModal
+    const [redirectOnLogout, setRedirectOnLogout] = useState(false); 
 
     // PERSIST STATE OF COOKIE EXPIRY PAST REFRESH
     useEffect(() => {
@@ -194,14 +193,14 @@ export const Dashboard = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [listItemsHaveChangedSinceLastSave, tripDetailsHaveChangedSinceLastSave]);
 
-    // Reuseable block to set the lists and allListItems state, and initialise the allDeletedItems state
-    const configureLists = (listsConfig, allListsConfig) => {
+    // Reuseable block to set the lists and allListItems state for the current/active trip, and initialise the allDeletedItems state
+    const configureLists = (currentLists, currentAllLists) => {
         // Set the lists and allListItems to their initial values provided by our get request
-        setLists(listsConfig);
-        setAllListItems(allListsConfig);
+        setLists(currentLists);
+        setAllListItems(currentAllLists);
 
         // Set the initial value of our allDeletedItems variable to be an array of the same length as the number of lists we have. Each element in that array is itself an empty array.
-        const numOfLists = listsConfig.length;
+        const numOfLists = currentLists.length;
         let initialAllDeletedItems = [];
         for (let i = 0; i < numOfLists; i++) {
             initialAllDeletedItems.push([]);
@@ -210,6 +209,14 @@ export const Dashboard = () => {
 
         // This tells the lists component that it is ready to be re-rendered
         setIsFetchProcessing(false);
+    }
+
+    // Function to reset the activeTrip and lists etc. states to their values on initial render
+    const resetOnDelete = () => {
+        setActiveTrip({...initialActiveTripState});
+        setLists([]);
+        setAllListItems([]);
+        setAllDeletedItems([]);
     }
 
     const saveTripDetails = async () => {
@@ -377,6 +384,7 @@ export const Dashboard = () => {
                                 setTripDetailsHaveChangedSinceLastSave={setTripDetailsHaveChangedSinceLastSave}
                                 toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
                                 setToggleRefreshAllTripsDropdown={setToggleRefreshAllTripsDropdown}
+                                resetOnDelete={resetOnDelete}
                                  />
                             : null
                     }

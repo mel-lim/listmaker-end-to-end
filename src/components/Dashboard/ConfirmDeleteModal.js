@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Popup from 'reactjs-popup';
 
-export const ConfirmDeleteModal = ({ activeTrip, toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown }) => {
+export const ConfirmDeleteModal = ({ activeTrip, toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown, resetOnDelete }) => {
 
     const [deleteSuccessful, setDeleteSuccessful] = useState(false);
 
@@ -31,7 +31,8 @@ export const ConfirmDeleteModal = ({ activeTrip, toggleRefreshAllTripsDropdown, 
         if (response.status === 204) {
             console.log("response status is 204");
             setDeleteSuccessful(true);
-            setToggleRefreshAllTripsDropdown(!toggleRefreshAllTripsDropdown); // This will trigger the hook to re-fetch the all trips data and re-populate the drop down list with the updated trip name */
+            setToggleRefreshAllTripsDropdown(!toggleRefreshAllTripsDropdown); // This will trigger the hook to re-fetch the all trips data and re-populate the drop down list with the updated trip name
+            resetOnDelete(); // Call function to reset the activeTrip and lists etc. states to their initial render value (i.e. empty/clear) - this will remove the active trip console and lists from showing the just-deleted trip info
         }
     }
 

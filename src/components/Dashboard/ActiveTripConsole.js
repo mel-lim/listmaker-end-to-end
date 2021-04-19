@@ -3,7 +3,7 @@ import { SettledTripName } from "./SettledTripName";
 import { EditTripNameForm } from "./EditTripNameForm";
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 
-export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, saveListChanges, saveTripDetails, saveTripDetailsMessage, saveListsMessage, setTripDetailsHaveChangedSinceLastSave, toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown }) => {
+export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, saveListChanges, saveTripDetails, saveTripDetailsMessage, saveListsMessage, setTripDetailsHaveChangedSinceLastSave, toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown, resetOnDelete }) => {
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -41,7 +41,8 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
                 <ConfirmDeleteModal
                     activeTrip={activeTrip}
                     toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
-                    setToggleRefreshAllTripsDropdown={setToggleRefreshAllTripsDropdown} />
+                    setToggleRefreshAllTripsDropdown={setToggleRefreshAllTripsDropdown}
+                    resetOnDelete={resetOnDelete} />
 
                 {lists.length && allListItems.length ?
                     <input type="button" value="Save changes" onClick={handleClickSave} />
