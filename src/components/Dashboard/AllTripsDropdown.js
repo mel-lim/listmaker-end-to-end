@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export const AllTripsDropdown = ({ fetchLists, setActiveTrip, toggleRefreshAllTripsDropdown }) => {
+export const AllTripsDropdown = ({ fetchLists, activeTrip, setActiveTrip, toggleRefreshAllTripsDropdown }) => {
 
     const [allTrips, setAllTrips] = useState([]);
     const isMounted = true;
@@ -56,8 +56,8 @@ export const AllTripsDropdown = ({ fetchLists, setActiveTrip, toggleRefreshAllTr
 
         <div className="trip-dropdown">
             <label htmlFor="trip-select">Load your lists:</label>
-            <select name="trip" id="trip-select" onChange={handleChange}>
-                <option value="select-trip">Select trip</option>
+            <select name="trip" id="trip-select" onChange={handleChange} value={activeTrip.tripId ? activeTrip.tripId : "select-trip"}>
+                <option value="select-trip" selected="selected">Select trip</option>
                 {allTrips.map(trip => <option key={trip.id} value={trip.id}>{trip.name} / {trip.category} / {trip.duration}</option>)}
             </select>
         </div>

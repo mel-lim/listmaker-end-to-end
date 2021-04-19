@@ -355,6 +355,7 @@ export const Dashboard = () => {
                     <GreetUser />
                     <AllTripsDropdown
                         fetchLists={fetchLists}
+                        activeTrip={activeTrip}
                         setActiveTrip={setActiveTrip}
                         toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
                     />
