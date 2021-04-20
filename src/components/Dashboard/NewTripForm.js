@@ -85,10 +85,7 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
 
     return (
         <section className="new-trip-form">
-
-            <div>
-                <p>-- OR -- </p>
-
+            <p className="inline-text">Make new lists:</p>
                 {
                     !newTripClicked ?
 
@@ -96,9 +93,6 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
 
                         <input type="button" value='Cancel new trip' onClick={cancelTrip} />
                 }
-
-            </div>
-
             {
                 newTripClicked ?
 

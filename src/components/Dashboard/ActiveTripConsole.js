@@ -19,9 +19,10 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
 
     return (
         <div className="active-trip-console">
-            <div className="section-separator">*************</div>
+        <hr></hr>
             <div>
                 <div>
+                <p>Active trip console</p>
                     {!isEditing ?
                         <SettledTripName
                             activeTrip={activeTrip}
