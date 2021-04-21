@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { ConfirmDeleteListModal } from "./ConfirmDeleteListModal";
 import { SettledListTitle } from "./SettledListTitle";
 import { AddUndoRow } from "./AddUndoRow";
 import { ListItem } from "./ListItem/ListItem";
@@ -87,6 +88,8 @@ export const List = ({ list, lists, setLists, index, allListItems, setAllListIte
 
     return (
         <section className="list-container">
+        <ConfirmDeleteListModal />
+        <span class="clear"></span>
             {
                 !isEditingListTitle ?
                     <SettledListTitle
