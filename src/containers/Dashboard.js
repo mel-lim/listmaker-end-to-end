@@ -1,5 +1,5 @@
 // Import libraries
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Redirect } from "react-router-dom";
 import dayjs from "dayjs";
 import Cookies from "js-cookie";
@@ -23,6 +23,7 @@ export const Dashboard = () => {
 
     const { setUser } = useContext(UserContext);
     const { cookieExpiry, setCookieExpiry } = useContext(CookieExpiryContext);
+    const newListRef = useRef(null);
 
     const initialActiveTripState = { tripId: '', tripName: '', tripCategory: '', tripDuration: '' };
     const [activeTrip, setActiveTrip] = useState(initialActiveTripState); // If the post request to create a new trip is successful, the activeTrip variable will contain the details of the new trip provided in the response
@@ -41,11 +42,12 @@ export const Dashboard = () => {
 
     const [listItemsHaveChangedSinceLastSave, setListItemsHaveChangedSinceLastSave] = useState(false); // This is set to true when the user adds, edits or deletes a list item and reset to false upon a successful save
     const [saveListsMessage, setSaveListsMessage] = useState('');
-    
+    const [nextListIdNum, setNextListIdNum] = useState(0);
+
     const [isFetchProcessing, setIsFetchProcessing] = useState(false);
 
     const [openModal, setOpenModal] = useState(false); // This is to open and close the ConfirmCredentialsModal
-    const [redirectOnLogout, setRedirectOnLogout] = useState(false); 
+    const [redirectOnLogout, setRedirectOnLogout] = useState(false);
 
     // PERSIST STATE OF COOKIE EXPIRY PAST REFRESH
     useEffect(() => {
@@ -144,6 +146,19 @@ export const Dashboard = () => {
         localStorage.setItem("lists", JSON.stringify(lists));
     }, [lists]);
 
+    // Upon browser refresh, this will get the nextListIdNum that we stored in localstorage, so we can persist it
+    useEffect(() => {
+        const storedNextListIdNum = localStorage.getItem("nextListIdNum");
+        if (storedNextListIdNum) {
+            setNextListIdNum(JSON.parse(storedNextListIdNum));
+        }
+    }, []);
+
+    // Once the nextListIdNum variable is updated, we store in localstorage for safekeeping
+    useEffect(() => {
+        localStorage.setItem("nextListIdNum", JSON.stringify(nextListIdNum));
+    }, [nextListIdNum]);
+
     // Upon browser refresh, this will get the allListItems data that we stored in localstorage, so we can persist it
     useEffect(() => {
         const storedAllListItems = localStorage.getItem("allListItems");
@@ -213,7 +228,7 @@ export const Dashboard = () => {
 
     // Function to reset the activeTrip and lists etc. states to their values on initial render
     const resetOnDelete = () => {
-        setActiveTrip({...initialActiveTripState});
+        setActiveTrip({ ...initialActiveTripState });
         setLists([]);
         setAllListItems([]);
         setAllDeletedItems([]);
@@ -251,8 +266,8 @@ export const Dashboard = () => {
         });
 
         const responseBodyText = await response.json();
-        setSaveTripDetailsMessage(responseBodyText.message);   
-        
+        setSaveTripDetailsMessage(responseBodyText.message);
+
         if (response.status === 200 || 304) {
             console.log("response status is 200 or 304");
             setTripDetailsHaveChangedSinceLastSave(false); // Reset to false once saved
@@ -262,7 +277,7 @@ export const Dashboard = () => {
 
     // Post data to db to save the users changes
     const saveListChanges = async () => {
-        
+
         // If the lists have not changed since the last save, exit
         if (!newTripNeedsSaving && !listItemsHaveChangedSinceLastSave) {
             return;
@@ -346,68 +361,87 @@ export const Dashboard = () => {
         }
     }
 
-    return (
-        redirectOnLogout ? 
-        <Redirect to="/login" /> :
-        <div>
-            <main>
-                <div className="dashboard-start-container">
-                    <GreetUser />
-                    <AllTripsDropdown
-                        fetchLists={fetchLists}
-                        activeTrip={activeTrip}
-                        setActiveTrip={setActiveTrip}
-                        toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
-                    />
-                    <NewTripForm
-                        newTripClicked={newTripClicked}
-                        setNewTripClicked={setNewTripClicked}
-                        setIsFetchProcessing={setIsFetchProcessing}
-                        setActiveTrip={setActiveTrip}
-                        toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
-                        setToggleRefreshAllTripsDropdown={setToggleRefreshAllTripsDropdown}
-                        configureLists={configureLists}
-                        setNewTripNeedsSaving={setNewTripNeedsSaving}
-                    />
-                    {
-                        (activeTrip.tripId) ? // I removed the condition && !isFetchProcessing - if it stays in, everytime we save the lists we get this blinky, glitchy effect. I think it's uncessary - the only thing in active trip console that requires on the fetch request is the save attempt message, and it seems to work fine. Keep and eye on this though. There might have been an edge case error that I put the condition in to address originally. 
+    const generateTempListId = () => {
+        const tempListId = `tempList-${nextListIdNum}`;
+        setNextListIdNum(prev => prev + 1);
+        return tempListId;
+    }
 
-                            <ActiveTripConsole 
-                                setNewTripClicked={setNewTripClicked}
-                                activeTrip={activeTrip}
-                                setActiveTrip={setActiveTrip}
+    // ADD NEW LIST
+    const addNewList = () => {
+        const tempListId = generateTempListId();
+        setLists(prev => [...prev, {id: tempListId, title: "New list" }]);
+        setAllListItems(prev => [...prev, []]);
+        newListRef.current.scrollIntoView();
+    }
+
+    return (
+        redirectOnLogout ?
+            <Redirect to="/login" /> :
+            <div>
+                <main>
+                    <div className="dashboard-start-container">
+                        <GreetUser />
+                        <AllTripsDropdown
+                            fetchLists={fetchLists}
+                            activeTrip={activeTrip}
+                            setActiveTrip={setActiveTrip}
+                            toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
+                        />
+                        <NewTripForm
+                            newTripClicked={newTripClicked}
+                            setNewTripClicked={setNewTripClicked}
+                            setIsFetchProcessing={setIsFetchProcessing}
+                            setActiveTrip={setActiveTrip}
+                            toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
+                            setToggleRefreshAllTripsDropdown={setToggleRefreshAllTripsDropdown}
+                            configureLists={configureLists}
+                            setNewTripNeedsSaving={setNewTripNeedsSaving}
+                        />
+                        {
+                            (activeTrip.tripId) ? // I removed the condition && !isFetchProcessing - if it stays in, everytime we save the lists we get this blinky, glitchy effect. I think it's uncessary - the only thing in active trip console that requires on the fetch request is the save attempt message, and it seems to work fine. Keep and eye on this though. There might have been an edge case error that I put the condition in to address originally. 
+
+                                <ActiveTripConsole
+                                    setNewTripClicked={setNewTripClicked}
+                                    activeTrip={activeTrip}
+                                    setActiveTrip={setActiveTrip}
+                                    lists={lists}
+                                    allListItems={allListItems}
+                                    fetchLists={fetchLists}
+                                    saveListChanges={saveListChanges}
+                                    saveTripDetails={saveTripDetails}
+                                    saveTripDetailsMessage={saveTripDetailsMessage}
+                                    saveListsMessage={saveListsMessage}
+                                    setTripDetailsHaveChangedSinceLastSave={setTripDetailsHaveChangedSinceLastSave}
+                                    toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
+                                    setToggleRefreshAllTripsDropdown={setToggleRefreshAllTripsDropdown}
+                                    resetOnDelete={resetOnDelete}
+                                    addNewList={addNewList}
+                                />
+                                : null
+                        }
+                    </div>
+
+                    <ConfirmCredentialsModal openModal={openModal} setOpenModal={setOpenModal} />
+
+                    {
+                        lists.length && allListItems.length && !isFetchProcessing ?
+                            <Lists
                                 lists={lists}
+                                setLists={setLists}
                                 allListItems={allListItems}
-                                fetchLists={fetchLists}
-                                saveListChanges={saveListChanges}
-                                saveTripDetails={saveTripDetails}
-                                saveTripDetailsMessage={saveTripDetailsMessage}
-                                saveListsMessage={saveListsMessage}
-                                setTripDetailsHaveChangedSinceLastSave={setTripDetailsHaveChangedSinceLastSave}
-                                toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
-                                setToggleRefreshAllTripsDropdown={setToggleRefreshAllTripsDropdown}
-                                resetOnDelete={resetOnDelete}
-                                 />
+                                setAllListItems={setAllListItems}
+                                allDeletedItems={allDeletedItems}
+                                setAllDeletedItems={setAllDeletedItems}
+                                setListItemsHaveChangedSinceLastSave={setListItemsHaveChangedSinceLastSave} /> 
                             : null
                     }
-                </div>
 
-                <ConfirmCredentialsModal openModal={openModal} setOpenModal={setOpenModal} />
+                </main>
 
-                {lists.length && allListItems.length && !isFetchProcessing ?
-                    <Lists
-                        lists={lists}
-                        setLists={setLists}
-                        allListItems={allListItems}
-                        setAllListItems={setAllListItems}
-                        allDeletedItems={allDeletedItems}
-                        setAllDeletedItems={setAllDeletedItems}
-                        setListItemsHaveChangedSinceLastSave={setListItemsHaveChangedSinceLastSave} /> :
-                    null}
-
-            </main>
-
-            <Footer />
-        </div>
+                <span ref={newListRef}></span>
+                
+                <Footer />
+            </div>
     );
 }
