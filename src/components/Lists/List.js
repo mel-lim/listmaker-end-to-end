@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { SettledListTitle } from "./SettledListTitle";
 import { AddUndoRow } from "./AddUndoRow";
 import { ListItem } from "./ListItem/ListItem";
+import { EditListTitleForm } from "./EditListTitleForm";
 
-export const List = ({ listTitle, index, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems, setListItemsHaveChangedSinceLastSave }) => {
+export const List = ({ list, lists, setLists, index, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems, setListItemsHaveChangedSinceLastSave }) => {
+
+    const [isEditingListTitle, setIsEditingListTitle] = useState(false);
 
     const [nextIdNum, setNextIdNum] = useState(0);
     const [listItems, setListItems] = useState(allListItems[index]);
@@ -26,6 +30,10 @@ export const List = ({ listTitle, index, allListItems, setAllListItems, allDelet
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [deletedListItems]);
+
+    const toggleEditListTitle = () => {
+        setIsEditingListTitle(!isEditingListTitle);
+    }
 
     const generateTempItemId = () => {
         const itemId = `tempItem-${nextIdNum}`;
@@ -79,7 +87,18 @@ export const List = ({ listTitle, index, allListItems, setAllListItems, allDelet
 
     return (
         <section className="list-container">
-            <h3>{listTitle}</h3>
+            {
+                !isEditingListTitle ?
+                    <SettledListTitle
+                        listTitle={list.title}
+                        toggleEditListTitle={toggleEditListTitle} />
+                    : <EditListTitleForm
+                        list={list}
+                        lists={lists}
+                        setLists={setLists}
+                        index={index}
+                        toggleEditListTitle={toggleEditListTitle} />
+            }
             {
                 listItems ?
                     listItems.map(listItem =>

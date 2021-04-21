@@ -396,6 +396,7 @@ export const Dashboard = () => {
                 {lists.length && allListItems.length && !isFetchProcessing ?
                     <Lists
                         lists={lists}
+                        setLists={setLists}
                         allListItems={allListItems}
                         setAllListItems={setAllListItems}
                         allDeletedItems={allDeletedItems}

@@ -241,17 +241,17 @@ main {
   text-align: left;
 }
 
-.trip-name-container {
+.trip-name-container, .list-name-container {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.trip-name-container button {
+.trip-name-container button, .list-name-container button {
   margin-left: 14px;
 }
 
-.edit-trip-name-container input[type=text] {
+.edit-trip-name-container input[type=text], .edit-list-title-container input[type=text] {
   font-size: 1.1rem;
   margin: 0.85rem 0;
   width: 230px;
