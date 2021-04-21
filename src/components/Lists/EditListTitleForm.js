@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export const EditListTitleForm = ({ list, lists, setLists, index, toggleEditListTitle }) => {
+export const EditListTitleForm = ({ list, lists, setLists, index, toggleEditListTitle, setListItemsHaveChangedSinceLastSave }) => {
 
     const [editedListTitle, setEditedListTitle] = useState(list.title);
 
@@ -11,10 +11,10 @@ export const EditListTitleForm = ({ list, lists, setLists, index, toggleEditList
             const currentList = Object.assign({}, list);
             currentList.title = editedListTitle;
             const currentLists = [...lists];
-            currentLists.splice(index, 1, currentList);
+            currentLists[index] = currentList;
             setLists(currentLists);
+            setListItemsHaveChangedSinceLastSave(true);
         }
-
     }
 
     return (

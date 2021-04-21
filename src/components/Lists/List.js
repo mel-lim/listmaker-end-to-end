@@ -97,7 +97,8 @@ export const List = ({ list, lists, setLists, index, allListItems, setAllListIte
                         lists={lists}
                         setLists={setLists}
                         index={index}
-                        toggleEditListTitle={toggleEditListTitle} />
+                        toggleEditListTitle={toggleEditListTitle}
+                        setListItemsHaveChangedSinceLastSave={setListItemsHaveChangedSinceLastSave} />
             }
             {
                 listItems ?
