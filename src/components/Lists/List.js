@@ -15,7 +15,7 @@ export const List = ({ list, lists, setLists, index, allListItems, setAllListIte
 
     // Every time we edit our listItems state, we pass on the change to the allListItems variable and push that up to localstorage for safekeeping
     useEffect(() => {
-        const currentAllListItems = allListItems;
+        const currentAllListItems = [...allListItems];
         currentAllListItems.splice(index, 1, listItems);
         setAllListItems(currentAllListItems);
         localStorage.setItem("allListItems", JSON.stringify(allListItems));
@@ -24,7 +24,7 @@ export const List = ({ list, lists, setLists, index, allListItems, setAllListIte
 
     // Every time we edit our deletedItems state, we pass on the change to the allDeletedItems variable and push that up to localstorage for safekeeping
     useEffect(() => {
-        const currentAllDeletedItems = allDeletedItems;
+        const currentAllDeletedItems = [...allDeletedItems];
         currentAllDeletedItems.splice(index, 1, deletedListItems);
         setAllDeletedItems(currentAllDeletedItems);
         localStorage.setItem("allDeletedItems", JSON.stringify(allDeletedItems));
@@ -34,6 +34,16 @@ export const List = ({ list, lists, setLists, index, allListItems, setAllListIte
 
     const toggleEditListTitle = () => {
         setIsEditingListTitle(!isEditingListTitle);
+    }
+
+    const deleteList = () => {
+        const currentAllListItems = [...allListItems];
+        currentAllListItems.splice(index, 1);
+        setAllListItems(currentAllListItems);
+        const currentLists = [...lists];
+        currentLists.splice(index, 1);
+        setLists(currentLists);
+        setListItemsHaveChangedSinceLastSave(true);
     }
 
     const generateTempItemId = () => {
@@ -88,8 +98,8 @@ export const List = ({ list, lists, setLists, index, allListItems, setAllListIte
 
     return (
         <section className="list-container">
-        <ConfirmDeleteListModal />
-        <span class="clear"></span>
+        <ConfirmDeleteListModal deleteList={deleteList} />
+        <span className="clear"></span>
             {
                 !isEditingListTitle ?
                     <SettledListTitle
