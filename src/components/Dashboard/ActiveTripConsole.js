@@ -3,7 +3,7 @@ import { SettledTripName } from "./SettledTripName";
 import { EditTripNameForm } from "./EditTripNameForm";
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 
-export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, saveListChanges, saveTripDetails, saveTripDetailsMessage, saveListsMessage, setTripDetailsHaveChangedSinceLastSave, toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown, resetOnDelete }) => {
+export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, fetchLists, saveListChanges, saveTripDetails, saveTripDetailsMessage, saveListsMessage, setTripDetailsHaveChangedSinceLastSave, toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown, resetOnDelete }) => {
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -17,12 +17,17 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
         saveTripDetails(); // This calls the savetripdetails request to the server - the code can be found in Dashboard.js
     }
 
+    const handleClickRevert = event => {
+        event.preventDefault();
+        fetchLists(activeTrip.tripId);
+    }
+
     return (
         <div className="active-trip-console">
-        <hr></hr>
+            <hr></hr>
             <div>
                 <div>
-                <p>Active trip console</p>
+                    <p>Active trip console</p>
                     {!isEditing ?
                         <SettledTripName
                             activeTrip={activeTrip}
@@ -46,7 +51,10 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
                     resetOnDelete={resetOnDelete} />
 
                 {lists.length && allListItems.length ?
-                    <input type="button" value="Save changes" onClick={handleClickSave} />
+                    <div>
+                        <input type="button" value="Revert to last save" onClick={handleClickRevert} />
+                        <input type="button" value="Save changes" onClick={handleClickSave} />
+                    </div>
                     :
                     null}
 

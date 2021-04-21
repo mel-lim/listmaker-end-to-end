@@ -98,7 +98,7 @@ export const List = ({ list, lists, setLists, index, allListItems, setAllListIte
 
     return (
         <section className="list-container">
-        <ConfirmDeleteListModal deleteList={deleteList} />
+        <ConfirmDeleteListModal list={list} deleteList={deleteList} />
         <span className="clear"></span>
             {
                 !isEditingListTitle ?

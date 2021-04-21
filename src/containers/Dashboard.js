@@ -378,6 +378,7 @@ export const Dashboard = () => {
                                 setActiveTrip={setActiveTrip}
                                 lists={lists}
                                 allListItems={allListItems}
+                                fetchLists={fetchLists}
                                 saveListChanges={saveListChanges}
                                 saveTripDetails={saveTripDetails}
                                 saveTripDetailsMessage={saveTripDetailsMessage}
