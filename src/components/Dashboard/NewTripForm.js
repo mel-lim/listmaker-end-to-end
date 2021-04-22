@@ -109,8 +109,16 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
                             <div className="trip-question">
                                 <h5 className="lighter-weight">What sort of trip?</h5>
                                 <div className="radio-button-label-div">
-                                    <input type="radio" id="ski-touring-radio" name="ski-touring-radio" value="ski-tour" className="radio-buttons" onClick={event => setTripCategory(event.target.value)} />
+                                    <input type="radio" id="ski-touring-radio" name="ski-touring-radio" value="ski tour" className="radio-buttons" onClick={event => setTripCategory(event.target.value)} />
                                     <label htmlFor="ski-touring-radio">Ski tour/splitboarding</label>
+                                </div>
+                                <div className="radio-button-label-div">
+                                    <input type="radio" id="summer-mountaineering-radio" name="summer-mountaineering-radio" value="summer mountaineering" className="radio-buttons" onClick={event => setTripCategory(event.target.value)} />
+                                    <label htmlFor="summer-mountaineering-radio">Summer mountaineering</label>
+                                </div>
+                                <div className="radio-button-label-div">
+                                    <input type="radio" id="hiking-radio" name="hiking-radio" value="hiking" className="radio-buttons" onClick={event => setTripCategory(event.target.value)} />
+                                    <label htmlFor="hiking-radio">Hiking</label>
                                 </div>
                             </div>
 
