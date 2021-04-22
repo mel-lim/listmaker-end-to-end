@@ -283,7 +283,8 @@ export const Dashboard = () => {
             return;
         }
 
-        if (!lists) { // Not quite sure that this would ever happen in the current version of our app, but let's leave this for now.
+        if (!lists || !lists.length) { 
+            setSaveListsMessage('Unable to save: please add at least one list');
             return;
         }
 
