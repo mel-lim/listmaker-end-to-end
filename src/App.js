@@ -9,6 +9,7 @@ import { UserContext, CookieExpiryContext } from "./UserContext";
 
 import { Home } from "./containers/Home";
 import { Nav } from "./containers/Nav";
+import { HamburgerNav } from "./containers/HamburgerNav";
 import { Contact } from "./containers/Contact";
 
 import { SignUp } from "./containers/SignUp";
@@ -40,20 +41,19 @@ function App() {
   return (
     <Router>
 
-
-      <header className="website-name">
-        <Link to="/">
-          <h1>Collaberie</h1>
-        </Link>
-      </header>
-
-
-
-
       <UserContext.Provider value={userValue}>
+        <header className="website-name">
+          
+          <Link to="/">
+            <h1>kit collab.</h1>
+          </Link>
+
+          <HamburgerNav />
+
+        </header>
+
+
         <CookieExpiryContext.Provider value={cookieExpiryValue}>
-
-
           <Nav />
           <Switch>
             <Route path="/" exact component={Home} />

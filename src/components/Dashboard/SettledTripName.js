@@ -4,7 +4,7 @@ export const SettledTripName = ({ activeTrip, toggleEdit }) => {
 
     return (
         <div className="trip-name-container">
-            <h5>Trip name: {activeTrip.tripName}</h5>
+            <h4>Trip name: {activeTrip.tripName}</h4>
             <button className="edit-button ui-button" onClick={toggleEdit}></button>
         </div>
     );

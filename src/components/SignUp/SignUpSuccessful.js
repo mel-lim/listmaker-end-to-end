@@ -4,12 +4,7 @@ import { UserContext } from "../../UserContext";
 
 export const SignUpSuccessful = ({ registeredAppUser }) => {
 
-    const { user, setUser } = useContext(UserContext);
-
-    const handleClick = event => {
-        setUser(registeredAppUser);
-        //TO DO - RIGHT NOW THIS DOESNT REALLY LOG THE USER IN, IT JUST FAKES IT
-    }
+    const { user } = useContext(UserContext);
 
     return (
         <div className="user-credentials sign-up">
@@ -19,7 +14,12 @@ export const SignUpSuccessful = ({ registeredAppUser }) => {
                     <h3>You've successfully registered your details</h3>
                     <p>Username: {registeredAppUser.username}</p>
                     <p>Email: {registeredAppUser.email}</p>
-                    <input type="button" value="Log in" onClick={handleClick} />
+                    <Link to="/login">
+                        <input type="button"
+                            className="pillbox-button"
+                            value="Log in" />
+                    </Link>
+
                 </div> :
                 <div>
                     <h3>Welcome {user.username}!</h3>

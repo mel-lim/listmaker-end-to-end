@@ -98,8 +98,12 @@ export const List = ({ list, lists, setLists, index, allListItems, setAllListIte
 
     return (
         <section className="list-container">
-        <ConfirmDeleteListModal list={list} deleteList={deleteList} />
-        <span className="clear"></span>
+
+            <ConfirmDeleteListModal list={list}
+                deleteList={deleteList} />
+
+            <span className="clear"></span>
+
             {
                 !isEditingListTitle ?
                     <SettledListTitle
@@ -120,7 +124,9 @@ export const List = ({ list, lists, setLists, index, allListItems, setAllListIte
                     ) :
                     null
             }
-            <AddUndoRow addListItem={addListItem} undoDelete={undoDelete} />
+            <AddUndoRow addListItem={addListItem} 
+                undoDelete={undoDelete} />
+                
         </section>
     );
 }

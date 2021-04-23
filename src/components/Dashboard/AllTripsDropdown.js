@@ -56,15 +56,32 @@ export const AllTripsDropdown = ({ fetchLists, activeTrip, setActiveTrip, toggle
 
         <div className="trip-dropdown">
             <div>
-                <label htmlFor="trip-select">Load your lists from a saved trip:</label>
-                <select name="trip" id="trip-select" onChange={handleChange} value={activeTrip.tripId ? activeTrip.tripId : "select-trip"}>
-                    {allTrips.length ?
-                        <option value="select-trip">Select trip</option> 
-                        : <option value="no-saved-trips">No saved trips</option>
+
+                <label htmlFor="trip-select" 
+                    className="bolder">Load your lists from a saved trip:</label>
+
+                <select name="trip"
+                    id="trip-select"
+                    onChange={handleChange}
+                    value={activeTrip.tripId ? activeTrip.tripId : "select-trip"}>
+
+                    {
+                        allTrips.length ?
+
+                            <option value="select-trip">Select trip</option>
+
+                            : <option value="no-saved-trips">No saved trips</option>
                     }
-                    {allTrips.map(trip => <option key={trip.id} value={trip.id}>{trip.name} / {trip.category} / {trip.duration}</option>)}
+
+                    {
+                        allTrips.map(trip => 
+                            <option key={trip.id} value={trip.id}>{trip.name} / {trip.category} / {trip.duration}</option>)
+                    }
+
                 </select>
-                <p>-- OR -- </p>
+
+                <p>-- or --</p>
+                
             </div>
         </div>
     );

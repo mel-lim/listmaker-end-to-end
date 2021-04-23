@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from '../../UserContext';
 
 import configData from "../../config.json";
 
 export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration }) => {
+    const { setUser } = useContext(UserContext);
+
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -21,7 +23,7 @@ export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration
 
     // Validate that the password and confirm password fields match
     useEffect(() => {
-        if (password.length === 0 && confirmPassword.length === 0 ) {
+        if (password.length === 0 && confirmPassword.length === 0) {
             return;
         }
         password === confirmPassword ? setPasswordMatchMessage('Passwords match') : setPasswordMatchMessage('Passwords do not match');
@@ -60,6 +62,9 @@ export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration
         event.preventDefault();
         setShow(!show);
     }
+    const tryAsGuest = () => {
+        setUser('guest');
+    }
 
     return (
         <div className="user-credentials sign-up">
@@ -69,43 +74,82 @@ export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration
 
             <form className="user-credentials-form" onSubmit={handleSubmit}>
                 <div className="input-label-container">
+
                     <label htmlFor="username-input" >Username</label>
-                    <input type="text" id="username-input" name="username" onChange={event => setUsername(event.target.value)} value={username} required />
+
+                    <input type="text"
+                        id="username-input"
+                        name="username"
+                        onChange={event => setUsername(event.target.value)}
+                        value={username}
+                        required />
+
                     <p className="validation-message">{usernameValidationMessage}</p>
                 </div>
 
                 <div className="input-label-container">
+
                     <label htmlFor="email-input">Email</label>
-                    <input type="email" id="email-input" name="email" onChange={event => setEmail(event.target.value)} value={email} required />
+
+                    <input type="email"
+                        id="email-input"
+                        name="email"
+                        onChange={event => setEmail(event.target.value)}
+                        value={email}
+                        required />
                 </div>
 
                 <div className="input-label-container">
+
                     <label htmlFor="password-input">Password (minimum 8 characters)</label>
-                    <input type={show ? "text" : "password"} id="password-input" name="password" minLength="8" autoComplete="new-password" onChange={event => setPassword(event.target.value)} value={password} required />
-                    <button onClick={toggleShowPassword} >{show ? "Hide" : "Show"} </button>
+
+                    <input type={show ? "text" : "password"}
+                        id="password-input"
+                        name="password"
+                        minLength="8"
+                        autoComplete="new-password"
+                        onChange={event => setPassword(event.target.value)}
+                        value={password}
+                        required />
+
+                    <button type="button"
+                        className={show ? "visible password-button" : "not-visible password-button"}
+                        onClick={toggleShowPassword}></button>
                 </div>
 
                 <div className="input-label-container">
+
                     <label htmlFor="confirm-password-input">Confirm Password</label>
-                    <input type="password" id="confirm-password-input" name="password" autoComplete="current-password" onChange={event => {
-        setConfirmPassword(event.target.value)}} value={confirmPassword} required />
+
+                    <input type="password"
+                        id="confirm-password-input"
+                        name="password"
+                        autoComplete="current-password"
+                        onChange={event => {
+                            setConfirmPassword(event.target.value)
+                        }}
+                        value={confirmPassword}
+                        required />
+
                     <p className="validation-message">{passwordMatchMessage}</p>
                 </div>
 
                 <div>
-                    <input type="submit" value='Sign up' />
-                </div>
-
-                <hr></hr><p className="button-separator">or</p><hr></hr>
-
-                <div>
-                    <Link to="/">
-                        <input type="button" value='Try as guest' />
-                        {/* TO DO - DOESN'T REALLY DO ANYTHING RIGHT NOW - HAVE A THINK ABOUT HOW THE USER CAN REALLY TRY AS A GUEST */}
-                    </Link>
+                    <input type="submit"
+                        className="pillbox-button"
+                        value='Sign up' />
                 </div>
 
             </form>
+
+            <hr></hr><p className="button-separator">or</p><hr></hr>
+            <div>
+                <input type="button"
+                    className="pillbox-button"
+                    value='Try as guest'
+                    onClick={tryAsGuest} />
+            </div>
+
         </div>
     );
 }

@@ -1,7 +1,5 @@
 import React from "react";
 
-//import { Switch, Route, Redirect, NavLink } from "react-router-dom";
-
 export const Footer = () => {
   return (
       <footer>
@@ -12,3 +10,4 @@ export const Footer = () => {
       </footer>
   );
 }
+

@@ -24,23 +24,28 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
 
     return (
         <div className="active-trip-console">
+
             <hr></hr>
+
             <div>
                 <div>
-                    <p>Active trip console</p>
-                    {!isEditing ?
-                        <SettledTripName
-                            activeTrip={activeTrip}
-                            toggleEdit={toggleEdit} />
-                        : <EditTripNameForm
-                            activeTrip={activeTrip}
-                            setActiveTrip={setActiveTrip}
-                            toggleEdit={toggleEdit}
-                            setTripDetailsHaveChangedSinceLastSave={setTripDetailsHaveChangedSinceLastSave} />
+                    <p className="bolder">Active trip console</p>
+                    {
+                        !isEditing ?
+                            <SettledTripName
+                                activeTrip={activeTrip}
+                                toggleEdit={toggleEdit} />
+                            : <EditTripNameForm
+                                activeTrip={activeTrip}
+                                setActiveTrip={setActiveTrip}
+                                toggleEdit={toggleEdit}
+                                setTripDetailsHaveChangedSinceLastSave={setTripDetailsHaveChangedSinceLastSave} />
                     }
                 </div>
-                <h6 className="lighter-weight">Trip category: {activeTrip.tripCategory}</h6>
-                <h6 className="lighter-weight">Trip duration: {activeTrip.tripDuration}</h6>
+
+                <h5 className="lighter-weight">Trip category: {activeTrip.tripCategory}</h5>
+
+                <h5 className="lighter-weight">Trip duration: {activeTrip.tripDuration}</h5>
             </div>
 
             <div className="save-button-container">
@@ -49,12 +54,21 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
                     toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
                     setToggleRefreshAllTripsDropdown={setToggleRefreshAllTripsDropdown}
                     resetOnDelete={resetOnDelete} />
-                <input type="button" value="Add new list" onClick={addNewList} />
+                <input type="button"
+                    className="pillbox-button"
+                    value="New list" onClick={addNewList} />
 
                 {lists.length && allListItems.length ?
                     <div>
-                        <input type="button" value="Revert to last save" onClick={handleClickRevert} />
-                        <input type="button" value="Save changes" onClick={handleClickSave} />
+                        <input type="button"
+                            className="pillbox-button"
+                            value="Revert"
+                            onClick={handleClickRevert} />
+
+                        <input type="button"
+                            className="pillbox-button"
+                            value="Save"
+                            onClick={handleClickSave} />
                     </div>
                     :
                     null}

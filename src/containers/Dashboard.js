@@ -384,7 +384,7 @@ export const Dashboard = () => {
             <Redirect to="/login" /> :
             <div>
                 <main>
-                    <div className="dashboard-start-container">
+                    <div className="dashboard-console">
                         <GreetUser />
                         <AllTripsDropdown
                             fetchLists={fetchLists}

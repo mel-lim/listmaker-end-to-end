@@ -3,54 +3,53 @@ import { Link } from "react-router-dom";
 import { UserContext } from "../UserContext";
 
 export const Nav = () => {
-    const {user} = useContext(UserContext);
+    const { user } = useContext(UserContext);
 
     return (
         <nav id="sticky-nav">
             <ul>
 
                 <Link to="/dashboard">
-                    <li>Dashboard</li>
+                    <li>dashboard</li>
                 </Link>
 
-                <li>&middot;</li>
+                <li className="middot" >&middot;</li>
 
-                {!user ?
-                    <div>
-                        <Link to="/signup">
-                            <li>Sign up</li>
-                        </Link>
-                    </div>
-                    :
-                    <div>
-                        <Link to="/myaccount">
-                            <li>My account</li>
-                        </Link>
-                    </div>
+                {
+                    !user ?
+                        <div>
+                            <Link to="/signup">
+                                <li>sign up</li>
+                            </Link>
+                        </div>
+                        :
+                        <div>
+                            <Link to="/myaccount">
+                                <li>my account</li>
+                            </Link>
+                        </div>
                 }
 
-                <li id="one-line-middot">&middot;</li>
+                <li className="middot" id="one-line-middot">&middot;</li>
 
-                {/*div id="nav-item-pair">*/}
-
-                    {!user ?
+                {
+                    !user ?
                         <div>
                             <Link to="/login">
-                                <li>Log in</li>
+                                <li>log in</li>
                             </Link>
                         </div> :
                         <div>
                             <Link to="/logout">
-                                <li>Log out</li>
+                                <li>log out</li>
                             </Link>
                         </div>
-                    
                 }
 
-                    <li>&middot;</li>
-                    <Link to="/contact">
-                        <li>Contact</li>
-                    </Link>
+                <li className="middot">&middot;</li>
+                <Link to="/contact">
+                    <li>contact</li>
+                </Link>
 
             </ul>
         </nav>

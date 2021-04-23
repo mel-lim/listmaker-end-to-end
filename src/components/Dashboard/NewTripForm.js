@@ -84,62 +84,118 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
     }
 
     return (
-        <section className="new-trip-form">
-            <p className="inline-text">Make new lists:</p>
-                {
-                    !newTripClicked ?
-
-                        <input type="button" value='Create new trip' onClick={() => setNewTripClicked(true)} /> :
-
-                        <input type="button" value='Cancel new trip' onClick={cancelTrip} />
-                }
+        <div className="new-trip-form">
             {
-                newTripClicked ?
+                !newTripClicked ?
+                <div>
+                <p className="inline-text bolder">Make new lists:</p>
+                    <input type="button"
+                        className="pillbox-button"
+                        value='New trip'
+                        onClick={() => setNewTripClicked(true)} />
 
+                </div>
+                
+                    :
                     <div>
-                        <h5 className="lighter-weight">Answer a couple of questions to populate your lists with some suggested items.</h5>
+                    <p className="bolder">Make new lists:</p>
+
+                        <p>Answer a couple of questions to populate your lists with some suggested items.</p>
 
                         <form onSubmit={handleSubmit}>
 
                             <div className="trip-question">
-                                <h5>Trip name</h5>
-                                <input type="text" id="trip-name-input" name="trip-name" value={tripName} onChange={event => setTripName(event.target.value)} placeholder="e.g. Rainbow Mountain" required />
+
+                                <label htmlFor="trip-name">Trip name</label>
+
+                                <input type="text"
+                                    id="trip-name-input"
+                                    name="trip-name"
+                                    value={tripName}
+                                    onChange={event => setTripName(event.target.value)}
+                                    placeholder="e.g. Rainbow Mountain"
+                                    required />
+
                             </div>
 
                             <div className="trip-question">
-                                <h5 className="lighter-weight">What sort of trip?</h5>
+
+                                <p className="bolder">What sort of trip?</p>
+
                                 <div className="radio-button-label-div">
-                                    <input type="radio" id="ski-touring-radio" name="ski-touring-radio" value="ski tour" className="radio-buttons" onClick={event => setTripCategory(event.target.value)} />
+                                    <input type="radio"
+                                        id="ski-touring-radio"
+                                        name="trip-category-radio"
+                                        value="ski tour"
+                                        className="radio-buttons"
+                                        onClick={event => setTripCategory(event.target.value)} />
+
                                     <label htmlFor="ski-touring-radio">Ski tour/splitboarding</label>
+
                                 </div>
+
                                 <div className="radio-button-label-div">
-                                    <input type="radio" id="summer-mountaineering-radio" name="summer-mountaineering-radio" value="summer mountaineering" className="radio-buttons" onClick={event => setTripCategory(event.target.value)} />
+                                    <input type="radio"
+                                        id="summer-mountaineering-radio"
+                                        name="trip-category-radio"
+                                        value="summer mountaineering"
+                                        className="radio-buttons"
+                                        onClick={event => setTripCategory(event.target.value)} />
+
                                     <label htmlFor="summer-mountaineering-radio">Summer mountaineering</label>
                                 </div>
+
                                 <div className="radio-button-label-div">
-                                    <input type="radio" id="hiking-radio" name="hiking-radio" value="hiking" className="radio-buttons" onClick={event => setTripCategory(event.target.value)} />
+                                    <input type="radio"
+                                        id="hiking-radio"
+                                        name="trip-category-radio"
+                                        value="hiking"
+                                        className="radio-buttons"
+                                        onClick={event => setTripCategory(event.target.value)} />
+
                                     <label htmlFor="hiking-radio">Hiking</label>
                                 </div>
                             </div>
 
 
                             <div className="trip-question">
-                                <h5 className="lighter-weight">Day trip or overnight trip?</h5>
+                                <p className="bolder">Day trip or overnight trip?</p>
+
                                 <div className="radio-button-label-div">
-                                    <input type="radio" id="day-trip-radio" name="day-or-overnight-radio" value="day" className="radio-buttons" onClick={event => setTripDuration(event.target.value)} />
+                                    <input type="radio"
+                                        id="day-trip-radio"
+                                        name="day-or-overnight-radio"
+                                        value="day"
+                                        className="radio-buttons"
+                                        onClick={event => setTripDuration(event.target.value)} />
+
                                     <label htmlFor="day-trip-radio">Day trip</label>
                                 </div>
+
                                 <div className="radio-button-label-div">
-                                    <input type="radio" id="overnight-trip-radio" name="day-or-overnight-radio" value="overnight"
-                                        className="radio-buttons" onClick={event => setTripDuration(event.target.value)} />
+                                    <input type="radio"
+                                        id="overnight-trip-radio"
+                                        name="day-or-overnight-radio"
+                                        value="overnight"
+                                        className="radio-buttons"
+                                        onClick={event => setTripDuration(event.target.value)} />
+
                                     <label htmlFor="overnight-trip-radio">Overnight trip</label>
                                 </div>
+
                             </div>
 
                             <div className="trip-question">
-                                <h5 className="lighter-weight">Generate lists with suggested list items?</h5>
+                                <p className="bolder">Generate lists with suggested list items?</p>
+
                                 <div className="radio-button-label-div">
-                                    <input type="radio" id="request-template-radio-true" name="request-template" value="yes" className="radio-buttons" onClick={event => setRequestTemplate(event.target.value)} />
+                                    <input type="radio"
+                                        id="request-template-radio-true"
+                                        name="request-template"
+                                        value="yes"
+                                        className="radio-buttons"
+                                        onClick={event => setRequestTemplate(event.target.value)} />
+
                                     <label htmlFor="request-template-radio-true">Yes</label>
                                 </div>
                                 <div className="radio-button-label-div">
@@ -149,14 +205,17 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
                                 </div>
                             </div>
 
-                            <input type="submit" value='Create trip' />
+                            <input type="submit"
+                                className="pillbox-button" value='Create trip' />
+                                <input type="button"
+                            className="pillbox-button"
+                            value='Cancel'
+                            onClick={cancelTrip} />
                             <p>{submissionErrorMessage}</p>
                         </form>
                     </div>
-
-                    : null
             }
-        </section>
+        </div>
     );
 }
 

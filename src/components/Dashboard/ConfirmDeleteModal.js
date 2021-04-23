@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Popup from 'reactjs-popup';
 
 export const ConfirmDeleteModal = ({ activeTrip, toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown, resetOnDelete }) => {
@@ -34,7 +34,7 @@ export const ConfirmDeleteModal = ({ activeTrip, toggleRefreshAllTripsDropdown, 
     }
 
     return (
-        <Popup trigger={<input type="button" value="Delete trip" />} modal nested>
+        <Popup trigger={<input type="button" className="pillbox-button" value="Delete trip" />} modal nested>
             {
                 close => (
                     <div className="confirm-delete-modal">

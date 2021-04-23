@@ -8,7 +8,6 @@ export const GreetUser = () => {
     return (
         <article className="dashboard-greeting">
             <h3>Hi {user}!</h3>
-            <h5 className="lighter-weight">Every successful adventure starts with a few good lists.</h5> 
         </article>
         
     );
