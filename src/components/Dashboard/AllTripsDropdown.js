@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export const AllTripsDropdown = ({ fetchLists, activeTrip, setActiveTrip, toggleRefreshAllTripsDropdown }) => {
+export const AllTripsDropdown = ({ fetchLists, activeTrip, setActiveTrip, toggleRefreshAllTripsDropdown, setOpenModal }) => {
 
     const [allTrips, setAllTrips] = useState([]);
     const isMounted = true;
@@ -26,6 +26,7 @@ export const AllTripsDropdown = ({ fetchLists, activeTrip, setActiveTrip, toggle
         });
 
         const responseBodyText = await response.json();
+        console.log(response.status);
 
         if (response.status === 200 || response.status === 304) {
             console.log(responseBodyText.trips);
@@ -36,7 +37,6 @@ export const AllTripsDropdown = ({ fetchLists, activeTrip, setActiveTrip, toggle
     }
 
     const handleChange = event => {
-        console.log(event.target.value);
         if (event.target.value === "select-trip") {
             return;
         } else {
@@ -64,12 +64,9 @@ export const AllTripsDropdown = ({ fetchLists, activeTrip, setActiveTrip, toggle
                     }
                     {allTrips.map(trip => <option key={trip.id} value={trip.id}>{trip.name} / {trip.category} / {trip.duration}</option>)}
                 </select>
-
                 <p>-- OR -- </p>
             </div>
         </div>
-
-
     );
 }
 

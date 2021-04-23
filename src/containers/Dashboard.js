@@ -357,6 +357,9 @@ export const Dashboard = () => {
             // Configure the list and allListItems states
             configureLists(responseBodyText.lists, responseBodyText.allListItems);
 
+        } else if (response.status === 401) {
+            setOpenModal(true);
+            console.log(responseBodyText.message);
         } else {
             console.log(responseBodyText.message);
         }
@@ -388,6 +391,7 @@ export const Dashboard = () => {
                             activeTrip={activeTrip}
                             setActiveTrip={setActiveTrip}
                             toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
+                            setOpenModal={setOpenModal}
                         />
                         <NewTripForm
                             newTripClicked={newTripClicked}

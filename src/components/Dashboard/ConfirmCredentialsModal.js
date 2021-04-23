@@ -18,7 +18,7 @@ export const ConfirmCredentialsModal = ({ openModal, setOpenModal }) => {
 
                         <button className="close" onClick={closeModal}>&times;</button>
 
-                        <div className="header">Your token is about to expire. Please confirm your login details to keep using the app or you will automatically be logged out.</div>
+                        <div className="header">Your token has expired. Please confirm your login details to keep using the app or you will automatically be logged out.</div>
 
                         <div className="content">
                             <ValidateCredentials context={context} setOpenModal={setOpenModal} />
