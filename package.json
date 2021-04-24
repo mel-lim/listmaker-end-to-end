@@ -1,5 +1,5 @@
 {
-  "name": "listmaker-end-to-end.nosync",
+  "name": "persistent-listmaker-front-end.nosync",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -40,5 +40,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:4000"
+  "proxy": "https://kitcollabapi.herokuapp.com"
 }
