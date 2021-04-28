@@ -1,0 +1,13 @@
+[[redirects]]
+  from = "/appusers/*"
+  to = "https://enigmatic-earth-70101.herokuapp.com/appusers/:splat"
+  status = 200
+  force = true
+  headers = {X-From = "Netlify"}
+
+[[redirects]]
+  from = "/trips/*"
+  to = "https://enigmatic-earth-70101.herokuapp.com/trips/:splat"
+  status = 200
+  force = true
+  headers = {X-From = "Netlify"}
