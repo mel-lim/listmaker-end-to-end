@@ -12,7 +12,7 @@ export const LogOut = () => {
     const response = await fetch('/api/appusers/logout', {
       method: 'GET',
       mode: 'cors',
-      cache: 'no-cache',
+      cache: 'no-store', // See if this will make logout work when in production
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
