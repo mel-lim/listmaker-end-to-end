@@ -12,8 +12,7 @@ export const LogOut = () => {
     const response = await fetch('/api/appusers/logout', {
       method: 'GET',
       mode: 'cors',
-      cache: 'default',
-      credentials: 'include',
+      cache: 'no-cache',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
