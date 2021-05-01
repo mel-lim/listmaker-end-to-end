@@ -12,7 +12,8 @@ export const LogOut = () => {
     const response = await fetch('/api/appusers/logout', {
       method: 'GET',
       mode: 'cors',
-      cache: 'no-store', // See if this will make logout work when in production
+      cache: 'no-store', // See if this will make logout work when in production 
+      // YES THIS WORKS!!!!!!!!!!! Note this solved an issue in both Firefox and Chrome where the cache was not letting my backend clear my cookies on logout for some reason. This was only in production (Heroku/Netlify) and not in dev (localhost)
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
