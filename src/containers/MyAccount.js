@@ -6,7 +6,7 @@ export const MyAccount = () => {
 
     useEffect(() => {
         getAccountDetails();
-    })
+    }, []);
 
     const getAccountDetails = async () => {
 
@@ -15,7 +15,8 @@ export const MyAccount = () => {
             mode: 'cors',
             cache: 'default',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             redirect: 'follow',
             referrerPolicy: 'no-referrer'
