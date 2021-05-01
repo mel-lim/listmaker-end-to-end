@@ -29,8 +29,8 @@ export const SignUp = () => {
         });
         const responseBodyText = await response.json();
         if (response.status === 201) {
-            setRegisteredAppUser(responseBodyText.appUser[0]);
-            console.log(responseBodyText.appUser[0]);
+            setRegisteredAppUser(responseBodyText.appUser);
+            console.log(responseBodyText.appUser);
             setIsSuccessfulRegistration(true);
             setIsFailedRegistration(false);
             setAttemptedAppUser(null);
