@@ -142,13 +142,13 @@ export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration
 
             </form>
 
-            <hr></hr><p className="button-separator">or</p><hr></hr>
+            {/* <hr></hr><p className="button-separator">or</p><hr></hr>
             <div>
                 <input type="button"
                     className="pillbox-button"
                     value='Try as guest'
                     onClick={tryAsGuest} />
-            </div>
+            </div> */}
 
         </div>
     );
