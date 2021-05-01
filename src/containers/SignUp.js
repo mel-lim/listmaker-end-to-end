@@ -12,7 +12,7 @@ export const SignUp = () => {
     
 
     const postNewUser = async (username, email, password) => {
-        const response = await fetch('/appusers/signup', {
+        const response = await fetch('/api/appusers/signup', {
             method: 'POST',
             mode: 'cors',
             cache: 'default',

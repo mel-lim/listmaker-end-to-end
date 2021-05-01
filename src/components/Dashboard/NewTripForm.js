@@ -30,7 +30,7 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
 
         const requestBodyContent = { tripName, tripCategory, tripDuration, requestTemplate };
 
-        const response = await fetch('/trips/newtrip', {
+        const response = await fetch('/api/trips/newtrip', {
             method: 'POST',
             mode: 'cors',
             cache: 'default',

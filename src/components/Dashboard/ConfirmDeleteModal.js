@@ -14,7 +14,7 @@ export const ConfirmDeleteModal = ({ activeTrip, toggleRefreshAllTripsDropdown, 
 
         console.log("delete request starting");
 
-        const response = await fetch(`/trips/${tripId}/deletetrip`, {
+        const response = await fetch(`/api/trips/${tripId}/deletetrip`, {
             method: 'DELETE',
             mode: 'cors',
             cache: 'default',

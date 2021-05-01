@@ -54,7 +54,7 @@ export const ValidateCredentials = ({ context, setOpenModal }) => {
         // Add the password to the body content
         requestBodyContent.password = password;
 
-        const response = await fetch('/appusers/login', {
+        const response = await fetch('/api/appusers/login', {
             method: 'POST',
             mode: 'cors',
             cache: 'default',

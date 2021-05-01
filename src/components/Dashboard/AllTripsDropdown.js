@@ -14,7 +14,7 @@ export const AllTripsDropdown = ({ fetchLists, activeTrip, setActiveTrip, toggle
 
     // FETCH ALL TRIPS FOR THIS USER
     const fetchTrips = async () => {
-        const response = await fetch(`/trips/alltrips`, {
+        const response = await fetch(`/api/trips/alltrips`, {
             method: 'GET',
             mode: 'cors',
             cache: 'default',

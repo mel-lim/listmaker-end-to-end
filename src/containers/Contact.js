@@ -17,7 +17,7 @@ export const Contact = () => {
             message: message.value
         }
 
-        const response = await fetch('/contact', {
+        const response = await fetch('/api/contact', {
             method: 'POST',
             mode: 'cors',
             cache: 'default',

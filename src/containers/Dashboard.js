@@ -252,7 +252,7 @@ export const Dashboard = () => {
         const tripId = activeTrip.tripId;
         const requestBodyContent = { tripName };
 
-        const response = await fetch(`/trips/${tripId}/savetripdetails`, {
+        const response = await fetch(`/api/trips/${tripId}/savetripdetails`, {
             method: 'PUT',
             mode: 'cors',
             cache: 'default',
@@ -306,7 +306,7 @@ export const Dashboard = () => {
         const tripId = activeTrip.tripId;
         const requestBodyContent = { lists, allListItems };
 
-        const response = await fetch(`/trips/${tripId}/lists/savelists`, {
+        const response = await fetch(`/api/trips/${tripId}/lists/savelists`, {
             method: 'POST',
             mode: 'cors',
             cache: 'default',
@@ -339,7 +339,7 @@ export const Dashboard = () => {
         // While this is true, the renderer will render "Loading...". We will set it back to false at the end of the request to re-render the updated lists as fetched from the db.
         setIsFetchProcessing(true);
 
-        const response = await fetch(`/trips/${tripId}/lists/fetchlists`, {
+        const response = await fetch(`/api/trips/${tripId}/lists/fetchlists`, {
             method: 'GET',
             mode: 'cors',
             cache: 'default',

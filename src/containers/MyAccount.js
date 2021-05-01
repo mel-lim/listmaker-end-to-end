@@ -10,7 +10,7 @@ export const MyAccount = () => {
 
     const getAccountDetails = async () => {
 
-        const response = await fetch('/appusers/accountdetails', {
+        const response = await fetch('/api/appusers/accountdetails', {
             method: 'GET',
             mode: 'cors',
             cache: 'default',

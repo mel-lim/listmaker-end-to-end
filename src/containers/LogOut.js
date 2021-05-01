@@ -9,7 +9,7 @@ export const LogOut = () => {
   const logOut = async () => {
     // Delete the cookies
     // Note, the cookie containing the JWT can only be deleted server-side because it is a http only cookie
-    const response = await fetch('/appusers/logout', {
+    const response = await fetch('/api/appusers/logout', {
       method: 'GET',
       mode: 'cors',
       cache: 'default',
