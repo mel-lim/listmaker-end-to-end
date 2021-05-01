@@ -35,7 +35,7 @@ export const Contact = () => {
 
     return (
         <div id="form-container">
-            <h3>Send a note</h3>
+            <h3>Send us a message</h3>
             <form id="contact-form" onSubmit={handleSubmit}>
 
                 <div className="form-row">
@@ -52,7 +52,7 @@ export const Contact = () => {
                 </div>
 
                 <div className="form-row" id="submit-row">
-                    <input type="submit" value="Send message" />
+                    <input type="submit" className="pillbox-button" value="Send" />
                 </div>
 
             </form>

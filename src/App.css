@@ -575,7 +575,7 @@ input.user-input-text {
   justify-content: flex-end;
 }
 
-#contact-form input[type=submit] {
+/* #contact-form input[type=submit] {
   cursor: pointer;
   color: hsl(0, 0%, 30%);
   padding: 5px 20px;
@@ -583,7 +583,7 @@ input.user-input-text {
   border-radius: 20px;
   background-color: #f9f9f9;
   font-weight: bolder;
-}
+} */
 
 /* Footer */
 
