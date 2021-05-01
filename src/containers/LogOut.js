@@ -13,6 +13,7 @@ export const LogOut = () => {
       method: 'GET',
       mode: 'cors',
       cache: 'default',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
