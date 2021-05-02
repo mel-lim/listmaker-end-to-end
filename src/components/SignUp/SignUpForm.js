@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
-import { UserContext } from '../../UserContext';
+import React, { useState, useEffect } from "react";
+/* import { UserContext } from '../../UserContext'; */
 
 import configData from "../../config.json";
 
 export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration }) => {
-    const { setUser } = useContext(UserContext);
+    /* const { setUser } = useContext(UserContext); */
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -62,9 +62,9 @@ export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration
         event.preventDefault();
         setShow(!show);
     }
-    const tryAsGuest = () => {
+    /* const tryAsGuest = () => {
         setUser('guest');
-    }
+    } */
 
     return (
         <div className="user-credentials sign-up">
