@@ -3,14 +3,13 @@ import { UserContext } from "../UserContext";
 import { logoutApi } from "../api";
 
 
-export const LogOut = () => {
+export const Logout = () => {
 
   const { setUser } = useContext(UserContext);
 
-  const logOut = async () => {
+  const logout = async () => {
     // Delete the cookies
     // Note, the cookie containing the JWT can only be deleted server-side because it is a http only cookie
-    
     const { response, responseBodyText } = await logoutApi();
     console.log(responseBodyText);
 
@@ -24,7 +23,7 @@ export const LogOut = () => {
 
   const handleClick = event => {
     event.preventDefault();
-    logOut();
+    logout();
   }
 
   return (

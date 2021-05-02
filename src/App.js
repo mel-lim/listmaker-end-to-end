@@ -17,7 +17,7 @@ import { Login } from "./containers/Login";
 
 import { Dashboard } from "./containers/Dashboard";
 import { MyAccount } from "./containers/MyAccount";
-import { LogOut } from "./containers/LogOut";
+import { Logout } from "./containers/Logout";
 
 import { ProtectedLoggedIn } from "./routes/ProtectedLoggedIn";
 import { ProtectedLoggedOut } from "./routes/ProtectedLoggedOut";
@@ -61,7 +61,7 @@ function App() {
             <Route path="/signup" component={SignUp} />
             <ProtectedLoggedOut path="/login" component={Login} />
             <Route path="/myaccount" component={MyAccount} />
-            <ProtectedLoggedIn path="/logout" component={LogOut} />
+            <ProtectedLoggedIn path="/logout" component={Logout} />
             <Route path="/contact" component={Contact} />
           </Switch>
         </CookieExpiryContext.Provider>
