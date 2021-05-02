@@ -237,6 +237,20 @@ export const Dashboard = () => {
         setAllDeletedItems([]);
     }
 
+    const generateTempListId = () => {
+        const tempListId = `tempList-${nextListIdNum}`;
+        setNextListIdNum(prev => prev + 1);
+        return tempListId;
+    }
+
+    // ADD NEW LIST
+    const addNewList = () => {
+        const tempListId = generateTempListId();
+        setLists(prev => [...prev, {id: tempListId, title: "New list" }]);
+        setAllListItems(prev => [...prev, []]);
+        newListRef.current.scrollIntoView();
+    }
+
     const saveTripDetails = async () => {
 
         // If the trip name has not been changed since the last save, exit
@@ -330,20 +344,6 @@ export const Dashboard = () => {
         } else {
             console.log(responseBodyText.message);
         }
-    }
-
-    const generateTempListId = () => {
-        const tempListId = `tempList-${nextListIdNum}`;
-        setNextListIdNum(prev => prev + 1);
-        return tempListId;
-    }
-
-    // ADD NEW LIST
-    const addNewList = () => {
-        const tempListId = generateTempListId();
-        setLists(prev => [...prev, {id: tempListId, title: "New list" }]);
-        setAllListItems(prev => [...prev, []]);
-        newListRef.current.scrollIntoView();
     }
 
     return (

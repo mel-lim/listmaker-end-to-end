@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export const AddUndoRow = ({ addListItem, undoDelete }) => {
+export const AddUndoRow = ({ addListItem, undoDelete }) => { // This is a component of List
 
     const [userInput, setUserInput] = useState('');
 
@@ -9,7 +9,7 @@ export const AddUndoRow = ({ addListItem, undoDelete }) => {
         if (userInput.length === 0) {
             return;
         }
-        addListItem(userInput);
+        addListItem(userInput); // See List.js
         setUserInput('');
     }
 

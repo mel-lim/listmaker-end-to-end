@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { ConfirmDeleteListModal } from "./ConfirmDeleteListModal";
 import { SettledListTitle } from "./SettledListTitle";
 import { AddUndoRow } from "./AddUndoRow";
-import { ListItem } from "./ListItem/ListItem";
 import { EditListTitleForm } from "./EditListTitleForm";
+import { ListItem } from "../ListItem/ListItem";
 
 export const List = ({ list, lists, setLists, index, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems, setListItemsHaveChangedSinceLastSave }) => {
 
@@ -120,13 +120,18 @@ export const List = ({ list, lists, setLists, index, allListItems, setAllListIte
             {
                 listItems ?
                     listItems.map(listItem =>
-                        <ListItem key={`item-${listItem.id}`} listItem={listItem} listItems={listItems} setListItems={setListItems} removeListItem={removeListItem} setListItemsHaveChangedSinceLastSave={setListItemsHaveChangedSinceLastSave} />
+                        <ListItem key={`item-${listItem.id}`}
+                            listItem={listItem}
+                            listItems={listItems}
+                            setListItems={setListItems}
+                            removeListItem={removeListItem}
+                             setListItemsHaveChangedSinceLastSave={setListItemsHaveChangedSinceLastSave} />
                     ) :
                     null
             }
-            <AddUndoRow addListItem={addListItem} 
+            <AddUndoRow addListItem={addListItem}
                 undoDelete={undoDelete} />
-                
+
         </section>
     );
 }
