@@ -19,6 +19,9 @@ import { Lists } from "../components/Lists/Lists";
 import { Footer } from "../components/Footer";
 import { ConfirmCredentialsModal } from "../components/Dashboard/ConfirmCredentialsModal";
 
+// Import api calls
+import { fetchListsApi } from "../api";
+
 export const Dashboard = () => {
 
     const { setUser } = useContext(UserContext);
@@ -339,22 +342,9 @@ export const Dashboard = () => {
         // While this is true, the renderer will render "Loading...". We will set it back to false at the end of the request to re-render the updated lists as fetched from the db.
         setIsFetchProcessing(true);
 
-        const response = await fetch(`/api/trips/${tripId}/lists/fetchlists`, {
-            method: 'GET',
-            mode: 'cors',
-            cache: 'default',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer'
-        });
-
-        const responseBodyText = await response.json();
+        const { response, responseBodyText } = await fetchListsApi(tripId);
 
         if (response.status === 200 || response.status === 304) {
-
             // Configure the list and allListItems states
             configureLists(responseBodyText.lists, responseBodyText.allListItems);
 

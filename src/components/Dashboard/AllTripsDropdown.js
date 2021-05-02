@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { fetchTripsApi } from "../../api";
 
 export const AllTripsDropdown = ({ fetchLists, activeTrip, setActiveTrip, toggleRefreshAllTripsDropdown, setOpenModal }) => {
 
@@ -14,20 +15,7 @@ export const AllTripsDropdown = ({ fetchLists, activeTrip, setActiveTrip, toggle
 
     // FETCH ALL TRIPS FOR THIS USER
     const fetchTrips = async () => {
-        const response = await fetch(`/api/trips/alltrips`, {
-            method: 'GET',
-            mode: 'cors',
-            cache: 'default',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer'
-        });
-
-        const responseBodyText = await response.json();
-        console.log(response.status);
+        const { response, responseBodyText } = await fetchTripsApi();
 
         if (response.status === 200 || response.status === 304) {
             console.log(responseBodyText.trips);

@@ -2,15 +2,12 @@ import React, { useState } from "react";
 import { SignUpForm } from "../components/SignUp/SignUpForm";
 import { SignUpSuccessful } from "../components/SignUp/SignUpSuccessful";
 
-
-
 export const SignUp = () => {
     const [registeredAppUser, setRegisteredAppUser] = useState(null);
     const [attemptedAppUser, setAttemptedAppUser] = useState(null);
     const [isSuccessfulRegistration, setIsSuccessfulRegistration] = useState(false);
     const [isFailedRegistration, setIsFailedRegistration] = useState(false);
     
-
     const postNewUser = async (username, email, password) => {
         const response = await fetch('/api/appusers/signup', {
             method: 'POST',

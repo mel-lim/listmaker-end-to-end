@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getAccountDetailsApi } from "../api";
 
 export const MyAccount = () => {
     const [username, setUsername] = useState('');
@@ -10,19 +11,7 @@ export const MyAccount = () => {
 
     const getAccountDetails = async () => {
 
-        const response = await fetch('/api/appusers/accountdetails', {
-            method: 'GET',
-            mode: 'cors',
-            cache: 'default',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer'
-        });
-
-        const responseBodyText = await response.json();
+        const { response, responseBodyText } = await getAccountDetailsApi();
         console.log(responseBodyText);
 
         if (response.status === 200) {
