@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SignUpForm } from "../components/SignUp/SignUpForm";
-import { SignUpSuccessful } from "../components/SignUp/SignUpSuccessful";
+import { SignUpSuccessful } from "../components/SignUp/SignUpSuccessful";import { postNewUserApi } from "../api";
 
 export const SignUp = () => {
     const [registeredAppUser, setRegisteredAppUser] = useState(null);
@@ -9,29 +9,21 @@ export const SignUp = () => {
     const [isFailedRegistration, setIsFailedRegistration] = useState(false);
     
     const postNewUser = async (username, email, password) => {
-        const response = await fetch('/api/appusers/signup', {
-            method: 'POST',
-            mode: 'cors',
-            cache: 'default',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer',
-            body: JSON.stringify({
-                username: username,
-                email: email,
-                password: password
-            })
-        });
-        const responseBodyText = await response.json();
+        const requestBodyContent = {
+            username: username,
+            email: email,
+            password: password
+        };
+        
+        const { response, responseBodyText } = await postNewUserApi(requestBodyContent);
+
         if (response.status === 201) {
             setRegisteredAppUser(responseBodyText.appUser);
             console.log(responseBodyText.appUser);
             setIsSuccessfulRegistration(true);
             setIsFailedRegistration(false);
             setAttemptedAppUser(null);
+
         } else if (response.status === 400) {
             setAttemptedAppUser({
                 errorMessage: responseBodyText.message,

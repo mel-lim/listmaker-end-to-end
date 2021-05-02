@@ -20,7 +20,7 @@ import { Footer } from "../components/Footer";
 import { ConfirmCredentialsModal } from "../components/Dashboard/ConfirmCredentialsModal";
 
 // Import api calls
-import { fetchListsApi } from "../api";
+import { fetchListsApi, saveTripDetailsApi, saveListChangesApi } from "../api";
 
 export const Dashboard = () => {
 
@@ -255,20 +255,8 @@ export const Dashboard = () => {
         const tripId = activeTrip.tripId;
         const requestBodyContent = { tripName };
 
-        const response = await fetch(`/api/trips/${tripId}/savetripdetails`, {
-            method: 'PUT',
-            mode: 'cors',
-            cache: 'default',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer',
-            body: JSON.stringify(requestBodyContent)
-        });
+        const { response, responseBodyText } = await saveTripDetailsApi(tripId, requestBodyContent);
 
-        const responseBodyText = await response.json();
         setSaveTripDetailsMessage(responseBodyText.message);
 
         if (response.status === 200 || 304) {
@@ -309,20 +297,8 @@ export const Dashboard = () => {
         const tripId = activeTrip.tripId;
         const requestBodyContent = { lists, allListItems };
 
-        const response = await fetch(`/api/trips/${tripId}/lists/savelists`, {
-            method: 'POST',
-            mode: 'cors',
-            cache: 'default',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer',
-            body: JSON.stringify(requestBodyContent)
-        });
+        const { response, responseBodyText } = await saveListChangesApi(tripId, requestBodyContent);
 
-        const responseBodyText = await response.json();
         if (response.status === 201) {
             fetchLists(tripId);
             setListItemsHaveChangedSinceLastSave(false);

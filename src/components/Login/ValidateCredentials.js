@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { UserContext, CookieExpiryContext } from "../../UserContext";
+import { checkUserCredentialsApi } from "../../api";
 
 import configData from "../../config.json";
 
@@ -54,20 +55,7 @@ export const ValidateCredentials = ({ context, setOpenModal }) => {
         // Add the password to the body content
         requestBodyContent.password = password;
 
-        const response = await fetch('/api/appusers/login', {
-            method: 'POST',
-            mode: 'cors',
-            cache: 'default',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer',
-            body: JSON.stringify(requestBodyContent)
-        });
-
-        const responseBodyText = await response.json();
+        const { response, responseBodyText } = await checkUserCredentialsApi(requestBodyContent);
         const username = responseBodyText.username;
 
         if (response.status === 200) {

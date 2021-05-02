@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createTripApi } from "../../api";
 
 export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProcessing, toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown, setActiveTrip, configureLists, setNewTripNeedsSaving }) => {
 
@@ -30,20 +31,7 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
 
         const requestBodyContent = { tripName, tripCategory, tripDuration, requestTemplate };
 
-        const response = await fetch('/api/trips/newtrip', {
-            method: 'POST',
-            mode: 'cors',
-            cache: 'default',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer',
-            body: JSON.stringify(requestBodyContent)
-        });
-
-        const responseBodyText = await response.json();
+        const { response, responseBodyText } = await createTripApi(requestBodyContent);
 
         // Update the states that govern render-logic
         setNewTripClicked(false);

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { sendMessageApi } from "../api";
 
 export const Contact = () => {
     const [submissionStatusMessage, setSubmissionStatusMessage] = useState('');
@@ -10,28 +11,15 @@ export const Contact = () => {
         console.log(event.target.elements);
         const { name, email, subject, message } = event.target.elements; // See MDN documentation for HtmlFormElements/elements
 
-        const details = {
+        const requestBodyContent = {
             name: name.value,
             email: email.value,
             subject: subject.value,
             message: message.value
         }
 
-        const response = await fetch('/api/contact', {
-            method: 'POST',
-            mode: 'cors',
-            cache: 'default',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer',
-            body: JSON.stringify(details)
-        });
-
-        const result = await response.json();
-        setSubmissionStatusMessage(result.message);
+        const { responseBodyText } = await sendMessageApi(requestBodyContent);
+        setSubmissionStatusMessage(responseBodyText.message);
     }
 
     return (

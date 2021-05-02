@@ -1,5 +1,6 @@
 import React from 'react';
 import Popup from 'reactjs-popup';
+import { deleteTripApi } from '../../api';
 
 export const ConfirmDeleteModal = ({ activeTrip, toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown, resetOnDelete }) => {
 
@@ -14,17 +15,7 @@ export const ConfirmDeleteModal = ({ activeTrip, toggleRefreshAllTripsDropdown, 
 
         console.log("delete request starting");
 
-        const response = await fetch(`/api/trips/${tripId}/deletetrip`, {
-            method: 'DELETE',
-            mode: 'cors',
-            cache: 'default',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer'
-        });
+        const response = await deleteTripApi(tripId);
 
         if (response.status === 204) {
             console.log("response status is 204");

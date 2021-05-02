@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { UserContext } from "../UserContext";
+import { logoutApi } from "../api";
 
 
 export const LogOut = () => {
@@ -9,20 +10,8 @@ export const LogOut = () => {
   const logOut = async () => {
     // Delete the cookies
     // Note, the cookie containing the JWT can only be deleted server-side because it is a http only cookie
-    const response = await fetch('/api/appusers/logout', {
-      method: 'GET',
-      mode: 'cors',
-      cache: 'no-store', // See if this will make logout work when in production 
-      // YES THIS WORKS!!!!!!!!!!! Note this solved an issue in both Firefox and Chrome where the cache was not letting my backend clear my cookies on logout for some reason. This was only in production (Heroku/Netlify) and not in dev (localhost)
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      redirect: 'follow',
-      referrerPolicy: 'no-referrer'
-    });
-
-    const responseBodyText = await response.json();
+    
+    const { response, responseBodyText } = await logoutApi();
     console.log(responseBodyText);
 
     if (response.status === 200) {
