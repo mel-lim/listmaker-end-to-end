@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 
 import configData from "../../config.json";
 
-export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration }) => {
+export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration, isSigningUp }) => {
     /* const { setUser } = useContext(UserContext); */
 
     const [username, setUsername] = useState('');
@@ -14,8 +14,6 @@ export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration
     const [usernameValidationMessage, setUsernameValidationMessage] = useState('');
     const [passwordMatchMessage, setPasswordMatchMessage] = useState('');
     const [submissionUnsuccessfulMessage, setSubmissionUnsuccessfulMessage] = useState('');
-
-    const [isConnecting, setIsConnecting] = useState(false);
 
     // Validate username - only want alphanumeric and no spaces, just to make things simple
     useEffect(() => {
@@ -43,15 +41,17 @@ export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration
 
     const handleSubmit = event => {
         event.preventDefault();
+        
         // Prevent submission if either username or email fields are empty
         if (username.length === 0 || email.length === 0 || password.length === 0 || confirmPassword.length === 0) {
             setSubmissionUnsuccessfulMessage('All fields must be completed');
             return;
+
         } else if (password !== confirmPassword) { // Prevent submission if the password and confirm password fields don't match
             setSubmissionUnsuccessfulMessage('** Passwords do not match **');
             return;
         }
-        setIsConnecting(true);
+
         postNewUser(username, email, password);
         setUsername('');
         setEmail('');
@@ -59,7 +59,6 @@ export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration
         setConfirmPassword('');
         setPasswordMatchMessage('');
         setSubmissionUnsuccessfulMessage('');
-        setIsConnecting(false);
     }
 
     const toggleShowPassword = event => {
@@ -76,78 +75,79 @@ export const SignUpForm = ({ postNewUser, attemptedAppUser, isFailedRegistration
 
             <p className="submission-unsuccessful-message">{submissionUnsuccessfulMessage}</p>
 
-            {!isConnecting ?
-                <form className="user-credentials-form" onSubmit={handleSubmit}>
-                    <div className="input-label-container">
+            {
+                !isSigningUp ?
+                    <form className="user-credentials-form" onSubmit={handleSubmit}>
+                        <div className="input-label-container">
 
-                        <label htmlFor="username-input" >Username</label>
+                            <label htmlFor="username-input" >Username</label>
 
-                        <input type="text"
-                            id="username-input"
-                            name="username"
-                            onChange={event => setUsername(event.target.value)}
-                            value={username}
-                            required />
+                            <input type="text"
+                                id="username-input"
+                                name="username"
+                                onChange={event => setUsername(event.target.value)}
+                                value={username}
+                                required />
 
-                        <p className="validation-message">{usernameValidationMessage}</p>
-                    </div>
+                            <p className="validation-message">{usernameValidationMessage}</p>
+                        </div>
 
-                    <div className="input-label-container">
+                        <div className="input-label-container">
 
-                        <label htmlFor="email-input">Email</label>
+                            <label htmlFor="email-input">Email</label>
 
-                        <input type="email"
-                            id="email-input"
-                            name="email"
-                            onChange={event => setEmail(event.target.value)}
-                            value={email}
-                            required />
-                    </div>
+                            <input type="email"
+                                id="email-input"
+                                name="email"
+                                onChange={event => setEmail(event.target.value)}
+                                value={email}
+                                required />
+                        </div>
 
-                    <div className="input-label-container">
+                        <div className="input-label-container">
 
-                        <label htmlFor="password-input">Password (minimum 8 characters)</label>
+                            <label htmlFor="password-input">Password (minimum 8 characters)</label>
 
-                        <input type={show ? "text" : "password"}
-                            id="password-input"
-                            name="password"
-                            minLength="8"
-                            autoComplete="new-password"
-                            onChange={event => setPassword(event.target.value)}
-                            value={password}
-                            required />
+                            <input type={show ? "text" : "password"}
+                                id="password-input"
+                                name="password"
+                                minLength="8"
+                                autoComplete="new-password"
+                                onChange={event => setPassword(event.target.value)}
+                                value={password}
+                                required />
 
-                        <button type="button"
-                            className={show ? "visible password-button" : "not-visible password-button"}
-                            onClick={toggleShowPassword}></button>
-                    </div>
+                            <button type="button"
+                                className={show ? "visible password-button" : "not-visible password-button"}
+                                onClick={toggleShowPassword}></button>
+                        </div>
 
-                    <div className="input-label-container">
+                        <div className="input-label-container">
 
-                        <label htmlFor="confirm-password-input">Confirm Password</label>
+                            <label htmlFor="confirm-password-input">Confirm Password</label>
 
-                        <input type="password"
-                            id="confirm-password-input"
-                            name="password"
-                            autoComplete="current-password"
-                            onChange={event => {
-                                setConfirmPassword(event.target.value)
-                            }}
-                            value={confirmPassword}
-                            required />
+                            <input type="password"
+                                id="confirm-password-input"
+                                name="password"
+                                autoComplete="current-password"
+                                onChange={event => {
+                                    setConfirmPassword(event.target.value)
+                                }}
+                                value={confirmPassword}
+                                required />
 
-                        <p className="validation-message">{passwordMatchMessage}</p>
-                    </div>
+                            <p className="validation-message">{passwordMatchMessage}</p>
+                        </div>
 
-                    <div>
-                        <input type="submit"
-                            className="pillbox-button"
-                            value='Sign up' />
-                    </div>
+                        <div>
+                            <input type="submit"
+                                className="pillbox-button"
+                                value='Sign up' />
+                        </div>
 
-                </form>
-                :
-                <p>Signing you up...</p>
+                    </form>
+                    :
+                    <p>Signing you up...</p>
             }
 
             {/* <hr></hr><p className="button-separator">or</p><hr></hr>

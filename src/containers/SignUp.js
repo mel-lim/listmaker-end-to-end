@@ -1,20 +1,22 @@
 import React, { useState } from "react";
 import { SignUpForm } from "../components/SignUp/SignUpForm";
-import { SignUpSuccessful } from "../components/SignUp/SignUpSuccessful";import { postNewUserApi } from "../api";
+import { SignUpSuccessful } from "../components/SignUp/SignUpSuccessful"; import { postNewUserApi } from "../api";
 
 export const SignUp = () => {
     const [registeredAppUser, setRegisteredAppUser] = useState(null);
     const [attemptedAppUser, setAttemptedAppUser] = useState(null);
     const [isSuccessfulRegistration, setIsSuccessfulRegistration] = useState(false);
     const [isFailedRegistration, setIsFailedRegistration] = useState(false);
-    
+    const [isSigningUp, setIsSigningUp] = useState(false);
+
     const postNewUser = async (username, email, password) => {
+        setIsSigningUp(true);
         const requestBodyContent = {
             username: username,
             email: email,
             password: password
         };
-        
+
         const { response, responseBodyText } = await postNewUserApi(requestBodyContent);
 
         if (response.status === 201) {
@@ -34,11 +36,21 @@ export const SignUp = () => {
             setIsSuccessfulRegistration(false);
             setIsFailedRegistration(true);
         }
+        setIsSigningUp(false);
     }
 
     return (
         <div>
-            {isSuccessfulRegistration ? <SignUpSuccessful registeredAppUser={registeredAppUser} /> : <SignUpForm postNewUser={postNewUser} attemptedAppUser={attemptedAppUser} isFailedRegistration={isFailedRegistration} />}
+            {
+                isSuccessfulRegistration ?
+                    <SignUpSuccessful
+                        registeredAppUser={registeredAppUser} />
+                    : <SignUpForm
+                        postNewUser={postNewUser}
+                        attemptedAppUser={attemptedAppUser}
+                        isFailedRegistration={isFailedRegistration}
+                        isSigningUp={isSigningUp} />
+            }
         </div>
     );
 }
