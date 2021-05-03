@@ -84,6 +84,10 @@ export const saveNewListItemApi = async (tripId, requestBodyContent) => {
     return postApiCall(`/api/trips/${tripId}/lists/savenewlistitem`, requestBodyContent);
 }
 
+export const deleteListItemApi = async (tripId, requestBodyContent) => {
+    return putApiCall(`/api/trips/${tripId}/lists/deletelistitem`, requestBodyContent);
+}
+
 export const deleteTripApi = async tripId => {
     const response = await fetch(`/api/trips/${tripId}/deletetrip`, {
         method: 'DELETE',

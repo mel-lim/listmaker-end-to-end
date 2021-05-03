@@ -4,7 +4,7 @@ import { SettledListTitle } from "./SettledListTitle";
 import { AddUndoRow } from "./AddUndoRow";
 import { EditListTitleForm } from "./EditListTitleForm";
 import { ListItem } from "../ListItem/ListItem";
-import { saveNewListItemApi } from "../../../api";
+import { saveNewListItemApi, deleteListItemApi } from "../../../api";
 
 export const List = ({ tripId, list, lists, setLists, index, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems, setListItemsHaveChangedSinceLastSave }) => {
 
@@ -80,22 +80,30 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
         setListItemsHaveChangedSinceLastSave(true);
     }
 
-    const removeListItem = itemId => {
-        console.log(allDeletedItems);
-        const index = listItems.findIndex(listItem => listItem.id === itemId);
-        const deletedItemWithIndex = {
-            deletedItem: listItems[index],
-            originalIndex: index
-        };
-        if (!deletedListItems) {
-            setDeletedListItems([deletedItemWithIndex]);
-        } else {
-            setDeletedListItems(prevDeletedListItems => [deletedItemWithIndex, ...prevDeletedListItems]);
-        }
-        setListItemsHaveChangedSinceLastSave(true);
+    const removeListItem = async itemId => {
+        // Make put api call to update the item in the db and set is_deleted to true
+        const requestBodyContent = { itemId };
+        const { response, responseBodyText } = await deleteListItemApi(tripId, requestBodyContent);
 
-        const updatedList = listItems.filter(listItem => listItem.id !== itemId);
-        setListItems(updatedList);
+        if (response.status === 200) {
+            const index = listItems.findIndex(listItem => listItem.id === itemId);
+            const deletedItemWithIndex = {
+                deletedItem: listItems[index],
+                originalIndex: index
+            };
+            if (!deletedListItems) {
+                setDeletedListItems([deletedItemWithIndex]);
+            } else {
+                setDeletedListItems(prevDeletedListItems => [deletedItemWithIndex, ...prevDeletedListItems]);
+            }
+            setListItemsHaveChangedSinceLastSave(true);
+
+            const updatedList = listItems.filter(listItem => listItem.id !== itemId);
+            setListItems(updatedList);
+
+        } else {
+            console.log(responseBodyText.message);
+        }
     }
 
     const undoDelete = () => {
