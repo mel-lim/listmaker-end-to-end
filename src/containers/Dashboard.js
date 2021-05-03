@@ -246,7 +246,7 @@ export const Dashboard = () => {
     // ADD NEW LIST
     const addNewList = () => {
         const tempListId = generateTempListId();
-        setLists(prev => [...prev, {id: tempListId, title: "New list" }]);
+        setLists(prev => [...prev, { id: tempListId, title: "New list" }]);
         setAllListItems(prev => [...prev, []]);
         newListRef.current.scrollIntoView();
     }
@@ -282,8 +282,9 @@ export const Dashboard = () => {
 
     // Post data to db to save the users changes
     const saveListChanges = async () => {
+        return;
 
-        // If the lists have not changed since the last save, exit
+        /* // If the lists have not changed since the last save, exit
         if (!newTripNeedsSaving && !listItemsHaveChangedSinceLastSave) {
             return;
         }
@@ -322,7 +323,7 @@ export const Dashboard = () => {
         }
 
         setSaveListsMessage(responseBodyText.message);
-        console.log(responseBodyText.message);
+        console.log(responseBodyText.message); */
     }
 
     // Fetch list data from the db and sync to page
@@ -399,20 +400,21 @@ export const Dashboard = () => {
                     {
                         lists.length && allListItems.length && !isFetchProcessing ?
                             <Lists
+                                tripId={activeTrip.tripId}
                                 lists={lists}
                                 setLists={setLists}
                                 allListItems={allListItems}
                                 setAllListItems={setAllListItems}
                                 allDeletedItems={allDeletedItems}
                                 setAllDeletedItems={setAllDeletedItems}
-                                setListItemsHaveChangedSinceLastSave={setListItemsHaveChangedSinceLastSave} /> 
+                                setListItemsHaveChangedSinceLastSave={setListItemsHaveChangedSinceLastSave} />
                             : null
                     }
 
                 </main>
 
                 <span ref={newListRef}></span>
-                
+
                 <Footer />
             </div>
     );

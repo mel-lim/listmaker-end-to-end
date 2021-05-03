@@ -5,7 +5,7 @@ import { AddUndoRow } from "./AddUndoRow";
 import { EditListTitleForm } from "./EditListTitleForm";
 import { ListItem } from "../ListItem/ListItem";
 
-export const List = ({ list, lists, setLists, index, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems, setListItemsHaveChangedSinceLastSave }) => {
+export const List = ({ tripId, list, lists, setLists, index, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems, setListItemsHaveChangedSinceLastSave }) => {
 
     const [isEditingListTitle, setIsEditingListTitle] = useState(false);
 
@@ -121,11 +121,12 @@ export const List = ({ list, lists, setLists, index, allListItems, setAllListIte
                 listItems ?
                     listItems.map(listItem =>
                         <ListItem key={`item-${listItem.id}`}
+                            tripId={tripId}
                             listItem={listItem}
                             listItems={listItems}
                             setListItems={setListItems}
                             removeListItem={removeListItem}
-                             setListItemsHaveChangedSinceLastSave={setListItemsHaveChangedSinceLastSave} />
+                            setListItemsHaveChangedSinceLastSave={setListItemsHaveChangedSinceLastSave} />
                     ) :
                     null
             }

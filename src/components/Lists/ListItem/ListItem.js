@@ -1,12 +1,31 @@
 import React, { useState } from "react";
 import { SettledItem } from "./SettledItem";
 import { EditItemForm } from "./EditItemForm";
+import { saveEditedListItemApi } from "../../../api";
 
-export const ListItem = ({ listItem, listItems, setListItems, removeListItem, setListItemsHaveChangedSinceLastSave }) => { // This is a component in List
+export const ListItem = ({ tripId, listItem, listItems, setListItems, removeListItem, setListItemsHaveChangedSinceLastSave }) => { // This is a component in List
     const [isEditing, setIsEditing] = useState(false);
 
     const toggleEdit = () => {
         setIsEditing(!isEditing);
+    }
+
+    const editListItem = (editedItemName) => {
+
+        // Make a put api call to update the db with the new list item
+        const requestBodyContent = { 
+            editedListItem: { ...listItem, name: editedItemName } 
+        };
+        saveEditedListItemApi(tripId, requestBodyContent); 
+
+        // REVIEW WHETHER WE WILL NEED TO KEEP THE FOLLOWING CODE ONCE THE NEW SAVE FUNCTIONALITY IS DONE
+        const index = listItems.findIndex(item => item.id === listItem.id); // Get the index of the item we are editing
+        let editedListItems = [...listItems]; // Makes a shallow copy of the listItems array 
+        editedListItems[index].name = editedItemName; // Edit the name property of the relevant item
+        setListItems(editedListItems); // Set the now edited array as the new listItems array
+
+        setListItemsHaveChangedSinceLastSave(true);
+
     }
 
     const handleClickDelete = event => {
@@ -30,10 +49,8 @@ export const ListItem = ({ listItem, listItems, setListItems, removeListItem, se
                 {!isEditing ?
                     <SettledItem listItem={listItem} /> :
                     <EditItemForm listItem={listItem}
-                        listItems={listItems}
-                        setListItems={setListItems}
                         toggleEdit={toggleEdit}
-                        setListItemsHaveChangedSinceLastSave={setListItemsHaveChangedSinceLastSave} />
+                        editListItem={editListItem} />
                 }
             </div>
             <hr />

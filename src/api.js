@@ -31,6 +31,23 @@ const postApiCall = async (url, requestBodyContent) => {
     return { response, responseBodyText };
 }
 
+const putApiCall = async (url, requestBodyContent) => {
+    const response = await fetch(url, {
+        method: 'PUT',
+        mode: 'cors',
+        cache: 'default',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+        body: JSON.stringify(requestBodyContent)
+    });
+    const responseBodyText = await response.json();
+    return { response, responseBodyText };
+}
+
 export const postNewUserApi = async requestBodyContent => {
     return postApiCall('/api/appusers/signup', requestBodyContent);
 }
@@ -52,24 +69,15 @@ export const createTripApi = requestBodyContent => {
 }
 
 export const saveTripDetailsApi = async (tripId, requestBodyContent) => {
-    const response = await fetch(`/api/trips/${tripId}/savetripdetails`, {
-        method: 'PUT',
-        mode: 'cors',
-        cache: 'default',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        redirect: 'follow',
-        referrerPolicy: 'no-referrer',
-        body: JSON.stringify(requestBodyContent)
-    });
-    const responseBodyText = await response.json();
-    return { response, responseBodyText };
+    return putApiCall(`/api/trips/${tripId}/savetripdetails`, requestBodyContent);
 }
 
 export const saveListChangesApi = async (tripId, requestBodyContent) => {
     return postApiCall(`/api/trips/${tripId}/lists/savelists`, requestBodyContent);
+}
+
+export const saveEditedListItemApi = async (tripId, requestBodyContent) => {
+    return putApiCall(`/api/trips/${tripId}/lists/saveeditedlistitem`, requestBodyContent);
 }
 
 export const deleteTripApi = async tripId => {
