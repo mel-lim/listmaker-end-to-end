@@ -20,7 +20,7 @@ import { Footer } from "../components/Footer";
 import { ConfirmCredentialsModal } from "../components/Dashboard/ConfirmCredentialsModal";
 
 // Import api calls
-import { fetchListsApi, saveTripDetailsApi, saveListChangesApi } from "../api";
+import { saveNewListApi, fetchListsApi, saveTripDetailsApi, saveListChangesApi } from "../api";
 
 export const Dashboard = () => {
 
@@ -244,11 +244,26 @@ export const Dashboard = () => {
     }
 
     // ADD NEW LIST
-    const addNewList = () => {
-        const tempListId = generateTempListId();
-        setLists(prev => [...prev, { id: tempListId, title: "New list" }]);
-        setAllListItems(prev => [...prev, []]);
-        newListRef.current.scrollIntoView();
+    const addNewList = async () => {
+        const newList = {
+            id: generateTempListId(),
+            title: 'New list'
+        }
+
+        // Make post api call to save new list to db
+        const requestBodyContent = { newList };
+        const { response, responseBodyText } = await saveNewListApi(activeTrip.tripId, requestBodyContent);
+
+        if (response.status === 201) {
+            newList.id = responseBodyText.id; // Update the new list with the actual id from the db
+            setLists(prev => [...prev, newList]);
+            setAllListItems(prev => [...prev, []]);
+            newListRef.current.scrollIntoView();
+        }
+
+        else {
+            console.log(responseBodyText.message);
+        }
     }
 
     const saveTripDetails = async () => {
