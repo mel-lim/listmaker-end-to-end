@@ -6,7 +6,6 @@ export const EditItemForm = ({ listItem, toggleEdit, editListItem }) => { // Thi
     const handleSubmit = event => {
         event.preventDefault();
         toggleEdit(); // This will show the list item in its 'settled' or fixed appearance, rather than as an input box.
-        console.log(editedItemName);
         editListItem(editedItemName); // This calls the editListItem function - see ListItem.js
     }
 

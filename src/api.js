@@ -76,6 +76,10 @@ export const saveListChangesApi = async (tripId, requestBodyContent) => {
     return postApiCall(`/api/trips/${tripId}/lists/savelists`, requestBodyContent);
 }
 
+export const editListTitleApi = async (tripId, requestBodyContent) => {
+    return putApiCall(`/api/trips/${tripId}/lists/editlisttitle`, requestBodyContent);
+}
+
 export const saveEditedListItemApi = async (tripId, requestBodyContent) => {
     return putApiCall(`/api/trips/${tripId}/lists/saveeditedlistitem`, requestBodyContent);
 }

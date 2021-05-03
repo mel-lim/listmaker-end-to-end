@@ -13,18 +13,18 @@ export const ListItem = ({ tripId, listItem, listItems, setListItems, removeList
     const editListItem = async editedItemName => {
 
         // Make a put api call to update the db with the new list item
-        const requestBodyContent = { 
-            editedListItem: { ...listItem, name: editedItemName } 
+        const requestBodyContent = {
+            editedListItem: { ...listItem, name: editedItemName }
         };
-        const {response, responseBodyText } = await saveEditedListItemApi(tripId, requestBodyContent); 
+        const { response, responseBodyText } = await saveEditedListItemApi(tripId, requestBodyContent);
 
         if (response.status === 200) {
-        // REVIEW WHETHER WE WILL NEED TO KEEP THE FOLLOWING CODE ONCE THE NEW SAVE FUNCTIONALITY IS DONE
-        const index = listItems.findIndex(item => item.id === listItem.id); // Get the index of the item we are editing
-        let editedListItems = [...listItems]; // Makes a shallow copy of the listItems array 
-        editedListItems[index].name = editedItemName; // Edit the name property of the relevant item
-        setListItems(editedListItems); // Set the now edited array as the new listItems array
-        } 
+            // REVIEW WHETHER WE WILL NEED TO KEEP THE FOLLOWING CODE ONCE THE NEW SAVE FUNCTIONALITY IS DONE
+            const index = listItems.findIndex(item => item.id === listItem.id); // Get the index of the item we are editing
+            let editedListItems = [...listItems]; // Makes a shallow copy of the listItems array 
+            editedListItems[index].name = editedItemName; // Edit the name property of the relevant item
+            setListItems(editedListItems); // Set the now edited array as the new listItems array
+        }
 
         else {
             console.log(responseBodyText.message);

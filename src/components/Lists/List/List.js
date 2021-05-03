@@ -4,7 +4,7 @@ import { SettledListTitle } from "./SettledListTitle";
 import { AddUndoRow } from "./AddUndoRow";
 import { EditListTitleForm } from "./EditListTitleForm";
 import { ListItem } from "../ListItem/ListItem";
-import { saveNewListItemApi, deleteListItemApi, undoDeleteListItemApi } from "../../../api";
+import { editListTitleApi, saveNewListItemApi, deleteListItemApi, undoDeleteListItemApi } from "../../../api";
 
 export const List = ({ tripId, list, lists, setLists, index, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems, setListItemsHaveChangedSinceLastSave }) => {
 
@@ -35,6 +35,31 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
 
     const toggleEditListTitle = () => {
         setIsEditingListTitle(!isEditingListTitle);
+    }
+
+    const editListTitle = async editedListTitle => {
+
+        // Make a put api call to update the db with the new list item
+        const requestBodyContent = {
+            editedListDetails: { ...list, title: editedListTitle }
+        };
+        const { response, responseBodyText } = await editListTitleApi(tripId, requestBodyContent);
+
+        if (response.status === 200) {
+            // REVIEW WHETHER WE WILL NEED TO KEEP THE FOLLOWING CODE ONCE THE NEW SAVE FUNCTIONALITY IS DONE
+            if (editedListTitle !== list.title) {
+                const currentList = Object.assign({}, list);
+                currentList.title = editedListTitle;
+                const currentLists = [...lists];
+                currentLists[index] = currentList;
+                setLists(currentLists);
+                setListItemsHaveChangedSinceLastSave(true);
+            }
+        }
+
+        else {
+            console.log(responseBodyText.message);
+        }
     }
 
     const deleteList = () => {
@@ -141,6 +166,7 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
                         toggleEditListTitle={toggleEditListTitle} />
                     : <EditListTitleForm
                         list={list}
+                        editListTitle={editListTitle}
                         lists={lists}
                         setLists={setLists}
                         index={index}
