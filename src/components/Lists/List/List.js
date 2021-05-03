@@ -4,6 +4,7 @@ import { SettledListTitle } from "./SettledListTitle";
 import { AddUndoRow } from "./AddUndoRow";
 import { EditListTitleForm } from "./EditListTitleForm";
 import { ListItem } from "../ListItem/ListItem";
+import { saveNewListItemApi } from "../../../api";
 
 export const List = ({ tripId, list, lists, setLists, index, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems, setListItemsHaveChangedSinceLastSave }) => {
 
@@ -52,17 +53,30 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
         return itemId;
     }
 
-    const addListItem = newItemName => {
+    const addListItem = async newItemName => {
         const newListItem = {
             id: generateTempItemId(),
             name: newItemName,
-            flag: 'newItem'
+            list_id: list.id,
+            is_checked: false
         }
-        if (!listItems) {
-            setListItems([newListItem]);
+
+        // Make post api call to save new list item to db
+        const requestBodyContent = { newListItem };
+        const { response, responseBodyText } = await saveNewListItemApi(tripId, requestBodyContent);
+
+        if (response.status === 201) {
+            newListItem.id = responseBodyText.id; // Update the new list item with the actual id from the db
+            if (!listItems) {
+                setListItems([newListItem]);
+            } else {
+                setListItems(prevListItems => [...prevListItems, newListItem]);
+            }
         } else {
-            setListItems(prevListItems => [...prevListItems, newListItem]);
+            console.log(responseBodyText.message);
         }
+
+        // LEAVE FOR NOW BUT I THINK WE WILL PROBABLY BE ABLE TO GET RID OF THIS
         setListItemsHaveChangedSinceLastSave(true);
     }
 
