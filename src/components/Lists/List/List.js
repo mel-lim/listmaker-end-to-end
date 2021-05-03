@@ -4,7 +4,7 @@ import { SettledListTitle } from "./SettledListTitle";
 import { AddUndoRow } from "./AddUndoRow";
 import { EditListTitleForm } from "./EditListTitleForm";
 import { ListItem } from "../ListItem/ListItem";
-import { saveNewListItemApi, deleteListItemApi } from "../../../api";
+import { saveNewListItemApi, deleteListItemApi, undoDeleteListItemApi } from "../../../api";
 
 export const List = ({ tripId, list, lists, setLists, index, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems, setListItemsHaveChangedSinceLastSave }) => {
 
@@ -106,16 +106,24 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
         }
     }
 
-    const undoDelete = () => {
+    const undoDelete = async () => {
         if (deletedListItems.length === 0) {
             return;
         }
         const lastDeletedItem = deletedListItems[0];
-        const currentListItems = [...listItems];
-        currentListItems.splice(lastDeletedItem.originalIndex, 0, lastDeletedItem.deletedItem)
-        setListItems(currentListItems);
-        const updatedDeletedListItems = deletedListItems.slice(1);
-        setDeletedListItems(updatedDeletedListItems);
+        const requestBodyContent = { itemId: lastDeletedItem.id };
+        const { response, responseBodyText } = await undoDeleteListItemApi(tripId, requestBodyContent);
+
+        if (response.status === 200) {
+            const currentListItems = [...listItems];
+            currentListItems.splice(lastDeletedItem.originalIndex, 0, lastDeletedItem.deletedItem)
+            setListItems(currentListItems);
+            const updatedDeletedListItems = deletedListItems.slice(1);
+            setDeletedListItems(updatedDeletedListItems);
+
+        } else {
+            console.log(responseBodyText.message);
+        }
     }
 
     return (
