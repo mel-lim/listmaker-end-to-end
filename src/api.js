@@ -48,6 +48,22 @@ const putApiCall = async (url, requestBodyContent) => {
     return { response, responseBodyText };
 }
 
+const deleteApiCall = async (url, requestBodyContent) => {
+    const response = await fetch(url, {
+        method: 'DELETE',
+        mode: 'cors',
+        cache: 'default',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+        body: JSON.stringify(requestBodyContent)
+    });
+    return response;
+}
+
 export const postNewUserApi = async requestBodyContent => {
     return postApiCall('/api/appusers/signup', requestBodyContent);
 }
@@ -82,6 +98,10 @@ export const editListTitleApi = async (tripId, requestBodyContent) => {
 
 export const saveNewListApi = async (tripId, requestBodyContent) => {
     return postApiCall(`/api/trips/${tripId}/lists/savenewlist`, requestBodyContent);
+}
+
+export const deleteListApi = async (tripId, requestBodyContent) => {
+    return deleteApiCall(`/api/trips/${tripId}/lists/deletelist`, requestBodyContent);
 }
 
 export const saveEditedListItemApi = async (tripId, requestBodyContent) => {

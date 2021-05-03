@@ -4,7 +4,7 @@ import { SettledListTitle } from "./SettledListTitle";
 import { AddUndoRow } from "./AddUndoRow";
 import { EditListTitleForm } from "./EditListTitleForm";
 import { ListItem } from "../ListItem/ListItem";
-import { editListTitleApi, saveNewListItemApi, deleteListItemApi, undoDeleteListItemApi } from "../../../api";
+import { editListTitleApi, deleteListApi, saveNewListItemApi, deleteListItemApi, undoDeleteListItemApi } from "../../../api";
 
 export const List = ({ tripId, list, lists, setLists, index, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems, setListItemsHaveChangedSinceLastSave }) => {
 
@@ -62,14 +62,24 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
         }
     }
 
-    const deleteList = () => {
-        const currentAllListItems = [...allListItems];
-        currentAllListItems.splice(index, 1);
-        setAllListItems(currentAllListItems);
-        const currentLists = [...lists];
-        currentLists.splice(index, 1);
-        setLists(currentLists);
-        setListItemsHaveChangedSinceLastSave(true);
+    const deleteList = async () => {
+        // Make put api call to update the item in the db and set is_deleted to true
+        const requestBodyContent = { listId: list.id };
+        const response = await deleteListApi(tripId, requestBodyContent);
+
+        if (response.status === 204) {
+            const currentAllListItems = [...allListItems];
+            currentAllListItems.splice(index, 1);
+            setAllListItems(currentAllListItems);
+            const currentLists = [...lists];
+            currentLists.splice(index, 1);
+            setLists(currentLists);
+            setListItemsHaveChangedSinceLastSave(true);
+        }
+
+        else {
+            console.log(response.status);
+        }
     }
 
     const generateTempItemId = () => {
