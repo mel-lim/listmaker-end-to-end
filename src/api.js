@@ -15,7 +15,7 @@ const getApiCall = async url => {
 }
 
 const postApiCall = async (url, requestBodyContent) => {
-    const response = await fetch(url, {
+    const req = {
         method: 'POST',
         mode: 'cors',
         cache: 'default',
@@ -24,15 +24,18 @@ const postApiCall = async (url, requestBodyContent) => {
             'Accept': 'application/json'
         },
         redirect: 'follow',
-        referrerPolicy: 'no-referrer',
-        body: JSON.stringify(requestBodyContent)
-    });
+        referrerPolicy: 'no-referrer'
+    };
+    if (requestBodyContent) {
+        req.body = JSON.stringify(requestBodyContent)
+    }
+    const response = await fetch(url, req);
     const responseBodyText = await response.json();
     return { response, responseBodyText };
 }
 
 const putApiCall = async (url, requestBodyContent) => {
-    const response = await fetch(url, {
+    const req = {
         method: 'PUT',
         mode: 'cors',
         cache: 'default',
@@ -41,15 +44,18 @@ const putApiCall = async (url, requestBodyContent) => {
             'Accept': 'application/json'
         },
         redirect: 'follow',
-        referrerPolicy: 'no-referrer',
-        body: JSON.stringify(requestBodyContent)
-    });
+        referrerPolicy: 'no-referrer'
+    };
+    if (requestBodyContent) {
+        req.body = JSON.stringify(requestBodyContent);
+    }
+    const response = await fetch(url, req);
     const responseBodyText = await response.json();
     return { response, responseBodyText };
 }
 
 const deleteApiCall = async (url, requestBodyContent) => {
-    const response = await fetch(url, {
+    const req = {
         method: 'DELETE',
         mode: 'cors',
         cache: 'default',
@@ -58,9 +64,12 @@ const deleteApiCall = async (url, requestBodyContent) => {
             'Accept': 'application/json'
         },
         redirect: 'follow',
-        referrerPolicy: 'no-referrer',
-        body: JSON.stringify(requestBodyContent)
-    });
+        referrerPolicy: 'no-referrer'
+    };
+    if (requestBodyContent) {
+        req.body = JSON.stringify(requestBodyContent);
+    }
+    const response = await fetch(url, req);
     return response;
 }
 
@@ -92,32 +101,32 @@ export const saveListChangesApi = async (tripId, requestBodyContent) => {
     return postApiCall(`/api/trips/${tripId}/lists/savelists`, requestBodyContent);
 }
 
-export const editListTitleApi = async (tripId, requestBodyContent) => {
-    return putApiCall(`/api/trips/${tripId}/lists/editlisttitle`, requestBodyContent);
+export const createNewListApi = async (tripId) => {
+    return postApiCall(`/api/trips/${tripId}/lists/createnew`, null);
 }
 
-export const saveNewListApi = async (tripId, requestBodyContent) => {
-    return postApiCall(`/api/trips/${tripId}/lists/savenewlist`, requestBodyContent);
+export const editListTitleApi = async (tripId, listId, requestBodyContent) => {
+    return putApiCall(`/api/trips/${tripId}/lists/${listId}/edit`, requestBodyContent);
 }
 
-export const deleteListApi = async (tripId, requestBodyContent) => {
-    return deleteApiCall(`/api/trips/${tripId}/lists/deletelist`, requestBodyContent);
+export const deleteListApi = async (tripId, listId) => {
+    return deleteApiCall(`/api/trips/${tripId}/lists/${listId}/delete`, null);
 }
 
-export const saveEditedListItemApi = async (tripId, requestBodyContent) => {
-    return putApiCall(`/api/trips/${tripId}/lists/saveeditedlistitem`, requestBodyContent);
+export const newListItemApi = async (tripId, listId, requestBodyContent) => {
+    return postApiCall(`/api/trips/${tripId}/lists/${listId}/listitems/addnew`, requestBodyContent);
 }
 
-export const saveNewListItemApi = async (tripId, requestBodyContent) => {
-    return postApiCall(`/api/trips/${tripId}/lists/savenewlistitem`, requestBodyContent);
+export const editListItemApi = async (tripId, listId, itemId, requestBodyContent) => {
+    return putApiCall(`/api/trips/${tripId}/lists/${listId}/listitems/${itemId}/edit`, requestBodyContent);
 }
 
-export const deleteListItemApi = async (tripId, requestBodyContent) => {
-    return putApiCall(`/api/trips/${tripId}/lists/deletelistitem`, requestBodyContent);
+export const deleteListItemApi = async (tripId, listId, itemId) => {
+    return putApiCall(`/api/trips/${tripId}/lists/${listId}/listitems/${itemId}/delete`, null);
 }
 
-export const undoDeleteListItemApi = async (tripId, requestBodyContent) => {
-    return putApiCall(`/api/trips/${tripId}/lists/undodeletelistitem`, requestBodyContent);
+export const undoDeleteListItemApi = async (tripId, listId, itemId) => {
+    return putApiCall(`/api/trips/${tripId}/lists/${listId}/listitems/${itemId}/undodelete`, null);
 }
 
 export const deleteTripApi = async tripId => {

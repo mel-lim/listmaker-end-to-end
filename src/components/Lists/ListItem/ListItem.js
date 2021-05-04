@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { SettledItem } from "./SettledItem";
 import { EditItemForm } from "./EditItemForm";
-import { saveEditedListItemApi } from "../../../api";
+import { editListItemApi } from "../../../api";
 
 export const ListItem = ({ tripId, listItem, listItems, setListItems, removeListItem, setListItemsHaveChangedSinceLastSave }) => { // This is a component in List
     const [isEditing, setIsEditing] = useState(false);
@@ -13,10 +13,8 @@ export const ListItem = ({ tripId, listItem, listItems, setListItems, removeList
     const editListItem = async editedItemName => {
 
         // Make a put api call to update the db with the new list item
-        const requestBodyContent = {
-            editedListItem: { ...listItem, name: editedItemName }
-        };
-        const { response, responseBodyText } = await saveEditedListItemApi(tripId, requestBodyContent);
+        const requestBodyContent = { editedItemName };
+        const { response, responseBodyText } = await editListItemApi(tripId, listItem.list_id, listItem.id, requestBodyContent);
 
         if (response.status === 200) {
             // REVIEW WHETHER WE WILL NEED TO KEEP THE FOLLOWING CODE ONCE THE NEW SAVE FUNCTIONALITY IS DONE

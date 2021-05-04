@@ -4,7 +4,7 @@ import { SettledListTitle } from "./SettledListTitle";
 import { AddUndoRow } from "./AddUndoRow";
 import { EditListTitleForm } from "./EditListTitleForm";
 import { ListItem } from "../ListItem/ListItem";
-import { editListTitleApi, deleteListApi, saveNewListItemApi, deleteListItemApi, undoDeleteListItemApi } from "../../../api";
+import { editListTitleApi, deleteListApi, newListItemApi, deleteListItemApi, undoDeleteListItemApi } from "../../../api";
 
 export const List = ({ tripId, list, lists, setLists, index, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems, setListItemsHaveChangedSinceLastSave }) => {
 
@@ -40,10 +40,8 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
     const editListTitle = async editedListTitle => {
 
         // Make a put api call to update the db with the new list item
-        const requestBodyContent = {
-            editedListDetails: { ...list, title: editedListTitle }
-        };
-        const { response, responseBodyText } = await editListTitleApi(tripId, requestBodyContent);
+        const requestBodyContent = { editedListTitle };
+        const { response, responseBodyText } = await editListTitleApi(tripId, list.id, requestBodyContent);
 
         if (response.status === 200) {
             // REVIEW WHETHER WE WILL NEED TO KEEP THE FOLLOWING CODE ONCE THE NEW SAVE FUNCTIONALITY IS DONE
@@ -64,8 +62,7 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
 
     const deleteList = async () => {
         // Make put api call to update the item in the db and set is_deleted to true
-        const requestBodyContent = { listId: list.id };
-        const response = await deleteListApi(tripId, requestBodyContent);
+        const response = await deleteListApi(tripId, list.id);
 
         if (response.status === 204) {
             const currentAllListItems = [...allListItems];
@@ -94,11 +91,11 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
             name: newItemName,
             list_id: list.id,
             is_checked: false
-        }
+        } 
 
         // Make post api call to save new list item to db
-        const requestBodyContent = { newListItem };
-        const { response, responseBodyText } = await saveNewListItemApi(tripId, requestBodyContent);
+        const requestBodyContent = { newItemName };
+        const { response, responseBodyText } = await newListItemApi(tripId, list.id, requestBodyContent);
 
         if (response.status === 201) {
             newListItem.id = responseBodyText.id; // Update the new list item with the actual id from the db
@@ -117,8 +114,7 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
 
     const removeListItem = async itemId => {
         // Make put api call to update the item in the db and set is_deleted to true
-        const requestBodyContent = { itemId };
-        const { response, responseBodyText } = await deleteListItemApi(tripId, requestBodyContent);
+        const { response, responseBodyText } = await deleteListItemApi(tripId, list.id, itemId);
 
         if (response.status === 200) {
             const index = listItems.findIndex(listItem => listItem.id === itemId);
@@ -146,8 +142,7 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
             return;
         }
         const lastDeletedItem = deletedListItems[0];
-        const requestBodyContent = { itemId: lastDeletedItem.id };
-        const { response, responseBodyText } = await undoDeleteListItemApi(tripId, requestBodyContent);
+        const { response, responseBodyText } = await undoDeleteListItemApi(tripId, list.id, lastDeletedItem.id);
 
         if (response.status === 200) {
             const currentListItems = [...listItems];

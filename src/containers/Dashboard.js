@@ -20,7 +20,7 @@ import { Footer } from "../components/Footer";
 import { ConfirmCredentialsModal } from "../components/Dashboard/ConfirmCredentialsModal";
 
 // Import api calls
-import { saveNewListApi, fetchListsApi, saveTripDetailsApi, saveListChangesApi } from "../api";
+import { createNewListApi, fetchListsApi, saveTripDetailsApi, saveListChangesApi } from "../api";
 
 export const Dashboard = () => {
 
@@ -246,13 +246,12 @@ export const Dashboard = () => {
     // ADD NEW LIST
     const addNewList = async () => {
         const newList = {
-            id: generateTempListId(),
-            title: 'New list'
+            id: generateTempListId(), // Might be able to get rid of this now - think on it
+            title: 'Untitled'
         }
 
         // Make post api call to save new list to db
-        const requestBodyContent = { newList };
-        const { response, responseBodyText } = await saveNewListApi(activeTrip.tripId, requestBodyContent);
+        const { response, responseBodyText } = await createNewListApi(activeTrip.tripId);
 
         if (response.status === 201) {
             newList.id = responseBodyText.id; // Update the new list with the actual id from the db
