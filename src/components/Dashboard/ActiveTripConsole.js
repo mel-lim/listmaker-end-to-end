@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { SettledTripName } from "./SettledTripName";
 import { EditTripNameForm } from "./EditTripNameForm";
-import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
+import { ConfirmDeleteTripModal } from "./ConfirmDeleteTripModal";
 
 export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, fetchLists, saveListChanges, editTripDetails, saveTripDetailsMessage, saveListsMessage, toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown, resetOnDelete, addNewList }) => {
 
@@ -50,7 +50,7 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
             </div>
 
             <div className="save-button-container">
-                <ConfirmDeleteModal
+                <ConfirmDeleteTripModal
                     activeTrip={activeTrip}
                     toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
                     setToggleRefreshAllTripsDropdown={setToggleRefreshAllTripsDropdown}
