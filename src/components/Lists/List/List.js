@@ -142,7 +142,7 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
             return;
         }
         const lastDeletedItem = deletedListItems[0];
-        const { response, responseBodyText } = await undoDeleteListItemApi(tripId, list.id, lastDeletedItem.id);
+        const { response, responseBodyText } = await undoDeleteListItemApi(tripId, list.id, lastDeletedItem.deletedItem.id);
 
         if (response.status === 200) {
             const currentListItems = [...listItems];
