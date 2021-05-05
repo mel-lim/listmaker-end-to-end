@@ -93,8 +93,8 @@ export const createTripApi = requestBodyContent => {
     return postApiCall('/api/trips/newtrip', requestBodyContent);
 }
 
-export const saveTripDetailsApi = async (tripId, requestBodyContent) => {
-    return putApiCall(`/api/trips/${tripId}/savetripdetails`, requestBodyContent);
+export const editTripDetailsApi = async (tripId, requestBodyContent) => {
+    return putApiCall(`/api/trips/${tripId}/edittripdetails`, requestBodyContent);
 }
 
 export const saveListChangesApi = async (tripId, requestBodyContent) => {

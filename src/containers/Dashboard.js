@@ -20,7 +20,7 @@ import { Footer } from "../components/Footer";
 import { ConfirmCredentialsModal } from "../components/Dashboard/ConfirmCredentialsModal";
 
 // Import api calls
-import { createNewListApi, fetchListsApi, saveTripDetailsApi, saveListChangesApi } from "../api";
+import { createNewListApi, fetchListsApi, editTripDetailsApi, saveListChangesApi } from "../api";
 
 export const Dashboard = () => {
 
@@ -203,7 +203,7 @@ export const Dashboard = () => {
     useEffect(() => {
         console.log("autosave hook triggered");
         const timer = setTimeout(() => {
-            saveTripDetails();
+            /* saveTripDetails(); */
             saveListChanges();
             console.log("autosave function run");
         }, parseInt(configData.AUTOSAVE_INTERVAL)); // 10 minutes
@@ -265,31 +265,24 @@ export const Dashboard = () => {
         }
     }
 
-    const saveTripDetails = async () => {
-
-        // If the trip name has not been changed since the last save, exit
-        if (!tripDetailsHaveChangedSinceLastSave) {
-            return;
-        }
-
-        const tripName = activeTrip.tripName;
+    const editTripDetails = async editedTripName => {
 
         // If the trip name is blank / empty
-        if (!tripName || !tripName.length) {
-            setSaveTripDetailsMessage("Unable to save edited trip name: trip name can't be blank");
+        if (!editedTripName) {
+            editedTripName = "Untitled";
         }
 
         console.log("save trip request starting");
         const tripId = activeTrip.tripId;
-        const requestBodyContent = { tripName };
+        const requestBodyContent = { editedTripName };
 
-        const { response, responseBodyText } = await saveTripDetailsApi(tripId, requestBodyContent);
-
+        const { response, responseBodyText } = await editTripDetailsApi(tripId, requestBodyContent);
         setSaveTripDetailsMessage(responseBodyText.message);
 
         if (response.status === 200 || 304) {
             console.log("response status is 200 or 304");
-            setTripDetailsHaveChangedSinceLastSave(false); // Reset to false once saved
+            setActiveTrip({...activeTrip, tripName: editedTripName});
+            // CHANGE THIS SO THAT WE JUST CALL FETCH TRIPS DIRECTLY INSTEAD OF THIS CIRCUITOUS HOOK METHOD
             setToggleRefreshAllTripsDropdown(!toggleRefreshAllTripsDropdown); // This will trigger the hook to re-fetch the all trips data and re-populate the drop down list with the updated trip name
         }
     }
@@ -396,7 +389,7 @@ export const Dashboard = () => {
                                     allListItems={allListItems}
                                     fetchLists={fetchLists}
                                     saveListChanges={saveListChanges}
-                                    saveTripDetails={saveTripDetails}
+                                    editTripDetails={editTripDetails}
                                     saveTripDetailsMessage={saveTripDetailsMessage}
                                     saveListsMessage={saveListsMessage}
                                     setTripDetailsHaveChangedSinceLastSave={setTripDetailsHaveChangedSinceLastSave}

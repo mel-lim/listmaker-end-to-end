@@ -3,7 +3,7 @@ import { SettledTripName } from "./SettledTripName";
 import { EditTripNameForm } from "./EditTripNameForm";
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 
-export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, fetchLists, saveListChanges, saveTripDetails, saveTripDetailsMessage, saveListsMessage, setTripDetailsHaveChangedSinceLastSave, toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown, resetOnDelete, addNewList }) => {
+export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, fetchLists, saveListChanges, editTripDetails, saveTripDetailsMessage, saveListsMessage, toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown, resetOnDelete, addNewList }) => {
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -14,7 +14,7 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
     const handleClickSave = event => {
         event.preventDefault();
         saveListChanges(); // This calls the savelists request to the server - the code can be found in Dashboard.js
-        saveTripDetails(); // This calls the savetripdetails request to the server - the code can be found in Dashboard.js
+        /* editTripDetails(); // This calls the savetripdetails request to the server - the code can be found in Dashboard.js */
     }
 
     const handleClickRevert = event => {
@@ -39,7 +39,8 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
                                 activeTrip={activeTrip}
                                 setActiveTrip={setActiveTrip}
                                 toggleEdit={toggleEdit}
-                                setTripDetailsHaveChangedSinceLastSave={setTripDetailsHaveChangedSinceLastSave} />
+                                editTripDetails={editTripDetails}
+                                 />
                     }
                 </div>
 
