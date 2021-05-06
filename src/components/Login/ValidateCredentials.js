@@ -5,7 +5,7 @@ import { checkUserCredentialsApi } from "../../api";
 
 import configData from "../../config.json";
 
-export const ValidateCredentials = ({ context, setOpenModal }) => {
+export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal }) => {
 
     const { user, setUser } = useContext(UserContext);
     const { setCookieExpiry } = useContext(CookieExpiryContext);
@@ -69,7 +69,7 @@ export const ValidateCredentials = ({ context, setOpenModal }) => {
             } else if (context === "confirmCredentials") {
 
                 // Once the user successfully confirms their credentials, close the modal and let the user continue using the dashboard
-                setOpenModal(false);
+                setOpenConfirmCredentialsModal(false);
             }
             setUser(username);
             setCookieExpiry(responseBodyText.cookieExpiry);

@@ -3,7 +3,7 @@ import { SettledTripName } from "./SettledTripName";
 import { EditTripNameForm } from "./EditTripNameForm";
 import { ConfirmDeleteTripModal } from "./ConfirmDeleteTripModal";
 
-export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, fetchLists, saveListChanges, editTripDetails, saveTripDetailsMessage, saveListsMessage, toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown, resetOnDelete, addNewList }) => {
+export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, fetchLists, editTripDetails, saveTripDetailsMessage, saveListsMessage, fetchTrips, resetTripAndListStates, addNewList }) => {
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -11,13 +11,7 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
         setIsEditing(!isEditing);
     }
 
-    const handleClickSave = event => {
-        event.preventDefault();
-        saveListChanges(); // This calls the savelists request to the server - the code can be found in Dashboard.js
-        /* editTripDetails(); // This calls the savetripdetails request to the server - the code can be found in Dashboard.js */
-    }
-
-    const handleClickRevert = event => {
+    const handleClickSync = event => {
         event.preventDefault();
         fetchLists(activeTrip.tripId);
     }
@@ -52,9 +46,8 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
             <div className="save-button-container">
                 <ConfirmDeleteTripModal
                     activeTrip={activeTrip}
-                    toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
-                    setToggleRefreshAllTripsDropdown={setToggleRefreshAllTripsDropdown}
-                    resetOnDelete={resetOnDelete} />
+                    fetchTrips={fetchTrips}
+                    resetTripAndListStates={resetTripAndListStates} />
                 <input type="button"
                     className="pillbox-button"
                     value="New list" onClick={addNewList} />
@@ -63,13 +56,8 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
                     <div>
                         <input type="button"
                             className="pillbox-button"
-                            value="Revert"
-                            onClick={handleClickRevert} />
-
-                        <input type="button"
-                            className="pillbox-button"
-                            value="Save"
-                            onClick={handleClickSave} />
+                            value="Sync"
+                            onClick={handleClickSync} />
                     </div>
                     :
                     null}

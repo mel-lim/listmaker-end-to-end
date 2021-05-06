@@ -2,21 +2,18 @@ import React from 'react';
 import Popup from 'reactjs-popup';
 import { deleteTripApi } from '../../api';
 
-export const ConfirmDeleteTripModal = ({ activeTrip, toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown, resetOnDelete }) => { // This is a component in ActiveTripConsole
+export const ConfirmDeleteTripModal = ({ activeTrip, fetchTrips, resetTripAndListStates }) => { // This is a component in ActiveTripConsole
 
     const deleteTrip = async () => {
 
         const tripId = activeTrip.tripId;
 
-        console.log("delete request starting");
-
         const response = await deleteTripApi(tripId);
 
         if (response.status === 204) {
-            console.log("response status is 204");
-            // CHANGE THIS TO DIRECTLY CALL FETCH LISTS
-            setToggleRefreshAllTripsDropdown(!toggleRefreshAllTripsDropdown); // This will trigger the hook to re-fetch the all trips data and re-populate the drop down list with the updated trip name
-            resetOnDelete(); // Call function to reset the activeTrip and lists etc. states to their initial render value (i.e. empty/clear) - this will remove the active trip console and lists from showing the just-deleted trip info
+            console.log("trip deleted");
+            fetchTrips();
+            resetTripAndListStates(); // Call function to reset the activeTrip and lists etc. states to their initial render value (i.e. empty/clear) - this will remove the active trip console and lists from showing the just-deleted trip info
         }
     }
 

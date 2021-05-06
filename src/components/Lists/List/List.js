@@ -6,7 +6,7 @@ import { EditListTitleForm } from "./EditListTitleForm";
 import { ListItem } from "../ListItem/ListItem";
 import { editListTitleApi, deleteListApi, newListItemApi, deleteListItemApi, undoDeleteListItemApi } from "../../../api";
 
-export const List = ({ tripId, list, lists, setLists, index, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems, setListItemsHaveChangedSinceLastSave }) => {
+export const List = ({ tripId, list, lists, setLists, index, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems }) => {
 
     const [isEditingListTitle, setIsEditingListTitle] = useState(false);
 
@@ -37,22 +37,25 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
         setIsEditingListTitle(!isEditingListTitle);
     }
 
+    // EDIT LIST TITLE
     const editListTitle = async editedListTitle => {
+
+        if (editedListTitle === list.title) {
+            console.log("no difference in list title");
+            return;
+        }
 
         // Make a put api call to update the db with the new list item
         const requestBodyContent = { editedListTitle };
         const { response, responseBodyText } = await editListTitleApi(tripId, list.id, requestBodyContent);
 
         if (response.status === 200) {
-            // REVIEW WHETHER WE WILL NEED TO KEEP THE FOLLOWING CODE ONCE THE NEW SAVE FUNCTIONALITY IS DONE
-            if (editedListTitle !== list.title) {
-                const currentList = Object.assign({}, list);
-                currentList.title = editedListTitle;
-                const currentLists = [...lists];
-                currentLists[index] = currentList;
-                setLists(currentLists);
-                setListItemsHaveChangedSinceLastSave(true);
-            }
+            const currentList = Object.assign({}, list);
+            currentList.title = editedListTitle;
+            const currentLists = [...lists];
+            currentLists[index] = currentList;
+            setLists(currentLists);
+            console.log(responseBodyText.message, ': ', editedListTitle);
         }
 
         else {
@@ -60,18 +63,24 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
         }
     }
 
+    // DELETE LIST
     const deleteList = async () => {
+
         // Make put api call to update the item in the db and set is_deleted to true
         const response = await deleteListApi(tripId, list.id);
 
         if (response.status === 204) {
+            // Remove the list items from the allListItems state
             const currentAllListItems = [...allListItems];
             currentAllListItems.splice(index, 1);
             setAllListItems(currentAllListItems);
+
+            // Remove the list from the lists state
             const currentLists = [...lists];
             currentLists.splice(index, 1);
             setLists(currentLists);
-            setListItemsHaveChangedSinceLastSave(true);
+
+            console.log("list deleted");
         }
 
         else {
@@ -91,7 +100,7 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
             name: newItemName,
             list_id: list.id,
             is_checked: false
-        } 
+        }
 
         // Make post api call to save new list item to db
         const requestBodyContent = { newItemName };
@@ -107,9 +116,6 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
         } else {
             console.log(responseBodyText.message);
         }
-
-        // LEAVE FOR NOW BUT I THINK WE WILL PROBABLY BE ABLE TO GET RID OF THIS
-        setListItemsHaveChangedSinceLastSave(true);
     }
 
     const removeListItem = async itemId => {
@@ -127,7 +133,6 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
             } else {
                 setDeletedListItems(prevDeletedListItems => [deletedItemWithIndex, ...prevDeletedListItems]);
             }
-            setListItemsHaveChangedSinceLastSave(true);
 
             const updatedList = listItems.filter(listItem => listItem.id !== itemId);
             setListItems(updatedList);
@@ -159,7 +164,8 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
     return (
         <section className="list-container">
 
-            <ConfirmDeleteListModal list={list}
+            <ConfirmDeleteListModal
+                list={list}
                 deleteList={deleteList} />
 
             <span className="clear"></span>
@@ -175,8 +181,7 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
                         lists={lists}
                         setLists={setLists}
                         index={index}
-                        toggleEditListTitle={toggleEditListTitle}
-                        setListItemsHaveChangedSinceLastSave={setListItemsHaveChangedSinceLastSave} />
+                        toggleEditListTitle={toggleEditListTitle} />
             }
             {
                 listItems ?
@@ -186,12 +191,12 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
                             listItem={listItem}
                             listItems={listItems}
                             setListItems={setListItems}
-                            removeListItem={removeListItem}
-                            setListItemsHaveChangedSinceLastSave={setListItemsHaveChangedSinceLastSave} />
+                            removeListItem={removeListItem} />
                     ) :
                     null
             }
-            <AddUndoRow addListItem={addListItem}
+            <AddUndoRow
+                addListItem={addListItem}
                 undoDelete={undoDelete} />
 
         </section>

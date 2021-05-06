@@ -1,39 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { fetchTripsApi } from "../../api";
+import React from "react";
 
-export const AllTripsDropdown = ({ fetchLists, activeTrip, setActiveTrip, toggleRefreshAllTripsDropdown, setOpenModal }) => {
-
-    const [allTrips, setAllTrips] = useState([]);
-    const isMounted = true;
-
-    useEffect(() => {
-        if (isMounted) {
-            fetchTrips();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [toggleRefreshAllTripsDropdown]);
-
-    // FETCH ALL TRIPS FOR THIS USER
-    const fetchTrips = async () => {
-        const { response, responseBodyText } = await fetchTripsApi();
-
-        if (response.status === 200 || response.status === 304) {
-            console.log(responseBodyText.trips);
-            setAllTrips(responseBodyText.trips);
-        } else {
-            console.log(responseBodyText.message);
-        }
-    }
+export const AllTripsDropdown = ({ allTrips, activeTrip, setActiveTrip, fetchLists, resetTripAndListStates }) => {
 
     const handleChange = event => {
         if (event.target.value === "select-trip") {
-            return;
+            resetTripAndListStates();
+
         } else {
             const selectedTripId = parseInt(event.target.value);
 
             const selectedTrip = allTrips.filter(trip => trip.id === selectedTripId)[0];
-
-            console.log(selectedTrip);
 
             setActiveTrip({ tripId: selectedTripId, tripName: selectedTrip.name, tripCategory: selectedTrip.category, tripDuration: selectedTrip.duration });
 

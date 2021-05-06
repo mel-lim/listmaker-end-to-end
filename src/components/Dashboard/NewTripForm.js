@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createTripApi } from "../../api";
 
-export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProcessing, toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown, setActiveTrip, configureLists, setNewTripNeedsSaving }) => {
+export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProcessing, fetchTrips, setActiveTrip, configureLists }) => {
 
     // Dynamic user inputs for the form
     const [tripName, setTripName] = useState('');
@@ -33,7 +33,7 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
 
         const { response, responseBodyText } = await createTripApi(requestBodyContent);
 
-        // Update the states that govern render-logic
+        // Update the state that shows/hides the new trip console / questionnaire
         setNewTripClicked(false);
 
         if (response.status === 201) {
@@ -50,11 +50,9 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
 
             // Sets the states that govern the lists rendered
             // Function is declared in Dashboard.js
-            console.log(responseBodyText.allListItems);
-            configureLists(responseBodyText.lists, responseBodyText.allListItems);
+            configureLists(responseBodyText.lists, responseBodyText.allListItems); // Note setFetchIsProcessing(false) is being called in the configureLists function
 
-            // CHANGE THIS SO THAT WE JUST CALL FETCH TRIPS DIRECTLY INSTEAD OF THIS CIRCUITOUS HOOK METHOD
-            setToggleRefreshAllTripsDropdown(!toggleRefreshAllTripsDropdown); // This will trigger the hook to re-fetch the all trips data and re-populate the drop down list with the updated trip name
+            fetchTrips();
 
             // Reset the local states that records the values inputted by the user into the new trip form
             setTripName('');
@@ -62,10 +60,11 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
             setTripDuration('');
             setSubmissionErrorMessage('');
 
+            console.log("new trip created");
+
         } else {
             console.log(responseBodyText.message);
         }
-        setIsFetchProcessing(false);
     }
 
     const handleSubmit = event => {
