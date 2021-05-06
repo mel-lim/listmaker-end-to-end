@@ -204,6 +204,7 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
                         </form>
                     </div>
             }
+            <p>-- or --</p>
         </div>
     );
 }

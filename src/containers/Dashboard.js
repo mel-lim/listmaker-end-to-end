@@ -313,13 +313,6 @@ export const Dashboard = () => {
                 <main>
                     <div className="dashboard-console">
                         <GreetUser />
-                        <AllTripsDropdown
-                            allTrips={allTrips}
-                            activeTrip={activeTrip}
-                            setActiveTrip={setActiveTrip}
-                            fetchLists={fetchLists}
-                            resetTripAndListStates={resetTripAndListStates}
-                        />
                         <NewTripForm
                             newTripClicked={newTripClicked}
                             setNewTripClicked={setNewTripClicked}
@@ -327,6 +320,13 @@ export const Dashboard = () => {
                             setActiveTrip={setActiveTrip}
                             fetchTrips={fetchTrips}
                             configureLists={configureLists}
+                        />
+                        <AllTripsDropdown
+                            allTrips={allTrips}
+                            activeTrip={activeTrip}
+                            setActiveTrip={setActiveTrip}
+                            fetchLists={fetchLists}
+                            resetTripAndListStates={resetTripAndListStates}
                         />
                         {
                             (activeTrip.tripId) ? // I removed the condition && !isFetchProcessing - if it stays in, everytime we save the lists we get this blinky, glitchy effect. I think it's uncessary - the only thing in active trip console that requires on the fetch request is the save attempt message, and it seems to work fine. Keep and eye on this though. There might have been an edge case error that I put the condition in to address originally. 

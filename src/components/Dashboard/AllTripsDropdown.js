@@ -43,10 +43,7 @@ export const AllTripsDropdown = ({ allTrips, activeTrip, setActiveTrip, fetchLis
                             <option key={trip.id} value={trip.id}>{trip.name} / {trip.category} / {trip.duration}</option>)
                     }
 
-                </select>
-
-                <p>-- or --</p>
-                
+                </select>                
             </div>
         </div>
     );
