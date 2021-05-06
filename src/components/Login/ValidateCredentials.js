@@ -12,6 +12,7 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
 
     const [attemptedAppUser, setAttemptedAppUser] = useState(null);
     const [isFailedLogin, setIsFailedLogin] = useState(false);
+    const [isLoggingIn, setIsLoggingIn] = useState(false);
 
     const [userIdentity, setUserIdentity] = useState('');
     const [password, setPassword] = useState('');
@@ -39,6 +40,7 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
 
 
     const checkUserCredentials = async (userIdentity, password) => {
+        setIsLoggingIn(true);
 
         // Detect whether the user identity inputted is a username or an email
         const requestBodyContent = {};
@@ -82,6 +84,7 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
             });
             setIsFailedLogin(true);
         }
+        setIsLoggingIn(false);
     }
 
     const handleSubmit = event => {
@@ -120,58 +123,63 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
 
             <p className="submission-unsuccessful-message">{submissionUnsuccessfulMessage}</p>
 
-            <form className="user-credentials-form" onSubmit={handleSubmit}>
+            {
+                isLoggingIn ?
+                    <form className="user-credentials-form" onSubmit={handleSubmit}>
 
-                <div className="input-label-container">
-                    <label htmlFor="user-identity-input" >Username or email</label>
-                    {context === "login" ?
-                        <input type="text"
-                            id="user-identity-input"
-                            name="userIdentity"
-                            onChange={event => setUserIdentity(event.target.value)}
-                            value={userIdentity} /> :
-                        <input type="text"
-                            id="user-identity-input"
-                            name="userIdentity"
-                            value={userIdentity}
-                            readOnly />
-                    }
-                </div>
+                        <div className="input-label-container">
+                            <label htmlFor="user-identity-input" >Username or email</label>
+                            {context === "login" ?
+                                <input type="text"
+                                    id="user-identity-input"
+                                    name="userIdentity"
+                                    onChange={event => setUserIdentity(event.target.value)}
+                                    value={userIdentity} /> :
+                                <input type="text"
+                                    id="user-identity-input"
+                                    name="userIdentity"
+                                    value={userIdentity}
+                                    readOnly />
+                            }
+                        </div>
 
-                <div className="input-label-container">
+                        <div className="input-label-container">
 
-                    <label htmlFor="password-input">Password</label>
+                            <label htmlFor="password-input">Password</label>
 
-                    <input type={show ? "text" : "password"}
-                        id="password-input"
-                        name="password"
-                        minLength="8"
-                        autoComplete="current-password"
-                        onChange={event => setPassword(event.target.value)}
-                        value={password}
-                        required />
-                    <button type="button"
-                        className={show ? "visible password-button" : "not-visible password-button"}
-                        onClick={toggleShowPassword}></button>
+                            <input type={show ? "text" : "password"}
+                                id="password-input"
+                                name="password"
+                                minLength="8"
+                                autoComplete="current-password"
+                                onChange={event => setPassword(event.target.value)}
+                                value={password}
+                                required />
+                            <button type="button"
+                                className={show ? "visible password-button" : "not-visible password-button"}
+                                onClick={toggleShowPassword}></button>
 
-                </div>
+                        </div>
 
-                <div>
-                    <input type="submit"
-                        className="pillbox-button"
-                        value={context === "login" ? 'Log in' : 'Confirm'} />
-                    {
-                        context === "confirmCredentials" ?
-                            <Link to="/logout">
-                                <input type="button"
-                                    className="pillbox-button"
-                                    value='Logout now' />
-                            </Link>
-                            : null
-                    }
-                </div>
+                        <div>
+                            <input type="submit"
+                                className="pillbox-button"
+                                value={context === "login" ? 'Log in' : 'Confirm'} />
+                            {
+                                context === "confirmCredentials" ?
+                                    <Link to="/logout">
+                                        <input type="button"
+                                            className="pillbox-button"
+                                            value='Logout now' />
+                                    </Link>
+                                    : null
+                            }
+                        </div>
 
-            </form>
+                    </form>
+                    :
+                    <p>Loggin you in...</p>
+            }
 
             {
                 context === "login" ?
