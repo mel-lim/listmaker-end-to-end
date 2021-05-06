@@ -35,7 +35,6 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
 
         // Update the states that govern render-logic
         setNewTripClicked(false);
-        setToggleRefreshAllTripsDropdown(!toggleRefreshAllTripsDropdown);
 
         if (response.status === 201) {
             const newTrip = {
@@ -51,7 +50,11 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
 
             // Sets the states that govern the lists rendered
             // Function is declared in Dashboard.js
+            console.log(responseBodyText.allListItems);
             configureLists(responseBodyText.lists, responseBodyText.allListItems);
+
+            // CHANGE THIS SO THAT WE JUST CALL FETCH TRIPS DIRECTLY INSTEAD OF THIS CIRCUITOUS HOOK METHOD
+            setToggleRefreshAllTripsDropdown(!toggleRefreshAllTripsDropdown); // This will trigger the hook to re-fetch the all trips data and re-populate the drop down list with the updated trip name
 
             // Reset the local states that records the values inputted by the user into the new trip form
             setTripName('');
@@ -59,12 +62,10 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
             setTripDuration('');
             setSubmissionErrorMessage('');
 
-            // Call for the newly generated lists and items to be saved
-            setNewTripNeedsSaving(true);
-
         } else {
             console.log(responseBodyText.message);
         }
+        setIsFetchProcessing(false);
     }
 
     const handleSubmit = event => {

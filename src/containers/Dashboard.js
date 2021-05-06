@@ -188,7 +188,7 @@ export const Dashboard = () => {
         localStorage.setItem("allDeletedItems", JSON.stringify(allDeletedItems));
     }, [allDeletedItems]);
 
-    // NEW TRIP SAVE HOOK
+    /* // NEW TRIP SAVE HOOK
     useEffect(() => {
         console.log("new trip save hook triggered");
         if (newTripNeedsSaving && lists.length && allListItems.length) {
@@ -197,19 +197,19 @@ export const Dashboard = () => {
         }
         return;
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [newTripNeedsSaving, lists, allListItems]); // This hook will get called everytime the newTripNeedsSaving state is updated (i.e. when a new trip is created) and everytime the lists or list items change (in case this is called before the lists or allListItems are defined, then get subsequently defined)
+    }, [newTripNeedsSaving, lists, allListItems]); // This hook will get called everytime the newTripNeedsSaving state is updated (i.e. when a new trip is created) and everytime the lists or list items change (in case this is called before the lists or allListItems are defined, then get subsequently defined) */
 
-    // AUTOSAVE HOOK
+/*     // AUTOSAVE HOOK
     useEffect(() => {
         console.log("autosave hook triggered");
         const timer = setTimeout(() => {
-            /* saveTripDetails(); */
+            saveTripDetails();
             saveListChanges();
             console.log("autosave function run");
         }, parseInt(configData.AUTOSAVE_INTERVAL)); // 10 minutes
         return () => clearTimeout(timer);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [listItemsHaveChangedSinceLastSave, tripDetailsHaveChangedSinceLastSave]);
+    }, [listItemsHaveChangedSinceLastSave, tripDetailsHaveChangedSinceLastSave]); */
 
     // Reuseable block to set the lists and allListItems state for the current/active trip, and initialise the allDeletedItems state
     const configureLists = (currentLists, currentAllLists) => {
