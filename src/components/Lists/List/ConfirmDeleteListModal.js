@@ -8,9 +8,9 @@ export const ConfirmDeleteListModal = ({ list, deleteList }) => {
             {
                 close => (
                     <div className="confirm-delete-modal">
-                        <div className="modal-header">Are you sure you want to delete "{list.title}"?</div>
+                        <div className="modal-header">Are you sure you want to delete the entire "{list.title}" list?</div>
                         <div className="actions">
-                            <input type="button" value="Delete it" onClick={deleteList} />
+                            <input type="button" value="Delete forever" onClick={deleteList} />
                             <input type="button" value="Keep it" onClick={close} />
                         </div>
                     </div>
