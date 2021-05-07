@@ -124,77 +124,80 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
             <p className="submission-unsuccessful-message">{submissionUnsuccessfulMessage}</p>
 
             {
-                isLoggingIn ?
-                    <form className="user-credentials-form" onSubmit={handleSubmit}>
+                !isLoggingIn ?
+                    <div>
+                        <form className="user-credentials-form" onSubmit={handleSubmit}>
 
-                        <div className="input-label-container">
-                            <label htmlFor="user-identity-input" >Username or email</label>
-                            {context === "login" ?
-                                <input type="text"
-                                    id="user-identity-input"
-                                    name="userIdentity"
-                                    onChange={event => setUserIdentity(event.target.value)}
-                                    value={userIdentity} /> :
-                                <input type="text"
-                                    id="user-identity-input"
-                                    name="userIdentity"
-                                    value={userIdentity}
-                                    readOnly />
-                            }
-                        </div>
+                            <div className="input-label-container">
+                                <label htmlFor="user-identity-input" >Username or email</label>
+                                {context === "login" ?
+                                    <input type="text"
+                                        id="user-identity-input"
+                                        name="userIdentity"
+                                        onChange={event => setUserIdentity(event.target.value)}
+                                        value={userIdentity} /> :
+                                    <input type="text"
+                                        id="user-identity-input"
+                                        name="userIdentity"
+                                        value={userIdentity}
+                                        readOnly />
+                                }
+                            </div>
 
-                        <div className="input-label-container">
+                            <div className="input-label-container">
 
-                            <label htmlFor="password-input">Password</label>
+                                <label htmlFor="password-input">Password</label>
 
-                            <input type={show ? "text" : "password"}
-                                id="password-input"
-                                name="password"
-                                minLength="8"
-                                autoComplete="current-password"
-                                onChange={event => setPassword(event.target.value)}
-                                value={password}
-                                required />
-                            <button type="button"
-                                className={show ? "visible password-button" : "not-visible password-button"}
-                                onClick={toggleShowPassword}></button>
+                                <input type={show ? "text" : "password"}
+                                    id="password-input"
+                                    name="password"
+                                    minLength="8"
+                                    autoComplete="current-password"
+                                    onChange={event => setPassword(event.target.value)}
+                                    value={password}
+                                    required />
+                                <button type="button"
+                                    className={show ? "visible password-button" : "not-visible password-button"}
+                                    onClick={toggleShowPassword}></button>
 
-                        </div>
+                            </div>
 
-                        <div>
-                            <input type="submit"
-                                className="pillbox-button"
-                                value={context === "login" ? 'Log in' : 'Confirm'} />
-                            {
-                                context === "confirmCredentials" ?
-                                    <Link to="/logout">
-                                        <input type="button"
-                                            className="pillbox-button"
-                                            value='Logout now' />
+                            <div>
+                                <input type="submit"
+                                    className="pillbox-button"
+                                    value={context === "login" ? 'Log in' : 'Confirm'} />
+                                {
+                                    context === "confirmCredentials" ?
+                                        <Link to="/logout">
+                                            <input type="button"
+                                                className="pillbox-button"
+                                                value='Logout now' />
+                                        </Link>
+                                        : null
+                                }
+                            </div>
+
+                        </form>
+
+
+                        {
+                            context === "login" ?
+                                <div>
+                                    <hr></hr><p className="button-separator">or</p><hr></hr>
+
+                                    <Link to="/signup">
+                                        <div>
+                                            <input type="button"
+                                                className="pillbox-button"
+                                                value='Sign up' />
+                                        </div>
                                     </Link>
-                                    : null
-                            }
-                        </div>
-
-                    </form>
+                                </div>
+                                : null
+                        }
+                    </div>
                     :
                     <p>Loggin you in...</p>
-            }
-
-            {
-                context === "login" ?
-                    <div>
-                        <hr></hr><p className="button-separator">or</p><hr></hr>
-
-                        <Link to="/signup">
-                            <div>
-                                <input type="button"
-                                    className="pillbox-button"
-                                    value='Sign up' />
-                            </div>
-                        </Link>
-                    </div>
-                    : null
             }
         </div>
     );

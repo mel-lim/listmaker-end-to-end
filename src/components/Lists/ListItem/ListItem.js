@@ -3,7 +3,7 @@ import { SettledItem } from "./SettledItem";
 import { EditItemForm } from "./EditItemForm";
 import { editListItemApi } from "../../../api";
 
-export const ListItem = ({ tripId, listItem, listItems, setListItems, removeListItem }) => { // This is a component in List
+export const ListItem = ({ tripId, listItem, listItems, setListItems, deleteListItem }) => { // This is a component in List
     const [isEditing, setIsEditing] = useState(false);
 
     const toggleEdit = () => {
@@ -31,7 +31,7 @@ export const ListItem = ({ tripId, listItem, listItems, setListItems, removeList
 
     const handleClickDelete = event => {
         event.preventDefault();
-        removeListItem(listItem.id); // See List.js
+        deleteListItem(listItem.id); // See List.js
     }
 
     return (
