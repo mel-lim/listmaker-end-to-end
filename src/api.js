@@ -29,9 +29,14 @@ const postApiCall = async (url, requestBodyContent) => {
     if (requestBodyContent) {
         req.body = JSON.stringify(requestBodyContent)
     }
-    const response = await fetch(url, req);
-    const responseBodyText = await response.json();
-    return { response, responseBodyText };
+    try {
+        const response = await fetch(url, req);
+        const responseBodyText = await response.json();
+        return { response, responseBodyText };
+    }
+    catch (error) {
+        console.error("The server is down");
+    }
 }
 
 const putApiCall = async (url, requestBodyContent) => {
@@ -73,11 +78,11 @@ const deleteApiCall = async (url, requestBodyContent) => {
     return response;
 }
 
-export const postNewUserApi = async requestBodyContent => {
+export const signUpNewUserApi = requestBodyContent => {
     return postApiCall('/api/appusers/signup', requestBodyContent);
 }
 
-export const checkUserCredentialsApi = async requestBodyContent => {
+export const checkUserCredentialsApi = requestBodyContent => {
     return postApiCall('/api/appusers/login', requestBodyContent);
 }
 
