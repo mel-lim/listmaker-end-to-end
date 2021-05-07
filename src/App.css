@@ -41,20 +41,20 @@ body {
 }
 
 .delete-button {
-  background-image: url('./resources/icons/016-crossed.svg');
+  background-image: url('./resources/icons/pixel-perfect/016-crossed.svg');
   height: 15px;
   width: 15px;
   margin-right: 9px;
 }
 
 .edit-button {
-  background-image: url('./resources/icons/053-edit.svg');
+  background-image: url('./resources/icons/pixel-perfect/053-edit.svg');
   height: 13px;
   width: 13px;
 }
 
 .done-button {
-  background-image: url('./resources/icons/007-check.svg');
+  background-image: url('./resources/icons/pixel-perfect/007-check.svg');
   height: 16px;
   width: 16px;
   margin-left: 9px;
@@ -64,16 +64,15 @@ body {
 .add-button {
   height: 20px;
   width: 20px;
-  background-image: url('./resources/icons/057-plus.svg');
+  background-image: url('./resources/icons/pixel-perfect/057-plus.svg');
   margin-right: 9px;
   margin-left: 9px;
 }
 
 .undo-button {
-  height: 17.5px;
-  width: 17.5px;
-  background-image: url('./resources/icons/undo.svg');
-  margin-top: 2px;
+  height: 19px;
+  width: 19px;
+  background-image: url('./resources/icons/uicons/fi-rr-undo.svg');
 }
 
 /* Text styles and sizing */
@@ -470,11 +469,11 @@ input.user-input-text {
 }
 
 .visible {
-  background-image: url('./resources/icons/eye.svg');
+  background-image: url('./resources/icons/pixel-perfect/eye.svg');
 }
 
 .not-visible {
-  background-image: url('./resources/icons/noeye.svg');
+  background-image: url('./resources/icons/pixel-perfect/noeye.svg');
 }
 
 #password-input, .password-button {
@@ -680,7 +679,7 @@ footer {
 
   #hamburger-navigation-button {
     display: block;
-    background-image: url('./resources/icons/035-hamburger.svg');
+    background-image: url('./resources/icons/pixel-perfect/035-hamburger.svg');
     width: 45px;
     height: 45px;
   }
