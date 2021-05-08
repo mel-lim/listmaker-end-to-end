@@ -1,17 +1,22 @@
 const getApiCall = async url => {
-    const response = await fetch(url, {
-        method: 'GET',
-        mode: 'cors',
-        cache: 'default',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        redirect: 'follow',
-        referrerPolicy: 'no-referrer'
-    });
-    const responseBodyText = await response.json();
-    return { response, responseBodyText };
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            mode: 'cors',
+            cache: 'default',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer'
+        });
+        const responseBodyText = await response.json();
+        return { response, responseBodyText };
+    }
+    catch (error) {
+        console.error("Error in stack at api.js - possible server connection error", error);
+    }
 }
 
 const postApiCall = async (url, requestBodyContent) => {
@@ -35,7 +40,7 @@ const postApiCall = async (url, requestBodyContent) => {
         return { response, responseBodyText };
     }
     catch (error) {
-        console.error("The server is down");
+        console.error("Error in stack at api.js - possible server connection error", error);
     }
 }
 
@@ -54,9 +59,14 @@ const putApiCall = async (url, requestBodyContent) => {
     if (requestBodyContent) {
         req.body = JSON.stringify(requestBodyContent);
     }
-    const response = await fetch(url, req);
-    const responseBodyText = await response.json();
-    return { response, responseBodyText };
+    try {
+        const response = await fetch(url, req);
+        const responseBodyText = await response.json();
+        return { response, responseBodyText };
+    }
+    catch (error) {
+        console.error("Error in stack at api.js - possible server connection error", error);
+    }
 }
 
 const deleteApiCall = async (url, requestBodyContent) => {
@@ -74,8 +84,13 @@ const deleteApiCall = async (url, requestBodyContent) => {
     if (requestBodyContent) {
         req.body = JSON.stringify(requestBodyContent);
     }
-    const response = await fetch(url, req);
-    return response;
+    try {
+        const response = await fetch(url, req);
+        return response;
+    }
+    catch (error) {
+        console.error("Error in stack at api.js - possible server connection error", error);
+    }
 }
 
 export const signUpNewUserApi = requestBodyContent => {
@@ -135,18 +150,7 @@ export const undoDeleteListItemApi = async (tripId, listId, itemId) => {
 }
 
 export const deleteTripApi = async tripId => {
-    const response = await fetch(`/api/trips/${tripId}/deletetrip`, {
-        method: 'DELETE',
-        mode: 'cors',
-        cache: 'default',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        redirect: 'follow',
-        referrerPolicy: 'no-referrer'
-    });
-    return response;
+    return deleteApiCall(`/api/trips/${tripId}/deletetrip`, null);
 }
 
 export const getAccountDetailsApi = () => {
@@ -154,20 +158,24 @@ export const getAccountDetailsApi = () => {
 }
 
 export const logoutApi = async () => {
-    const response = await fetch('/api/appusers/logout', {
-        method: 'GET',
-        mode: 'cors',
-        cache: 'no-store', // See if this will make logout work when in production 
-        // YES THIS WORKS!!!!!!!!!!! Note this solved an issue in both Firefox and Chrome where the cache was not letting my backend clear my cookies on logout for some reason. This was only in production (Heroku/Netlify) and not in dev (localhost)
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        redirect: 'follow',
-        referrerPolicy: 'no-referrer'
-    });
-    const responseBodyText = await response.json();
-    return { response, responseBodyText };
+    try {
+        const response = await fetch('/api/appusers/logout', {
+            method: 'GET',
+            mode: 'cors',
+            cache: 'no-store', // Note this solved an issue in both Firefox and Chrome where the cache was not letting my backend clear my cookies on logout for some reason. This was only in production (Heroku/Netlify) and not in dev (localhost)
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer'
+        });
+        const responseBodyText = await response.json();
+        return { response, responseBodyText };
+    }
+    catch (error) {
+        console.error("Error in stack at api.js - possible server connection error", error);
+    }
 }
 
 export const sendMessageApi = async requestBodyContent => {
