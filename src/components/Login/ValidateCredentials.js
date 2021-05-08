@@ -7,17 +7,21 @@ import configData from "../../config.json";
 
 export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal }) => {
 
+    // Contexts for user and cookie expiry
     const { user, setUser } = useContext(UserContext);
     const { setCookieExpiry } = useContext(CookieExpiryContext);
 
+    // States for the message above the form
     const [loggingInMessage, setLoggingInMessage] = useState(null);
+    const [submissionUnsuccessfulMessage, setSubmissionUnsuccessfulMessage] = useState('');
     const [serverStatusMessage, setServerStatusMessage] = useState(null);
 
+    // States for the inputs in the form
     const [userIdentity, setUserIdentity] = useState('');
     const [password, setPassword] = useState('');
-    const [show, setShow] = useState(false);
-    const [submissionUnsuccessfulMessage, setSubmissionUnsuccessfulMessage] = useState('');
-
+    const [showPassword, setShowPassword] = useState(false);
+    
+    // Regex expressions for username and email
     const usernameRegex = new RegExp(configData.USERNAME_REGEX);
     const emailRegex = new RegExp(configData.EMAIL_REGEX);
 
@@ -116,7 +120,7 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
 
     const toggleShowPassword = event => {
         event.preventDefault();
-        setShow(!show);
+        setShowPassword(!showPassword);
     }
 
     return (
@@ -151,7 +155,7 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
 
                     <label htmlFor="password-input">Password</label>
 
-                    <input type={show ? "text" : "password"}
+                    <input type={showPassword ? "text" : "password"}
                         id="password-input"
                         name="password"
                         minLength="8"
@@ -160,7 +164,7 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
                         value={password}
                         required />
                     <button type="button"
-                        className={show ? "visible password-button" : "not-visible password-button"}
+                        className={showPassword ? "visible password-button" : "not-visible password-button"}
                         onClick={toggleShowPassword}></button>
 
                 </div>
