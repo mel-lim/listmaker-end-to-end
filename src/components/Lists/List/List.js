@@ -45,46 +45,53 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
             return;
         }
 
-        // Make a put api call to update the db with the new list item
-        const requestBodyContent = { editedListTitle };
-        const { response, responseBodyText } = await editListTitleApi(tripId, list.id, requestBodyContent);
+        try {
+            // Make a put api call to update the db with the new list item
+            const requestBodyContent = { editedListTitle };
+            const { response, responseBodyText } = await editListTitleApi(tripId, list.id, requestBodyContent);
 
-        if (response.ok === true) {
-            const currentList = Object.assign({}, list);
-            currentList.title = editedListTitle;
-            const currentLists = [...lists];
-            currentLists[index] = currentList;
-            setLists(currentLists);
-            console.log(responseBodyText.message, ': ', editedListTitle);
-        }
+            if (response.ok === true) {
+                const currentList = Object.assign({}, list);
+                currentList.title = editedListTitle;
+                const currentLists = [...lists];
+                currentLists[index] = currentList;
+                setLists(currentLists);
+                console.log(responseBodyText.message, ': ', editedListTitle);
+            }
 
-        else {
-            console.log(responseBodyText.message);
+            else {
+                console.log(responseBodyText.message);
+            }
+        } catch {
+            console.error("Error in editListTitle function. Cannot connect to server");
         }
     }
 
     // DELETE LIST
     const deleteList = async () => {
+        try {
+            // Make put api call to update the item in the db and set is_deleted to true
+            const response = await deleteListApi(tripId, list.id);
 
-        // Make put api call to update the item in the db and set is_deleted to true
-        const response = await deleteListApi(tripId, list.id);
+            if (response.ok === true) {
+                // Remove the list items from the allListItems state
+                const currentAllListItems = [...allListItems];
+                currentAllListItems.splice(index, 1);
+                setAllListItems(currentAllListItems);
 
-        if (response.ok === true) {
-            // Remove the list items from the allListItems state
-            const currentAllListItems = [...allListItems];
-            currentAllListItems.splice(index, 1);
-            setAllListItems(currentAllListItems);
+                // Remove the list from the lists state
+                const currentLists = [...lists];
+                currentLists.splice(index, 1);
+                setLists(currentLists);
 
-            // Remove the list from the lists state
-            const currentLists = [...lists];
-            currentLists.splice(index, 1);
-            setLists(currentLists);
+                console.log("list deleted");
+            }
 
-            console.log("list deleted");
-        }
-
-        else {
-            console.log(response.status);
+            else {
+                console.log(response.status);
+            }
+        } catch {
+            console.error("Error in deleteList function. Cannot connect to server");
         }
     }
 
@@ -97,57 +104,64 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
 
     // ADD LIST ITEM
     const addListItem = async newItemName => {
+        try {
+            // Make post api call to save new list item to db
+            const requestBodyContent = { newItemName };
+            const { response, responseBodyText } = await newListItemApi(tripId, list.id, requestBodyContent);
 
-        // Make post api call to save new list item to db
-        const requestBodyContent = { newItemName };
-        const { response, responseBodyText } = await newListItemApi(tripId, list.id, requestBodyContent);
-
-        if (response.ok === true) {
-            const newListItem = {
-                id: responseBodyText.id,
-                name: newItemName,
-                list_id: list.id,
-                is_checked: false
-            };
-            if (!listItems) {
-                setListItems([newListItem]);
+            if (response.ok === true) {
+                const newListItem = {
+                    id: responseBodyText.id,
+                    name: newItemName,
+                    list_id: list.id,
+                    is_checked: false
+                };
+                if (!listItems) {
+                    setListItems([newListItem]);
+                } else {
+                    setListItems(prevListItems => [...prevListItems, newListItem]);
+                }
+                console.log("new list item added");
             } else {
-                setListItems(prevListItems => [...prevListItems, newListItem]);
+                console.log(responseBodyText.message);
             }
-            console.log("new list item added");
-        } else {
-            console.log(responseBodyText.message);
+        } catch {
+            console.error("Error in addListItem function. Cannot connect to server");
         }
     }
 
     // DELETE LIST ITEM
     const deleteListItem = async itemId => {
-        // Make put api call to update the item in the db and set is_deleted to true
-        const { response, responseBodyText } = await deleteListItemApi(tripId, list.id, itemId);
+        try {
+            // Make put api call to update the item in the db and set is_deleted to true
+            const { response, responseBodyText } = await deleteListItemApi(tripId, list.id, itemId);
 
-        if (response.ok === true) {
-            // Get the index of the item that was deleted from within the listItems array
-            const index = listItems.findIndex(listItem => listItem.id === itemId);
+            if (response.ok === true) {
+                // Get the index of the item that was deleted from within the listItems array
+                const index = listItems.findIndex(listItem => listItem.id === itemId);
 
-            // Store deleted item and its original index within the listItems array, in the deleteListItems state
-            const deletedItemWithIndex = {
-                deletedItem: listItems[index],
-                originalIndex: index
-            };
-            if (!deletedListItems) {
-                setDeletedListItems([deletedItemWithIndex]);
+                // Store deleted item and its original index within the listItems array, in the deleteListItems state
+                const deletedItemWithIndex = {
+                    deletedItem: listItems[index],
+                    originalIndex: index
+                };
+                if (!deletedListItems) {
+                    setDeletedListItems([deletedItemWithIndex]);
+                } else {
+                    setDeletedListItems(prevDeletedListItems => [deletedItemWithIndex, ...prevDeletedListItems]);
+                }
+
+                // Set listItems state so that it has the deleted item removed from it
+                const updatedList = listItems.filter(listItem => listItem.id !== itemId);
+                setListItems(updatedList);
+
+                console.log("item deleted");
+
             } else {
-                setDeletedListItems(prevDeletedListItems => [deletedItemWithIndex, ...prevDeletedListItems]);
+                console.log(responseBodyText.message);
             }
-
-            // Set listItems state so that it has the deleted item removed from it
-            const updatedList = listItems.filter(listItem => listItem.id !== itemId);
-            setListItems(updatedList);
-
-            console.log("item deleted");
-
-        } else {
-            console.log(responseBodyText.message);
+        } catch {
+            console.error("Error in deleteListItem function. Cannot connect to server");
         }
     }
 
@@ -161,24 +175,28 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
         // Get the most recently deleted item from the deletedListItems array
         const lastDeletedItem = deletedListItems[0];
 
-        // Make undo delete api call
-        const { response, responseBodyText } = await undoDeleteListItemApi(tripId, list.id, lastDeletedItem.deletedItem.id);
+        try {
+            // Make undo delete api call
+            const { response, responseBodyText } = await undoDeleteListItemApi(tripId, list.id, lastDeletedItem.deletedItem.id);
 
-        if (response.ok === true) {
+            if (response.ok === true) {
 
-            // Put the last deleted item back into the listItems array
-            const currentListItems = [...listItems];
-            currentListItems.splice(lastDeletedItem.originalIndex, 0, lastDeletedItem.deletedItem)
-            setListItems(currentListItems);
+                // Put the last deleted item back into the listItems array
+                const currentListItems = [...listItems];
+                currentListItems.splice(lastDeletedItem.originalIndex, 0, lastDeletedItem.deletedItem)
+                setListItems(currentListItems);
 
-            // Remove the now undone deleted item from the deletedListItems array
-            const updatedDeletedListItems = deletedListItems.slice(1);
-            setDeletedListItems(updatedDeletedListItems);
+                // Remove the now undone deleted item from the deletedListItems array
+                const updatedDeletedListItems = deletedListItems.slice(1);
+                setDeletedListItems(updatedDeletedListItems);
 
-            console.log("delete undone");
+                console.log("delete undone");
 
-        } else {
-            console.log(responseBodyText.message);
+            } else {
+                console.log(responseBodyText.message);
+            }
+        } catch {
+            console.error("Error in undoDelete function. Cannot connect to server");
         }
     }
 

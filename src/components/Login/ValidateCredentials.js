@@ -80,7 +80,7 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
             }
         }
         catch (error) {
-            console.error("The server is down");
+            console.error("Cannot connect to server");
             setLoggingInMessage(null);
             setUserIdentity(userIdentity);
             if (serverDownLoginAttempts < 5) {

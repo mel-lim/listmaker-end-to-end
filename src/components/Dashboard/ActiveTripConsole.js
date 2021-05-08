@@ -3,7 +3,7 @@ import { SettledTripName } from "./SettledTripName";
 import { EditTripNameForm } from "./EditTripNameForm";
 import { ConfirmDeleteTripModal } from "./ConfirmDeleteTripModal";
 
-export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, fetchLists, editTripDetails, saveTripDetailsMessage, saveListsMessage, fetchTrips, resetTripAndListStates, addNewList }) => {
+export const ActiveTripConsole = ({ activeTrip, setActiveTrip, fetchTrips, editTripDetails, resetTripAndListStates, saveTripDetailsMessage, lists, allListItems, fetchLists, createNewList, saveListsMessage }) => {
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -50,7 +50,7 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
                     resetTripAndListStates={resetTripAndListStates} />
                 <input type="button"
                     className="pillbox-button"
-                    value="New list" onClick={addNewList} />
+                    value="New list" onClick={createNewList} />
 
                 {lists.length && allListItems.length ?
                     <div>

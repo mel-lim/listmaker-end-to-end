@@ -29,41 +29,46 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
 
         setIsFetchProcessing(true);
 
-        const requestBodyContent = { tripName, tripCategory, tripDuration, requestTemplate };
+        try {
 
-        const { response, responseBodyText } = await createTripApi(requestBodyContent);
+            const requestBodyContent = { tripName, tripCategory, tripDuration, requestTemplate };
 
-        // Update the state that shows/hides the new trip console / questionnaire
-        setNewTripClicked(false);
+            const { response, responseBodyText } = await createTripApi(requestBodyContent);
 
-        if (response.status === 201) {
-            const newTrip = {
-                tripId: responseBodyText.tripId,
-                tripName: tripName,
-                tripCategory: tripCategory,
-                tripDuration: tripDuration,
-                requestTemplate: requestTemplate
+            // Update the state that shows/hides the new trip console / questionnaire
+            setNewTripClicked(false);
+
+            if (response.status === 201) {
+                const newTrip = {
+                    tripId: responseBodyText.tripId,
+                    tripName: tripName,
+                    tripCategory: tripCategory,
+                    tripDuration: tripDuration,
+                    requestTemplate: requestTemplate
+                }
+
+                // Activates a trip - this will display the trip details in the active trip console
+                setActiveTrip(newTrip); // This is going to get stored in localstorage
+
+                // Sets the states that govern the lists rendered
+                // Function is declared in Dashboard.js
+                configureLists(responseBodyText.lists, responseBodyText.allListItems); // Note setFetchIsProcessing(false) is being called in the configureLists function
+
+                fetchTrips();
+
+                // Reset the local states that records the values inputted by the user into the new trip form
+                setTripName('');
+                setTripCategory('');
+                setTripDuration('');
+                setSubmissionErrorMessage('');
+
+                console.log("new trip created");
+
+            } else {
+                console.log(responseBodyText.message);
             }
-
-            // Activates a trip - this will display the trip details in the active trip console
-            setActiveTrip(newTrip); // This is going to get stored in localstorage
-
-            // Sets the states that govern the lists rendered
-            // Function is declared in Dashboard.js
-            configureLists(responseBodyText.lists, responseBodyText.allListItems); // Note setFetchIsProcessing(false) is being called in the configureLists function
-
-            fetchTrips();
-
-            // Reset the local states that records the values inputted by the user into the new trip form
-            setTripName('');
-            setTripCategory('');
-            setTripDuration('');
-            setSubmissionErrorMessage('');
-
-            console.log("new trip created");
-
-        } else {
-            console.log(responseBodyText.message);
+        } catch {
+            console.error("Error in createTrip function. Cannot connect to server");
         }
     }
 
@@ -76,18 +81,18 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
         <div className="new-trip-form">
             {
                 !newTripClicked ?
-                <div>
-                <p className="inline-text bolder">Make new lists:</p>
-                    <input type="button"
-                        className="pillbox-button"
-                        value='New trip'
-                        onClick={() => setNewTripClicked(true)} />
+                    <div>
+                        <p className="inline-text bolder">Make new lists:</p>
+                        <input type="button"
+                            className="pillbox-button"
+                            value='New trip'
+                            onClick={() => setNewTripClicked(true)} />
 
-                </div>
-                
+                    </div>
+
                     :
                     <div>
-                    <p className="bolder">Make new lists:</p>
+                        <p className="bolder">Make new lists:</p>
 
                         <p>Answer a couple of questions to populate your lists with some suggested items.</p>
 
@@ -196,10 +201,10 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
 
                             <input type="submit"
                                 className="pillbox-button" value='Create trip' />
-                                <input type="button"
-                            className="pillbox-button"
-                            value='Cancel'
-                            onClick={cancelTrip} />
+                            <input type="button"
+                                className="pillbox-button"
+                                value='Cancel'
+                                onClick={cancelTrip} />
                             <p>{submissionErrorMessage}</p>
                         </form>
                     </div>

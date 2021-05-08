@@ -201,13 +201,17 @@ export const Dashboard = () => {
 
     // FETCH ALL TRIPS FOR THIS USER
     const fetchTrips = async () => {
-        const { response, responseBodyText } = await fetchTripsApi();
+        try {
+            const { response, responseBodyText } = await fetchTripsApi();
 
-        if (response.status === 200 || response.status === 304) {
-            console.log("all trips fetched: ", responseBodyText.trips);
-            setAllTrips(responseBodyText.trips);
-        } else {
-            console.log(responseBodyText.message);
+            if (response.status === 200 || response.status === 304) {
+                console.log("all trips fetched: ", responseBodyText.trips);
+                setAllTrips(responseBodyText.trips);
+            } else {
+                console.log(responseBodyText.message);
+            }
+        } catch {
+            console.error("Error in fetchTrips function. Cannot connect to server");
         }
     }
 
@@ -222,14 +226,18 @@ export const Dashboard = () => {
         const tripId = activeTrip.tripId;
         const requestBodyContent = { editedTripName };
 
-        const { response, responseBodyText } = await editTripDetailsApi(tripId, requestBodyContent);
-        setSaveTripDetailsMessage(responseBodyText.message);
+        try {
+            const { response, responseBodyText } = await editTripDetailsApi(tripId, requestBodyContent);
+            setSaveTripDetailsMessage(responseBodyText.message);
 
-        if (response.status === 200 || 304) {
-            console.log("edited trip name saved: ", editedTripName);
-            setActiveTrip({ ...activeTrip, tripName: editedTripName });
-            // CHANGE THIS SO THAT WE JUST CALL FETCH TRIPS DIRECTLY INSTEAD OF THIS CIRCUITOUS HOOK METHOD
-            fetchTrips();
+            if (response.status === 200 || 304) {
+                console.log("edited trip name saved: ", editedTripName);
+                setActiveTrip({ ...activeTrip, tripName: editedTripName });
+                // CHANGE THIS SO THAT WE JUST CALL FETCH TRIPS DIRECTLY INSTEAD OF THIS CIRCUITOUS HOOK METHOD
+                fetchTrips();
+            }
+        } catch {
+            console.error("Error in editTripDetails function. Cannot connect to server");
         }
     }
 
@@ -257,52 +265,62 @@ export const Dashboard = () => {
         setIsFetchProcessing(true); // This will ensure that the render function doesn't race past the completion of the fetch request. 
         // While this is true, the renderer will render "Loading...". We will set it back to false at the end of the request to re-render the updated lists as fetched from the db.
 
-        const { response, responseBodyText } = await fetchListsApi(tripId);
+        try {
 
-        if (response.status === 200 || response.status === 304) {
-            // Configure the list and allListItems states
-            configureLists(responseBodyText.lists, responseBodyText.allListItems);
-            // Note the setIsFetchProcessing(false) is located within the configureLists function
-            console.log("lists and list items fetched");
+            const { response, responseBodyText } = await fetchListsApi(tripId);
 
-        } else if (response.status === 401) {
-            setOpenConfirmCredentialsModal(true);
-            console.log(responseBodyText.message);
+            if (response.status === 200 || response.status === 304) {
+                // Configure the list and allListItems states
+                configureLists(responseBodyText.lists, responseBodyText.allListItems);
+                // Note the setIsFetchProcessing(false) is located within the configureLists function
+                console.log("lists and list items fetched");
 
-        } else {
-            console.log(responseBodyText.message);
+            } else if (response.status === 401) {
+                setOpenConfirmCredentialsModal(true);
+                console.log(responseBodyText.message);
+
+            } else {
+                console.log(responseBodyText.message);
+            }
+        } catch {
+            console.error("Error in fetchTrips function. Cannot connect to server");
         }
     }
 
     // Might be able to get rid of this now - think on it
     const generateTempListId = () => {
-        const tempListId = `tempList-${nextListIdNum}`; 
+        const tempListId = `tempList-${nextListIdNum}`;
         // Increment the next list id number for the temp list id
         setNextListIdNum(prev => prev + 1);
         return tempListId;
     }
 
-    // ADD NEW LIST
-    const addNewList = async () => {
+    // CREATE NEW LIST
+    const createNewList = async () => {
 
-        // Make post api call to save new list to db
-        const { response, responseBodyText } = await createNewListApi(activeTrip.tripId);
+        try {
 
-        if (response.status === 201) {
-            // Add new list to the lists state
-            setLists(prev => [...prev, responseBodyText]);
+            // Make post api call to save new list to db
+            const { response, responseBodyText } = await createNewListApi(activeTrip.tripId);
 
-            // Add an empty array to the allListItems array, to hold the new list items
-            setAllListItems(prev => [...prev, []]);
+            if (response.status === 201) {
+                // Add new list to the lists state
+                setLists(prev => [...prev, responseBodyText]);
 
-            // Scroll down to the new list
-            newListRef.current.scrollIntoView();
+                // Add an empty array to the allListItems array, to hold the new list items
+                setAllListItems(prev => [...prev, []]);
 
-            console.log("New untitled list created");
-        }
+                // Scroll down to the new list
+                newListRef.current.scrollIntoView();
 
-        else {
-            console.log(responseBodyText.message);
+                console.log("New untitled list created");
+            }
+
+            else {
+                console.log(responseBodyText.message);
+            }
+        } catch {
+            console.error("Error in createNewList function. Cannot connect to server");
         }
     }
 
@@ -343,7 +361,7 @@ export const Dashboard = () => {
                                     saveListsMessage={saveListsMessage}
                                     fetchTrips={fetchTrips}
                                     resetTripAndListStates={resetTripAndListStates}
-                                    addNewList={addNewList}
+                                    createNewList={createNewList}
                                 />
                                 : null
                         }

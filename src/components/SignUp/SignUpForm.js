@@ -6,6 +6,11 @@ import configData from "../../config.json";
 export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }) => {
     /* const { setUser } = useContext(UserContext); */
 
+    // States for the message above the form
+    const [signingInMessage, setSigningInMessage] = useState(null);
+    const [submissionUnsuccessfulMessage, setSubmissionUnsuccessfulMessage] = useState('');
+    const [serverStatusMessage, setServerStatusMessage] = useState(null);
+
     // States for the form itself
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -14,10 +19,6 @@ export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }
     const [showPassword, setShowPassword] = useState(false);
     const [usernameValidationMessage, setUsernameValidationMessage] = useState('');
     const [passwordMatchMessage, setPasswordMatchMessage] = useState('');
-    const [submissionUnsuccessfulMessage, setSubmissionUnsuccessfulMessage] = useState('');
-
-    const [signingInMessage, setSigningInMessage] = useState(null);
-    const [serverStatusMessage, setServerStatusMessage] = useState(null);
 
     // Live validation username - only want alphanumeric and no spaces, just to make things simple
     useEffect(() => {
@@ -58,7 +59,7 @@ export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }
             }
         }
         catch (error) {
-            console.error("The server is down");
+            console.error("Cannot connect to server");
             setSigningInMessage(null);
             setUsername(username);
             setEmail(email);
@@ -96,14 +97,6 @@ export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }
 
         // Calls the signUpNewUser function to send new user details to the server
         signUpNewUser(username, email, password);
-
-        /* // Reset all the fields
-        setUsername('');
-        setEmail('');
-        setPassword('');
-        setConfirmPassword('');
-        setPasswordMatchMessage('');
-        setSubmissionUnsuccessfulMessage(''); */
     }
 
     const toggleShowPassword = event => {

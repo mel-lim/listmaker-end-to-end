@@ -18,8 +18,12 @@ export const Contact = () => {
             message: message.value
         }
 
-        const { responseBodyText } = await sendMessageApi(requestBodyContent);
-        setSubmissionStatusMessage(responseBodyText.message);
+        try {
+            const { responseBodyText } = await sendMessageApi(requestBodyContent);
+            setSubmissionStatusMessage(responseBodyText.message);
+        } catch {
+            console.error("Error in contact form submission. Cannot connect to server");
+        }
     }
 
     return (

@@ -105,58 +105,71 @@ export const fetchTripsApi = () => {
     return getApiCall(`/api/trips/alltrips`);
 }
 
-export const fetchListsApi = tripId => {
-    return getApiCall(`/api/trips/${tripId}/lists/fetchlists`);
-}
-
+// Called by createTrip in NewTripForm.js
 export const createTripApi = requestBodyContent => {
     return postApiCall('/api/trips/newtrip', requestBodyContent);
 }
 
+// Called by editTripDetails in Dashboard.js
 export const editTripDetailsApi = async (tripId, requestBodyContent) => {
     return putApiCall(`/api/trips/${tripId}/edittripdetails`, requestBodyContent);
 }
 
-export const saveListChangesApi = async (tripId, requestBodyContent) => {
-    return postApiCall(`/api/trips/${tripId}/lists/savelists`, requestBodyContent);
-}
-
-export const createNewListApi = async (tripId) => {
-    return postApiCall(`/api/trips/${tripId}/lists/createnew`, null);
-}
-
-export const editListTitleApi = async (tripId, listId, requestBodyContent) => {
-    return putApiCall(`/api/trips/${tripId}/lists/${listId}/edit`, requestBodyContent);
-}
-
-export const deleteListApi = async (tripId, listId) => {
-    return deleteApiCall(`/api/trips/${tripId}/lists/${listId}/delete`, null);
-}
-
-export const newListItemApi = async (tripId, listId, requestBodyContent) => {
-    return postApiCall(`/api/trips/${tripId}/lists/${listId}/listitems/addnew`, requestBodyContent);
-}
-
-export const editListItemApi = async (tripId, listId, itemId, requestBodyContent) => {
-    return putApiCall(`/api/trips/${tripId}/lists/${listId}/listitems/${itemId}/edit`, requestBodyContent);
-}
-
-export const deleteListItemApi = async (tripId, listId, itemId) => {
-    return putApiCall(`/api/trips/${tripId}/lists/${listId}/listitems/${itemId}/delete`, null);
-}
-
-export const undoDeleteListItemApi = async (tripId, listId, itemId) => {
-    return putApiCall(`/api/trips/${tripId}/lists/${listId}/listitems/${itemId}/undodelete`, null);
-}
-
+// Called by deleteTrip in ConfirmDeleteTripModal.js
 export const deleteTripApi = async tripId => {
     return deleteApiCall(`/api/trips/${tripId}/deletetrip`, null);
 }
 
+/* export const saveListChangesApi = async (tripId, requestBodyContent) => {
+    return postApiCall(`/api/trips/${tripId}/lists/savelists`, requestBodyContent);
+} */
+
+// Called by fetchLists in Dashboard.js
+export const fetchListsApi = tripId => {
+    return getApiCall(`/api/trips/${tripId}/lists/fetchlists`);
+}
+
+// Called by createNewList in Dashboard.js
+export const createNewListApi = async (tripId) => {
+    return postApiCall(`/api/trips/${tripId}/lists/createnew`, null);
+}
+
+// Called by editListTitle in List.js
+export const editListTitleApi = async (tripId, listId, requestBodyContent) => {
+    return putApiCall(`/api/trips/${tripId}/lists/${listId}/edit`, requestBodyContent);
+}
+
+// Called by deleteList in List.js
+export const deleteListApi = async (tripId, listId) => {
+    return deleteApiCall(`/api/trips/${tripId}/lists/${listId}/delete`, null);
+}
+
+// Called by addListItem in List.js
+export const newListItemApi = async (tripId, listId, requestBodyContent) => {
+    return postApiCall(`/api/trips/${tripId}/lists/${listId}/listitems/addnew`, requestBodyContent);
+}
+
+// Called by editListItem in ListItem.js
+export const editListItemApi = async (tripId, listId, itemId, requestBodyContent) => {
+    return putApiCall(`/api/trips/${tripId}/lists/${listId}/listitems/${itemId}/edit`, requestBodyContent);
+}
+
+// Called by deleteListItem in List.js
+export const deleteListItemApi = async (tripId, listId, itemId) => {
+    return putApiCall(`/api/trips/${tripId}/lists/${listId}/listitems/${itemId}/delete`, null);
+}
+
+// Called by undoDelete in List.js
+export const undoDeleteListItemApi = async (tripId, listId, itemId) => {
+    return putApiCall(`/api/trips/${tripId}/lists/${listId}/listitems/${itemId}/undodelete`, null);
+}
+
+// Called by getAccountDetails in MyAccount.js
 export const getAccountDetailsApi = () => {
     return getApiCall('/api/appusers/accountdetails');
 }
 
+// Called by logout in Logout.js
 export const logoutApi = async () => {
     try {
         const response = await fetch('/api/appusers/logout', {
@@ -178,6 +191,7 @@ export const logoutApi = async () => {
     }
 }
 
+// Called by handleSubmit in Contact.js
 export const sendMessageApi = async requestBodyContent => {
     return postApiCall('/api/contact', requestBodyContent);
 }

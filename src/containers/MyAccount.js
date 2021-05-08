@@ -10,13 +10,18 @@ export const MyAccount = () => {
     }, []);
 
     const getAccountDetails = async () => {
+        try {
+            const { response, responseBodyText } = await getAccountDetailsApi();
+            console.log(responseBodyText);
 
-        const { response, responseBodyText } = await getAccountDetailsApi();
-        console.log(responseBodyText);
-
-        if (response.status === 200) {
-            setUsername(responseBodyText.username);
-            setEmail(responseBodyText.email);
+            if (response.status === 200) {
+                setUsername(responseBodyText.username);
+                setEmail(responseBodyText.email);
+            }
+        } 
+        
+        catch {
+            console.error("Error in getAccountDetails function. Cannot connect to server");
         }
     }
 
