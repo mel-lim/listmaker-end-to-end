@@ -294,6 +294,10 @@ main {
   margin: 0 0.4rem 0 1rem;
 }
 
+.or-paragraph {
+  margin: 0.6rem 0 0 0;
+}
+
 /* Active trip console */
 
 .active-trip-console {
