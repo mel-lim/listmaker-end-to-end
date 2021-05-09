@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { UserContext, CookieExpiryContext } from "../../UserContext";
-import { checkUserCredentialsApi } from "../../api";
+import { delay, checkUserCredentialsApi } from "../../api";
 
 import configData from "../../config.json";
 
@@ -20,7 +20,7 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
     const [userIdentity, setUserIdentity] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    
+
     // Regex expressions for username and email
     const usernameRegex = new RegExp(configData.USERNAME_REGEX);
     const emailRegex = new RegExp(configData.EMAIL_REGEX);
@@ -33,8 +33,7 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    let serverDownLoginAttempts = 0;
-    const checkUserCredentials = async (userIdentity, password) => {
+    const checkUserCredentials = async (userIdentity, password, retryCount = 0) => {
         setLoggingInMessage("Logging you in...");
 
         // Detect whether the user identity inputted is a username or an email
@@ -83,15 +82,13 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
             console.error("Cannot connect to server");
             setLoggingInMessage(null);
             setUserIdentity(userIdentity);
-            if (serverDownLoginAttempts < 5) {
-                setServerStatusMessage('The server not responding. Trying again...');
-                setTimeout(() => {
-                    checkUserCredentials(userIdentity, password);
-                }, 4000);
+            if (retryCount < 5) {
+                setServerStatusMessage(`The server not responding. Trying again... ${retryCount}/4`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return checkUserCredentials(userIdentity, password, retryCount + 1); // After the delay, try connecting again
             } else {
-                setServerStatusMessage('We are so sorry. Our server is experiencing some problems. Please come back later.');
-            }
-            serverDownLoginAttempts++;
+                setServerStatusMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+            };
         }
     }
 

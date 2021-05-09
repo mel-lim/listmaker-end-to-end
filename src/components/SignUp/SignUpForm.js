@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 /* import { UserContext } from '../../UserContext'; */
-import { signUpNewUserApi } from "../../api";
+import { delay, signUpNewUserApi } from "../../api";
 import configData from "../../config.json";
 
 export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }) => {
@@ -34,8 +34,7 @@ export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }
         password === confirmPassword ? setPasswordMatchMessage('Passwords match') : setPasswordMatchMessage('Passwords do not match');
     }, [password, confirmPassword]);
 
-    let serverDownSignInAttempts = 0;
-    const signUpNewUser = async (username, email, password) => {
+    const signUpNewUser = async (username, email, password, retryCount = 0) => {
         setSigningInMessage("Signing you in...");
 
         // Construct body of request to send to server containing the new user details
@@ -64,16 +63,13 @@ export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }
             setUsername(username);
             setEmail(email);
             setPassword(password);
-            if (serverDownSignInAttempts < 5) {
-                setServerStatusMessage('The server not responding. Trying again...');
-                setTimeout(() => {
-                    signUpNewUser(username, email, password);
-                }, 4000);
+            if (retryCount < 5) {
+                setServerStatusMessage(`The server not responding. Trying again... ${retryCount}/4`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return signUpNewUser(username, email, password, retryCount + 1); // After the delay, try connecting again
             } else {
-                setServerStatusMessage('We are so sorry. Our server is experiencing some problems. Please come back later.');
+                setServerStatusMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
             }
-            serverDownSignInAttempts++;
-
         }
     }
 

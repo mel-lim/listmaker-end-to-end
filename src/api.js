@@ -93,6 +93,9 @@ const deleteApiCall = async (url, requestBodyContent) => {
     }
 }
 
+// Exponential backoff delay function
+export const delay = retryCount => new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+
 export const signUpNewUserApi = requestBodyContent => {
     return postApiCall('/api/appusers/signup', requestBodyContent);
 }
