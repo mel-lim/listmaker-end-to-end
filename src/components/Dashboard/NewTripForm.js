@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { createTripApi } from "../../api";
+import { delay, createTripApi } from "../../api";
 
-export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProcessing, fetchTrips, setActiveTrip, configureLists }) => {
+// Import config data
+import configData from "../../config.json";
+
+export const NewTripForm = ({ newTripClicked, setNewTripClicked, fetchTrips, setActiveTrip, configureLists, setIsFetchProcessing, setConnectionErrorMessage }) => {
 
     // Dynamic user inputs for the form
     const [tripName, setTripName] = useState('');
@@ -20,7 +23,7 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
     }
 
     // CREATE NEW TRIP AND GENERATE NEW LISTS
-    const createTrip = async () => {
+    const createTrip = async (retryCount = 0) => {
 
         if (!tripCategory || !tripDuration || !requestTemplate) {
             setSubmissionErrorMessage('** Please select a response for all questions **');
@@ -34,6 +37,7 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
             const requestBodyContent = { tripName, tripCategory, tripDuration, requestTemplate };
 
             const { response, responseBodyText } = await createTripApi(requestBodyContent);
+            setConnectionErrorMessage(null);
 
             // Update the state that shows/hides the new trip console / questionnaire
             setNewTripClicked(false);
@@ -69,6 +73,14 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
             }
         } catch {
             console.error("Error in createTrip function. Cannot connect to server");
+
+            if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
+                setConnectionErrorMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return createTrip(retryCount + 1); // After the delay, try connecting again
+            }
+            
+            setConnectionErrorMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
         }
     }
 
@@ -200,7 +212,8 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
                             </div>
 
                             <input type="submit"
-                                className="pillbox-button" value='Create trip' />
+                                className="pillbox-button" 
+                                value='Create trip' />
                             <input type="button"
                                 className="pillbox-button"
                                 value='Cancel'
@@ -209,7 +222,7 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, setIsFetchProce
                         </form>
                     </div>
             }
-            <p>-- or --</p>
+            <p className="or-paragraph">-- or --</p>
         </div>
     );
 }

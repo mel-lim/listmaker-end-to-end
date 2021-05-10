@@ -3,7 +3,7 @@ import { SettledTripName } from "./SettledTripName";
 import { EditTripNameForm } from "./EditTripNameForm";
 import { ConfirmDeleteTripModal } from "./ConfirmDeleteTripModal";
 
-export const ActiveTripConsole = ({ activeTrip, setActiveTrip, fetchTrips, editTripDetails, resetTripAndListStates, saveTripDetailsMessage, lists, allListItems, fetchLists, createNewList, saveListsMessage }) => {
+export const ActiveTripConsole = ({ activeTrip, setActiveTrip, fetchTrips, editTripDetails, resetTripAndListStates, lists, allListItems, fetchLists, createNewList, setConnectionErrorMessage }) => {
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -34,7 +34,7 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, fetchTrips, editT
                                 setActiveTrip={setActiveTrip}
                                 toggleEdit={toggleEdit}
                                 editTripDetails={editTripDetails}
-                                 />
+                            />
                     }
                 </div>
 
@@ -47,7 +47,8 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, fetchTrips, editT
                 <ConfirmDeleteTripModal
                     activeTrip={activeTrip}
                     fetchTrips={fetchTrips}
-                    resetTripAndListStates={resetTripAndListStates} />
+                    resetTripAndListStates={resetTripAndListStates}
+                    setConnectionErrorMessage={setConnectionErrorMessage} />
                 <input type="button"
                     className="pillbox-button"
                     value="New list" onClick={createNewList} />
@@ -61,9 +62,6 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, fetchTrips, editT
                     </div>
                     :
                     null}
-
-                <p>{saveTripDetailsMessage}</p>
-                <p>{saveListsMessage}</p>
 
             </div>
         </div>

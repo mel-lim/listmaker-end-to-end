@@ -4,15 +4,17 @@ import { SettledListTitle } from "./SettledListTitle";
 import { AddUndoRow } from "./AddUndoRow";
 import { EditListTitleForm } from "./EditListTitleForm";
 import { ListItem } from "../ListItem/ListItem";
-import { editListTitleApi, deleteListApi, newListItemApi, deleteListItemApi, undoDeleteListItemApi } from "../../../api";
+import { delay, editListTitleApi, deleteListApi, newListItemApi, deleteListItemApi, undoDeleteListItemApi } from "../../../api";
 
-export const List = ({ tripId, list, lists, setLists, index, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems }) => {
+// Import config data
+import configData from "../../../config.json";
+
+export const List = ({ tripId, list, lists, setLists, index, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems, setConnectionErrorMessage }) => { // Component in Lists.js
 
     const [isEditingListTitle, setIsEditingListTitle] = useState(false);
-
-    const [nextIdNum, setNextIdNum] = useState(0);
     const [listItems, setListItems] = useState(allListItems[index]);
     const [deletedListItems, setDeletedListItems] = useState(allDeletedItems[index]); // This will be an empty array to begin
+    const [modalErrorMessage, setModalErrorMessage] = useState(null);
 
     // Every time we edit our listItems state, we pass on the change to the allListItems variable and push that up to localstorage for safekeeping
     useEffect(() => {
@@ -38,7 +40,7 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
     }
 
     // EDIT LIST TITLE
-    const editListTitle = async editedListTitle => {
+    const editListTitle = async (editedListTitle, retryCount = 0) => {
 
         if (editedListTitle === list.title) {
             console.log("no difference in list title");
@@ -49,6 +51,7 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
             // Make a put api call to update the db with the new list item
             const requestBodyContent = { editedListTitle };
             const { response, responseBodyText } = await editListTitleApi(tripId, list.id, requestBodyContent);
+            setConnectionErrorMessage(null);
 
             if (response.ok === true) {
                 const currentList = Object.assign({}, list);
@@ -64,14 +67,23 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
             }
         } catch {
             console.error("Error in editListTitle function. Cannot connect to server");
+
+            if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
+                setConnectionErrorMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return editListTitle(editedListTitle, retryCount + 1); // After the delay, try connecting again
+            }
+            
+            setConnectionErrorMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
         }
     }
 
     // DELETE LIST
-    const deleteList = async () => {
+    const deleteList = async (retryCount = 0) => {
         try {
             // Make put api call to update the item in the db and set is_deleted to true
             const response = await deleteListApi(tripId, list.id);
+            setConnectionErrorMessage(null);
 
             if (response.ok === true) {
                 // Remove the list items from the allListItems state
@@ -85,29 +97,40 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
                 setLists(currentLists);
 
                 console.log("list deleted");
+                setModalErrorMessage(null);
             }
 
             else {
                 console.log(response.status);
+                setModalErrorMessage('This list cannot be deleted at this moment.');
             }
         } catch {
             console.error("Error in deleteList function. Cannot connect to server");
+
+            if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
+                setConnectionErrorMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return deleteList(retryCount + 1); // After the delay, try connecting again
+            }
+            
+            setConnectionErrorMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
         }
     }
 
-    // Might be able to get rid of this now
-    const generateTempItemId = () => {
+    // Keep this for now in case useful for developing offline mode
+    /* const generateTempItemId = () => {
         const itemId = `tempItem-${nextIdNum}`;
         setNextIdNum(prevNextIdNum => prevNextIdNum + 1);
         return itemId;
-    }
+    } */
 
     // ADD LIST ITEM
-    const addListItem = async newItemName => {
+    const addListItem = async (newItemName, retryCount = 0) => {
         try {
             // Make post api call to save new list item to db
             const requestBodyContent = { newItemName };
             const { response, responseBodyText } = await newListItemApi(tripId, list.id, requestBodyContent);
+            setConnectionErrorMessage(null);
 
             if (response.ok === true) {
                 const newListItem = {
@@ -127,14 +150,22 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
             }
         } catch {
             console.error("Error in addListItem function. Cannot connect to server");
+
+            if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
+                setConnectionErrorMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return addListItem(newItemName, retryCount + 1); // After the delay, try connecting again
+            }
+            setConnectionErrorMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
         }
     }
 
     // DELETE LIST ITEM
-    const deleteListItem = async itemId => {
+    const deleteListItem = async (itemId, retryCount = 0) => {
         try {
             // Make put api call to update the item in the db and set is_deleted to true
             const { response, responseBodyText } = await deleteListItemApi(tripId, list.id, itemId);
+            setConnectionErrorMessage(null);
 
             if (response.ok === true) {
                 // Get the index of the item that was deleted from within the listItems array
@@ -162,11 +193,18 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
             }
         } catch {
             console.error("Error in deleteListItem function. Cannot connect to server");
+            
+            if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
+                setConnectionErrorMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return deleteListItem(itemId, retryCount + 1); // After the delay, try connecting again
+            }
+            setConnectionErrorMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
         }
     }
 
     // UNDO DELETE ITEM
-    const undoDelete = async () => {
+    const undoDelete = async (retryCount = 0) => {
         // If nothing to undo, return
         if (deletedListItems.length === 0) {
             return;
@@ -178,6 +216,7 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
         try {
             // Make undo delete api call
             const { response, responseBodyText } = await undoDeleteListItemApi(tripId, list.id, lastDeletedItem.deletedItem.id);
+            setConnectionErrorMessage(null);
 
             if (response.ok === true) {
 
@@ -197,6 +236,13 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
             }
         } catch {
             console.error("Error in undoDelete function. Cannot connect to server");
+            
+            if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
+                setConnectionErrorMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return undoDelete(retryCount + 1); // After the delay, try connecting again
+            }
+            setConnectionErrorMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
         }
     }
 
@@ -205,8 +251,9 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
 
             <ConfirmDeleteListModal
                 list={list}
-                deleteList={deleteList} />
-
+                deleteList={deleteList}
+                modalErrorMessage={modalErrorMessage} />
+                
             <span className="clear"></span>
 
             {
@@ -230,7 +277,8 @@ export const List = ({ tripId, list, lists, setLists, index, allListItems, setAl
                             listItem={listItem}
                             listItems={listItems}
                             setListItems={setListItems}
-                            deleteListItem={deleteListItem} />
+                            deleteListItem={deleteListItem}
+                            setConnectionErrorMessage={setConnectionErrorMessage} />
                     ) :
                     null
             }

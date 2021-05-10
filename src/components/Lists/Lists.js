@@ -1,7 +1,8 @@
+import { set } from "js-cookie";
 import React from "react";
 import { List } from "./List/List";
 
-export const Lists = ({ tripId, lists, setLists, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems }) => {
+export const Lists = ({ tripId, lists, setLists, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems, setConnectionErrorMessage }) => {
 
     return (
         <article id="lists-container">
@@ -17,7 +18,8 @@ export const Lists = ({ tripId, lists, setLists, allListItems, setAllListItems, 
                             allListItems={allListItems}
                             setAllListItems={setAllListItems}
                             allDeletedItems={allDeletedItems}
-                            setAllDeletedItems={setAllDeletedItems} />
+                            setAllDeletedItems={setAllDeletedItems}
+                            setConnectionErrorMessage={setConnectionErrorMessage} />
                 )
             }
         </article>

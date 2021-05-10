@@ -52,7 +52,6 @@ function App() {
 
         </header>
 
-
         <CookieExpiryContext.Provider value={cookieExpiryValue}>
           <Nav />
           <Switch>

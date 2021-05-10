@@ -1,21 +1,26 @@
 import React, { useState } from "react";
 import { SettledItem } from "./SettledItem";
 import { EditItemForm } from "./EditItemForm";
-import { editListItemApi } from "../../../api";
+import { delay, editListItemApi } from "../../../api";
 
-export const ListItem = ({ tripId, listItem, listItems, setListItems, deleteListItem }) => { // This is a component in List
+// Import config data
+import configData from "../../../config.json";
+
+export const ListItem = ({ tripId, listItem, listItems, setListItems, deleteListItem, setConnectionErrorMessage }) => { // This is a component in List
+
     const [isEditing, setIsEditing] = useState(false);
 
     const toggleEdit = () => {
         setIsEditing(!isEditing);
     }
 
-    const editListItem = async editedItemName => {
+    const editListItem = async (editedItemName, retryCount = 0) => {
 
         try {
             // Make a put api call to update the db with the new list item
             const requestBodyContent = { editedItemName };
             const { response, responseBodyText } = await editListItemApi(tripId, listItem.list_id, listItem.id, requestBodyContent);
+            setConnectionErrorMessage(null);
 
             if (response.status === 200) {
                 // REVIEW WHETHER WE WILL NEED TO KEEP THE FOLLOWING CODE ONCE THE NEW SAVE FUNCTIONALITY IS DONE
@@ -30,6 +35,13 @@ export const ListItem = ({ tripId, listItem, listItems, setListItems, deleteList
             }
         } catch {
             console.error("Error in editListItem function. Cannot connect to server");
+            
+            if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
+                setConnectionErrorMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return editListItem(editedItemName, retryCount + 1); // After the delay, try connecting again
+            }
+            setConnectionErrorMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
         }
     }
 

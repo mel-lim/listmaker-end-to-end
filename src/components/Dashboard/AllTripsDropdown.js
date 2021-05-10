@@ -1,6 +1,6 @@
 import React from "react";
 
-export const AllTripsDropdown = ({ allTrips, activeTrip, setActiveTrip, fetchLists, resetTripAndListStates }) => {
+export const AllTripsDropdown = ({ allTrips, activeTrip, setActiveTrip, resetTripAndListStates, fetchLists, connectionErrorMessage }) => {
 
     const handleChange = event => {
         if (event.target.value === "select-trip") {
@@ -22,7 +22,7 @@ export const AllTripsDropdown = ({ allTrips, activeTrip, setActiveTrip, fetchLis
         <div className="trip-dropdown">
             <div>
 
-                <label htmlFor="trip-select" 
+                <label htmlFor="trip-select"
                     className="bolder">Load your lists from a saved trip:</label>
 
                 <select name="trip"
@@ -33,17 +33,26 @@ export const AllTripsDropdown = ({ allTrips, activeTrip, setActiveTrip, fetchLis
                     {
                         allTrips.length ?
 
-                            <option value="select-trip">Select trip</option>
+                            <option value="select-trip"
+                                disabled={connectionErrorMessage}>
+                                Select trip
+                            </option>
 
                             : <option value="no-saved-trips">No saved trips</option>
                     }
 
                     {
-                        allTrips.map(trip => 
-                            <option key={trip.id} value={trip.id}>{trip.name} / {trip.category} / {trip.duration}</option>)
+                        allTrips.map(
+                            trip =>
+                                <option key={trip.id}
+                                    value={trip.id}
+                                    disabled={connectionErrorMessage}>
+                                    {trip.name} / {trip.category} / {trip.duration}
+                                </option>
+                        )
                     }
 
-                </select>                
+                </select>
             </div>
         </div>
     );

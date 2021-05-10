@@ -20,38 +20,29 @@ import { Footer } from "../components/Footer";
 import { ConfirmCredentialsModal } from "../components/Dashboard/ConfirmCredentialsModal";
 
 // Import api calls
-import { fetchTripsApi, createNewListApi, fetchListsApi, editTripDetailsApi } from "../api";
+import { delay, fetchTripsApi, createNewListApi, fetchListsApi, editTripDetailsApi } from "../api";
 
 export const Dashboard = () => {
 
     const { setUser } = useContext(UserContext);
     const { cookieExpiry, setCookieExpiry } = useContext(CookieExpiryContext);
-    const newListRef = useRef(null);
+    const newListRef = useRef(null); // This is so that we can scroll down to a new list as soon as we have created it
 
-    const [allTrips, setAllTrips] = useState([]);
+    const [newTripClicked, setNewTripClicked] = useState(false); // When user clicks 'new trip', this will be set to 'true' engage the form for the user to input the settings to create a new trip
+    const [allTrips, setAllTrips] = useState([]); // This holds a list of all the pre-existing trips for this user, and populates the trip dropdown list
     const initialActiveTripState = { tripId: '', tripName: '', tripCategory: '', tripDuration: '' };
-    const [activeTrip, setActiveTrip] = useState(initialActiveTripState); // If the post request to create a new trip is successful, the activeTrip variable will contain the details of the new trip provided in the response
+    const [activeTrip, setActiveTrip] = useState(initialActiveTripState); //  This populates the ActiveTripConsole holds the detail about the selected trip
 
     const [lists, setLists] = useState([]); // This will sit empty until the data is fetched from the server
     const [allListItems, setAllListItems] = useState([]); // This will sit empty until the data is fetched from the server
     const [allDeletedItems, setAllDeletedItems] = useState([]); // This will sit empty until the user starts deleting items from their lists
-
-    const [newTripClicked, setNewTripClicked] = useState(false); // When user clicks 'new trip', this will be set to 'true' engage the form for the user to input the settings to create a new trip
-
-    const [saveTripDetailsMessage, setSaveTripDetailsMessage] = useState('');
-
-    const [saveListsMessage, setSaveListsMessage] = useState('');
     const [nextListIdNum, setNextListIdNum] = useState(0);
 
-    const [isFetchProcessing, setIsFetchProcessing] = useState(false);
+    const [isFetchProcessing, setIsFetchProcessing] = useState(false); // This prevents the component from racing to render before the fetch call is completed and the relevant states are set
+    const [connectionErrorMessage, setConnectionErrorMessage] = useState(null);
 
     const [openConfirmCredentialsModal, setOpenConfirmCredentialsModal] = useState(false); // This is to open and close the ConfirmCredentialsModal
     const [redirectOnLogout, setRedirectOnLogout] = useState(false);
-
-    // Fetch trips from server on first render
-    useEffect(() => {
-        fetchTrips();
-    }, []);
 
     // PERSIST STATE OF COOKIE EXPIRY PAST REFRESH
     useEffect(() => {
@@ -100,6 +91,25 @@ export const Dashboard = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [cookieExpiry]);
+
+    // FETCH TRIPS FROM SERVER ON FIRST RENDER
+    useEffect(() => {
+        fetchTrips();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // PERSIST STATE OF ALLTRIPS PAST REFRESH
+    useEffect(() => {
+        const storedAllTrips = localStorage.getItem("allTrips");
+        if (storedAllTrips) {
+            setAllTrips(JSON.parse(storedAllTrips));
+        }
+    }, []);
+
+    // When the allTrips state is updated, store it in localStorage
+    useEffect(() => {
+        localStorage.setItem("allTrips", JSON.stringify(allTrips));
+    }, [allTrips]);
 
     // PERSIST STATE OF newTripClicked PAST REFRESH
     useEffect(() => {
@@ -179,18 +189,6 @@ export const Dashboard = () => {
         localStorage.setItem("allDeletedItems", JSON.stringify(allDeletedItems));
     }, [allDeletedItems]);
 
-    /*     // AUTOSAVE HOOK
-        useEffect(() => {
-            console.log("autosave hook triggered");
-            const timer = setTimeout(() => {
-                saveTripDetails();
-                saveListChanges();
-                console.log("autosave function run");
-            }, parseInt(configData.AUTOSAVE_INTERVAL)); // 10 minutes
-            return () => clearTimeout(timer);
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [listItemsHaveChangedSinceLastSave, tripDetailsHaveChangedSinceLastSave]); */
-
     // Function to reset the activeTrip and lists etc. states to their values on initial render
     const resetTripAndListStates = () => {
         setActiveTrip({ ...initialActiveTripState });
@@ -200,9 +198,10 @@ export const Dashboard = () => {
     }
 
     // FETCH ALL TRIPS FOR THIS USER
-    const fetchTrips = async () => {
+    const fetchTrips = async (retryCount = 0) => {
         try {
             const { response, responseBodyText } = await fetchTripsApi();
+            setConnectionErrorMessage(null);
 
             if (response.status === 200 || response.status === 304) {
                 console.log("all trips fetched: ", responseBodyText.trips);
@@ -212,11 +211,19 @@ export const Dashboard = () => {
             }
         } catch {
             console.error("Error in fetchTrips function. Cannot connect to server");
+
+            if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
+                setConnectionErrorMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return fetchTrips(retryCount + 1); // After the delay, try connecting again
+            }
+            setConnectionErrorMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
         }
     }
 
-    // EDIT TRIP DETAILS (FOR NOW, ONLY THE TRIP NAME CAN BE EDITED)
-    const editTripDetails = async editedTripName => {
+    // EDIT TRIP DETAILS
+    // For now, only the trip name can be edited
+    const editTripDetails = async (editedTripName, retryCount = 0) => {
 
         // If the trip name is blank / empty, replace it with "Untitled"
         if (!editedTripName) {
@@ -228,16 +235,25 @@ export const Dashboard = () => {
 
         try {
             const { response, responseBodyText } = await editTripDetailsApi(tripId, requestBodyContent);
-            setSaveTripDetailsMessage(responseBodyText.message);
+            setConnectionErrorMessage(null);
 
             if (response.status === 200 || 304) {
                 console.log("edited trip name saved: ", editedTripName);
                 setActiveTrip({ ...activeTrip, tripName: editedTripName });
-                // CHANGE THIS SO THAT WE JUST CALL FETCH TRIPS DIRECTLY INSTEAD OF THIS CIRCUITOUS HOOK METHOD
-                fetchTrips();
+                fetchTrips(); // We want the dropdown list to show the updated trip name
+            } else {
+                console.log(responseBodyText.message);
             }
         } catch {
             console.error("Error in editTripDetails function. Cannot connect to server");
+
+            if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
+                setConnectionErrorMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return editTripDetails(editedTripName, retryCount + 1); // After the delay, try connecting again
+            }
+
+            setConnectionErrorMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
         }
     }
 
@@ -260,14 +276,14 @@ export const Dashboard = () => {
     }
 
     // FETCH LISTS AND LIST ITEMS FOR TRIP
-    const fetchLists = async tripId => {
+    const fetchLists = async (tripId, retryCount = 0) => {
 
         setIsFetchProcessing(true); // This will ensure that the render function doesn't race past the completion of the fetch request. 
         // While this is true, the renderer will render "Loading...". We will set it back to false at the end of the request to re-render the updated lists as fetched from the db.
 
         try {
-
             const { response, responseBodyText } = await fetchListsApi(tripId);
+            setConnectionErrorMessage(null);
 
             if (response.status === 200 || response.status === 304) {
                 // Configure the list and allListItems states
@@ -283,25 +299,32 @@ export const Dashboard = () => {
                 console.log(responseBodyText.message);
             }
         } catch {
-            console.error("Error in fetchTrips function. Cannot connect to server");
+            console.error("Error in fetchLists function. Cannot connect to server");
+
+            if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
+                setConnectionErrorMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return fetchLists(tripId, retryCount + 1); // After the delay, try connecting again
+            }
+
+            setConnectionErrorMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
         }
     }
 
-    // Might be able to get rid of this now - think on it
-    const generateTempListId = () => {
-        const tempListId = `tempList-${nextListIdNum}`;
-        // Increment the next list id number for the temp list id
-        setNextListIdNum(prev => prev + 1);
-        return tempListId;
-    }
+    // Keep in case useful for development of offline mode
+    /*     const generateTempListId = () => {
+            const tempListId = `tempList-${nextListIdNum}`;
+            // Increment the next list id number for the temp list id
+            setNextListIdNum(prev => prev + 1);
+            return tempListId;
+        } */
 
     // CREATE NEW LIST
-    const createNewList = async () => {
-
+    const createNewList = async (retryCount = 0) => {
         try {
-
             // Make post api call to save new list to db
             const { response, responseBodyText } = await createNewListApi(activeTrip.tripId);
+            setConnectionErrorMessage(null);
 
             if (response.status === 201) {
                 // Add new list to the lists state
@@ -321,6 +344,14 @@ export const Dashboard = () => {
             }
         } catch {
             console.error("Error in createNewList function. Cannot connect to server");
+
+            if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
+                setConnectionErrorMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return createNewList(retryCount + 1); // After the delay, try connecting again
+            }
+
+            setConnectionErrorMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
         }
     }
 
@@ -338,13 +369,15 @@ export const Dashboard = () => {
                             setActiveTrip={setActiveTrip}
                             fetchTrips={fetchTrips}
                             configureLists={configureLists}
+                            setConnectionErrorMessage={setConnectionErrorMessage}
                         />
                         <AllTripsDropdown
                             allTrips={allTrips}
                             activeTrip={activeTrip}
                             setActiveTrip={setActiveTrip}
-                            fetchLists={fetchLists}
                             resetTripAndListStates={resetTripAndListStates}
+                            fetchLists={fetchLists}
+                            connectionErrorMessage={connectionErrorMessage}
                         />
                         {
                             (activeTrip.tripId) ? // I removed the condition && !isFetchProcessing - if it stays in, everytime we save the lists we get this blinky, glitchy effect. I think it's uncessary - the only thing in active trip console that requires on the fetch request is the save attempt message, and it seems to work fine. Keep and eye on this though. There might have been an edge case error that I put the condition in to address originally. 
@@ -353,18 +386,18 @@ export const Dashboard = () => {
                                     setNewTripClicked={setNewTripClicked}
                                     activeTrip={activeTrip}
                                     setActiveTrip={setActiveTrip}
+                                    fetchTrips={fetchTrips}
+                                    editTripDetails={editTripDetails}
+                                    resetTripAndListStates={resetTripAndListStates}
                                     lists={lists}
                                     allListItems={allListItems}
                                     fetchLists={fetchLists}
-                                    editTripDetails={editTripDetails}
-                                    saveTripDetailsMessage={saveTripDetailsMessage}
-                                    saveListsMessage={saveListsMessage}
-                                    fetchTrips={fetchTrips}
-                                    resetTripAndListStates={resetTripAndListStates}
                                     createNewList={createNewList}
+                                    setConnectionErrorMessage={setConnectionErrorMessage}
                                 />
                                 : null
                         }
+                        <p>{connectionErrorMessage}</p>
                     </div>
 
                     <ConfirmCredentialsModal openConfirmCredentialsModal={openConfirmCredentialsModal} setOpenConfirmCredentialsModal={setOpenConfirmCredentialsModal} />
@@ -378,7 +411,8 @@ export const Dashboard = () => {
                                 allListItems={allListItems}
                                 setAllListItems={setAllListItems}
                                 allDeletedItems={allDeletedItems}
-                                setAllDeletedItems={setAllDeletedItems} />
+                                setAllDeletedItems={setAllDeletedItems}
+                                setConnectionErrorMessage={setConnectionErrorMessage} />
                             : null
                     }
 

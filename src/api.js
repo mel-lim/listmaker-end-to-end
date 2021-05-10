@@ -1,3 +1,6 @@
+// Import config data
+import configData from "./config.json";
+
 const getApiCall = async url => {
     try {
         const response = await fetch(url, {
@@ -87,6 +90,7 @@ const deleteApiCall = async (url, requestBodyContent) => {
     try {
         const response = await fetch(url, req);
         return response;
+        // NOTE: If the server is disconnected, this won't throw an error. The response status received is 500. It's only if we try to do response.json() that we will get an error
     }
     catch (error) {
         console.error("Error in stack at api.js - possible server connection error", error);
@@ -94,7 +98,7 @@ const deleteApiCall = async (url, requestBodyContent) => {
 }
 
 // Exponential backoff delay function
-export const delay = retryCount => new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+export const delay = retryCount => new Promise(resolve => setTimeout(resolve, parseInt(configData.EXPONENTIAL_BACKOFF_BASE) * retryCount));
 
 export const signUpNewUserApi = requestBodyContent => {
     return postApiCall('/api/appusers/signup', requestBodyContent);
@@ -104,6 +108,7 @@ export const checkUserCredentialsApi = requestBodyContent => {
     return postApiCall('/api/appusers/login', requestBodyContent);
 }
 
+// Called by fetchTrips in Dashboard.js
 export const fetchTripsApi = () => {
     return getApiCall(`/api/trips/alltrips`);
 }
@@ -122,10 +127,6 @@ export const editTripDetailsApi = async (tripId, requestBodyContent) => {
 export const deleteTripApi = async tripId => {
     return deleteApiCall(`/api/trips/${tripId}/deletetrip`, null);
 }
-
-/* export const saveListChangesApi = async (tripId, requestBodyContent) => {
-    return postApiCall(`/api/trips/${tripId}/lists/savelists`, requestBodyContent);
-} */
 
 // Called by fetchLists in Dashboard.js
 export const fetchListsApi = tripId => {
