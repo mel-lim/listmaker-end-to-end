@@ -1,11 +1,12 @@
 import React, { useContext } from "react";
-import { UserContext } from "../UserContext";
+import { UserContext, GuestUserContext } from "../UserContext";
 import { logoutApi } from "../api";
 
 
 export const Logout = () => {
 
   const { setUser } = useContext(UserContext);
+  const { setIsGuestUser } = useContext(GuestUserContext);
 
   const logout = async () => {
     try {
@@ -16,6 +17,7 @@ export const Logout = () => {
 
       if (response.status === 200) {
         setUser(null);
+        setIsGuestUser(false);
       }
 
       // Clear the localStorage

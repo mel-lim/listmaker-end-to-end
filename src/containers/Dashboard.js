@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import Cookies from "js-cookie";
 
 // Import contexts
-import { UserContext, CookieExpiryContext } from "../UserContext";
+import { UserContext, CookieExpiryContext, GuestUserContext } from "../UserContext";
 
 // Import config data
 import configData from "../config.json";
@@ -18,6 +18,7 @@ import { ActiveTripConsole } from "../components/Dashboard/ActiveTripConsole";
 import { Lists } from "../components/Lists/Lists";
 import { Footer } from "../components/Footer";
 import { ConfirmCredentialsModal } from "../components/Dashboard/ConfirmCredentialsModal";
+import { GuestUserModal } from "../components/Dashboard/GuestUserModal";
 
 // Import api calls
 import { delay, fetchTripsApi, createNewListApi, fetchListsApi, editTripDetailsApi } from "../api";
@@ -26,6 +27,7 @@ export const Dashboard = () => {
 
     const { setUser } = useContext(UserContext);
     const { cookieExpiry, setCookieExpiry } = useContext(CookieExpiryContext);
+    const { isGuestUser } = useContext(GuestUserContext);
     const newListRef = useRef(null); // This is so that we can scroll down to a new list as soon as we have created it
 
     const [newTripClicked, setNewTripClicked] = useState(false); // When user clicks 'new trip', this will be set to 'true' engage the form for the user to input the settings to create a new trip
@@ -43,6 +45,7 @@ export const Dashboard = () => {
 
     const [openConfirmCredentialsModal, setOpenConfirmCredentialsModal] = useState(false); // This is to open and close the ConfirmCredentialsModal
     const [redirectOnLogout, setRedirectOnLogout] = useState(false);
+    const [openGuestUserModal, setOpenGuestUserModal] = useState(false);
 
     // PERSIST STATE OF COOKIE EXPIRY PAST REFRESH
     useEffect(() => {
@@ -60,11 +63,11 @@ export const Dashboard = () => {
             return;
         }
         else {
+            console.log('we are here at else');
             localStorage.setItem("cookieExpiry", JSON.stringify(cookieExpiry)); // Save the cookie expiry into localStorage
 
             const now = dayjs();
             const timeUntilExpiry = dayjs(cookieExpiry).diff(now);
-
             // Set a timer to prompt the user to confirm their credentials and refresh their token before it expires
             const confirmCredentialsTime = timeUntilExpiry - parseInt(configData.CONFIRM_CREDENTIAL_INTERVAL); // 5 minutes before the JWT expires
 
@@ -91,6 +94,14 @@ export const Dashboard = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [cookieExpiry]);
+
+    // CHECK IF GUEST USER WHEN FIRST RENDER
+    useEffect(() => {
+        isGuestUser ? setOpenGuestUserModal(true) : setOpenGuestUserModal(false);
+        console.log("isGuestUser", isGuestUser);
+        console.log(openGuestUserModal);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // FETCH TRIPS FROM SERVER ON FIRST RENDER
     useEffect(() => {
@@ -400,7 +411,13 @@ export const Dashboard = () => {
                         <p>{connectionErrorMessage}</p>
                     </div>
 
-                    <ConfirmCredentialsModal openConfirmCredentialsModal={openConfirmCredentialsModal} setOpenConfirmCredentialsModal={setOpenConfirmCredentialsModal} />
+                    <GuestUserModal 
+                        openGuestUserModal={openGuestUserModal}
+                        setOpenGuestUserModal={setOpenGuestUserModal} />
+
+                    <ConfirmCredentialsModal
+                        openConfirmCredentialsModal={openConfirmCredentialsModal}
+                        setOpenConfirmCredentialsModal={setOpenConfirmCredentialsModal} />
 
                     {
                         lists.length && allListItems.length && !isFetchProcessing ?

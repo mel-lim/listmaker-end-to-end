@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 import Cookies from "js-cookie";
 
-import { UserContext, CookieExpiryContext } from "./UserContext";
+import { UserContext, CookieExpiryContext, GuestUserContext } from "./UserContext";
 
 import { Home } from "./containers/Home";
 import { Nav } from "./containers/Nav";
@@ -25,8 +25,10 @@ import { ProtectedLoggedOut } from "./routes/ProtectedLoggedOut";
 function App() {
   const [user, setUser] = useState(null);
   const [cookieExpiry, setCookieExpiry] = useState(null);
+  const [isGuestUser, setIsGuestUser] = useState(false);
   const userValue = useMemo(() => ({ user, setUser }), [user, setUser]);
   const cookieExpiryValue = useMemo(() => ({ cookieExpiry, setCookieExpiry }), [cookieExpiry, setCookieExpiry]);
+  const isGuestUserValue = useMemo(() => ({ isGuestUser, setIsGuestUser }), [isGuestUser, setIsGuestUser]);
 
   // Check if the user is logged in, and if so, set that to state
   useEffect(() => {
@@ -43,7 +45,7 @@ function App() {
 
       <UserContext.Provider value={userValue}>
         <header className="website-name">
-          
+
           <Link to="/">
             <h1>kit collab.</h1>
           </Link>
@@ -53,16 +55,18 @@ function App() {
         </header>
 
         <CookieExpiryContext.Provider value={cookieExpiryValue}>
-          <Nav />
-          <Switch>
-            <Route path="/" exact component={Home} />
-            <ProtectedLoggedIn path="/dashboard" component={Dashboard} />
-            <Route path="/signup" component={SignUp} />
-            <ProtectedLoggedOut path="/login" component={Login} />
-            <Route path="/myaccount" component={MyAccount} />
-            <ProtectedLoggedIn path="/logout" component={Logout} />
-            <Route path="/contact" component={Contact} />
-          </Switch>
+          <GuestUserContext.Provider value={isGuestUserValue}>
+            <Nav />
+            <Switch>
+              <Route path="/" exact component={Home} />
+              <ProtectedLoggedIn path="/dashboard" component={Dashboard} />
+              <ProtectedLoggedOut path="/signup" component={SignUp} />
+              <ProtectedLoggedOut path="/login" component={Login} />
+              <Route path="/myaccount" component={MyAccount} />
+              <ProtectedLoggedIn path="/logout" component={Logout} />
+              <Route path="/contact" component={Contact} />
+            </Switch>
+          </GuestUserContext.Provider>
         </CookieExpiryContext.Provider>
       </UserContext.Provider>
     </Router>

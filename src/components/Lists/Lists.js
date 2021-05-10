@@ -1,4 +1,3 @@
-import { set } from "js-cookie";
 import React from "react";
 import { List } from "./List/List";
 

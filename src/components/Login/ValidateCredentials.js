@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { UserContext, CookieExpiryContext } from "../../UserContext";
+import { UserContext, CookieExpiryContext, GuestUserContext } from "../../UserContext";
 import { delay, checkUserCredentialsApi } from "../../api";
 
 import configData from "../../config.json";
@@ -10,6 +10,7 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
     // Contexts for user and cookie expiry
     const { user, setUser } = useContext(UserContext);
     const { setCookieExpiry } = useContext(CookieExpiryContext);
+    const { setIsGuestUser } = useContext(GuestUserContext);
 
     // States for the message above the form
     const [loggingInMessage, setLoggingInMessage] = useState(null);
@@ -70,6 +71,7 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
                 }
                 setUser(username);
                 setCookieExpiry(responseBodyText.cookieExpiry);
+                setIsGuestUser(false);
                 console.log("login sucessful");
 
             } else { // i.e. response.ok === false
@@ -110,9 +112,6 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
         }
 
         checkUserCredentials(userIdentity, password);
-        setUserIdentity('');
-        setPassword('');
-        setSubmissionUnsuccessfulMessage('');
     }
 
     const toggleShowPassword = event => {

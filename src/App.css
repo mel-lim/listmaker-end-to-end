@@ -332,7 +332,7 @@ main {
 
 /* Modals */
 
-.confirm-delete-modal {
+.modal, .confirm-delete-modal {
   text-align: center;
 }
 
@@ -342,6 +342,10 @@ main {
 
 .confirm-delete-modal input[type=button] {
   margin: 0 0.2rem 0.75rem 0.2rem;
+}
+
+.modal-button {
+  font-size: 0.8rem;
 }
 
 /* Lists */

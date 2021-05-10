@@ -108,6 +108,10 @@ export const checkUserCredentialsApi = requestBodyContent => {
     return postApiCall('/api/appusers/login', requestBodyContent);
 }
 
+export const tryAsGuestApi = () => {
+    return postApiCall('/api/appusers/tryasguest', null);
+}
+
 // Called by fetchTrips in Dashboard.js
 export const fetchTripsApi = () => {
     return getApiCall(`/api/trips/alltrips`);

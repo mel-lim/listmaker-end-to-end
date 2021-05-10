@@ -2,7 +2,6 @@
     "USERNAME_REGEX": "^[a-zA-Z0-9_]{2,}$",
     "EMAIL_REGEX": "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$",
     "ALPHANUMERIC_UNDERSCORE_REGEX": "^\\w*$",
-    "AUTOSAVE_INTERVAL": "600000", 
     "CONFIRM_CREDENTIAL_INTERVAL": "300000",
     "AUTOLOGOUT_BUFFER_INTERVAL": "60000",
     "EXPONENTIAL_BACKOFF_BASE": "1000",
