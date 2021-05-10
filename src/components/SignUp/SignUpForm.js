@@ -106,6 +106,7 @@ export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }
 
     const tryAsGuest = async (retryCount = 0) => {
         setSigningInMessage("Creating guest account...");
+        setIsGuestUser(true);
 
         try {
             // Api call to sign up new user
@@ -114,7 +115,6 @@ export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }
             if (response.ok === true) {
                 setUser(responseBodyText.username);
                 setCookieExpiry(responseBodyText.guestCookieExpiry);
-                setIsGuestUser(true);
 
             } else { // i.e. response.ok === false
                 setSigningInMessage(null);
