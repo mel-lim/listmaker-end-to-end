@@ -219,6 +219,11 @@ nav a:hover {
   list-style: circle;
 }
 
+.about-button-container {
+  display: flex;
+  justify-content: center;
+}
+
 /* Dashboard */
 
 main {

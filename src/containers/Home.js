@@ -45,6 +45,21 @@ export const Home = () => {
                 </ul>
 
                 <p>Looking forward, we have bold plans to build kit collab into a collaborative dashboard with a full suite of helpful expedition planning tools to help you and your team plan your next outing. Check back periodically to see our latest developments.</p>
+
+                <p>To use kit collab, please sign up with an account or try as a guest user.</p>
+
+                <div className="about-button-container">
+                    <Link to="/signup">
+                        <input type="button"
+                            className="pillbox-button about-button"
+                            value='Sign up' />
+                    </Link>
+                    <Link to="/tryasguest">
+                        <input type="button"
+                            className="pillbox-button about-button"
+                            value="Try as guest" />
+                    </Link>
+                </div>
             </div>
 
             <footer>

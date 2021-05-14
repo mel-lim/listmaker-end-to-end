@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import './App.css';
 
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import ScrollToTop from 'react-router-scroll-top'
 
 import Cookies from "js-cookie";
 
@@ -43,34 +44,36 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop>
 
-      <UserContext.Provider value={userValue}>
-        <header className="website-name">
+        <UserContext.Provider value={userValue}>
+          <header className="website-name">
 
-          <Link to="/">
-            <h1>kit collab.</h1>
-          </Link>
+            <Link to="/">
+              <h1>kit collab.</h1>
+            </Link>
 
-          <HamburgerNav />
+            <HamburgerNav />
 
-        </header>
+          </header>
 
-        <CookieExpiryContext.Provider value={cookieExpiryValue}>
-          <GuestUserContext.Provider value={isGuestUserValue}>
-            <Nav />
-            <Switch>
-              <Route path="/" exact component={Home} />
-              <ProtectedLoggedIn path="/dashboard" component={Dashboard} />
-              <ProtectedLoggedOut path="/tryasguest" component={TryAsGuest} />
-              <ProtectedLoggedOut path="/signup" component={SignUp} />
-              <ProtectedLoggedOut path="/login" component={Login} />
-              <Route path="/myaccount" component={MyAccount} />
-              <ProtectedLoggedIn path="/logout" component={Logout} />
-              <Route path="/contact" component={Contact} />
-            </Switch>
-          </GuestUserContext.Provider>
-        </CookieExpiryContext.Provider>
-      </UserContext.Provider>
+          <CookieExpiryContext.Provider value={cookieExpiryValue}>
+            <GuestUserContext.Provider value={isGuestUserValue}>
+              <Nav />
+              <Switch>
+                <Route path="/" exact component={Home} />
+                <ProtectedLoggedIn path="/dashboard" component={Dashboard} />
+                <ProtectedLoggedOut path="/tryasguest" component={TryAsGuest} />
+                <ProtectedLoggedOut path="/signup" component={SignUp} />
+                <ProtectedLoggedOut path="/login" component={Login} />
+                <Route path="/myaccount" component={MyAccount} />
+                <ProtectedLoggedIn path="/logout" component={Logout} />
+                <Route path="/contact" component={Contact} />
+              </Switch>
+            </GuestUserContext.Provider>
+          </CookieExpiryContext.Provider>
+        </UserContext.Provider>
+      </ScrollToTop>
     </Router>
   );
 }
