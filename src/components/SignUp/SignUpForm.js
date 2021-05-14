@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
-import { UserContext, CookieExpiryContext, GuestUserContext } from '../../UserContext';
-import { delay, signUpNewUserApi, tryAsGuestApi } from "../../api";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+
+import { delay, signUpNewUserApi } from "../../api";
 import configData from "../../config.json";
 
 export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }) => {
-    const { setUser } = useContext(UserContext);
-    const { setCookieExpiry } = useContext(CookieExpiryContext);
-    const { setIsGuestUser } = useContext(GuestUserContext);
 
     // States for the message above the form
     const [signingInMessage, setSigningInMessage] = useState(null);
@@ -65,7 +63,7 @@ export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }
             setUsername(username);
             setEmail(email);
             setPassword(password);
-            
+
             if (retryCount < 5) {
                 setServerStatusMessage(`The server not responding. Trying again... ${retryCount}/4`);
                 await delay(retryCount); // Exponential backoff - see api.js
@@ -104,125 +102,95 @@ export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }
         setShowPassword(!showPassword);
     }
 
-    const tryAsGuest = async (retryCount = 0) => {
-        setSigningInMessage("Creating guest account...");
-        setIsGuestUser(true);
+    return (
+        <div className="user-credentials sign-up">
+            <h3>Sign up</h3>
 
-        try {
-            // Api call to sign up new user
-            const { response, responseBodyText } = await tryAsGuestApi();
+            <p className="submission-unsuccessful-message">{signingInMessage}</p>
+            <p className="submission-unsuccessful-message">{submissionUnsuccessfulMessage}</p>
+            <p className="submission-unsuccessful-message">{serverStatusMessage}</p>
 
-            if (response.ok === true) {
-                setUser(responseBodyText.username);
-                setCookieExpiry(responseBodyText.guestCookieExpiry);
+            <form className="user-credentials-form" onSubmit={handleSubmit}>
+                <div className="input-label-container">
 
-            } else { // i.e. response.ok === false
-                setSigningInMessage(null);
-                setSubmissionUnsuccessfulMessage("** Something went wrong, please try again **");
-            }
-        } catch (error) {
-            console.error("Error in tryAsGuest function", error);
-            setSigningInMessage(null);
+                    <label htmlFor="username-input" >Username (minimum 2 characters)</label>
 
-            if (retryCount < 5) {
-                setServerStatusMessage(`The server not responding. Trying again... ${retryCount}/4`);
-                await delay(retryCount); // Exponential backoff - see api.js
-                return tryAsGuest(retryCount + 1); // After the delay, try connecting again
+                    <input type="text"
+                        id="username-input"
+                        name="username"
+                        onChange={event => setUsername(event.target.value)}
+                        value={username}
+                        required />
 
-            } else {
-                setServerStatusMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
-            }
-        }
-    }
+                    <p className="validation-message">{usernameValidationMessage}</p>
+                </div>
+
+                <div className="input-label-container">
+
+                    <label htmlFor="email-input">Email</label>
+
+                    <input type="email"
+                        id="email-input"
+                        name="email"
+                        onChange={event => setEmail(event.target.value)}
+                        value={email}
+                        required />
+                </div>
+
+                <div className="input-label-container">
+
+                    <label htmlFor="password-input">Password (minimum 8 characters)</label>
+
+                    <input type={showPassword ? "text" : "password"}
+                        id="password-input"
+                        name="password"
+                        minLength="8"
+                        autoComplete="new-password"
+                        onChange={event => setPassword(event.target.value)}
+                        value={password}
+                        required />
+
+                    <button type="button"
+                        className={showPassword ? "visible password-button" : "not-visible password-button"}
+                        onClick={toggleShowPassword}></button>
+                </div>
+
+                <div className="input-label-container">
+
+                    <label htmlFor="confirm-password-input">Confirm Password</label>
+
+                    <input type="password"
+                        id="confirm-password-input"
+                        name="password"
+                        autoComplete="current-password"
+                        onChange={event => {
+                            setConfirmPassword(event.target.value)
+                        }}
+                        value={confirmPassword}
+                        required />
+
+                    <p className="validation-message">{passwordMatchMessage}</p>
+                </div>
+
+                <div>
+                    <input type="submit"
+                        className="pillbox-button"
+                        value='Sign up' />
+                </div>
+
+            </form>
+
+            <hr></hr><p className="button-separator">or</p><hr></hr>
+            <Link to="/tryasguest">
+                <div>
+                    <input type="button"
+                        className="pillbox-button"
+                        value='Try as guest' />
+                </div>
+            </Link>
 
 
-return (
-    <div className="user-credentials sign-up">
-        <h3>Sign up</h3>
-
-        <p className="submission-unsuccessful-message">{signingInMessage}</p>
-        <p className="submission-unsuccessful-message">{submissionUnsuccessfulMessage}</p>
-        <p className="submission-unsuccessful-message">{serverStatusMessage}</p>
-
-        <form className="user-credentials-form" onSubmit={handleSubmit}>
-            <div className="input-label-container">
-
-                <label htmlFor="username-input" >Username (minimum 2 characters)</label>
-
-                <input type="text"
-                    id="username-input"
-                    name="username"
-                    onChange={event => setUsername(event.target.value)}
-                    value={username}
-                    required />
-
-                <p className="validation-message">{usernameValidationMessage}</p>
-            </div>
-
-            <div className="input-label-container">
-
-                <label htmlFor="email-input">Email</label>
-
-                <input type="email"
-                    id="email-input"
-                    name="email"
-                    onChange={event => setEmail(event.target.value)}
-                    value={email}
-                    required />
-            </div>
-
-            <div className="input-label-container">
-
-                <label htmlFor="password-input">Password (minimum 8 characters)</label>
-
-                <input type={showPassword ? "text" : "password"}
-                    id="password-input"
-                    name="password"
-                    minLength="8"
-                    autoComplete="new-password"
-                    onChange={event => setPassword(event.target.value)}
-                    value={password}
-                    required />
-
-                <button type="button"
-                    className={showPassword ? "visible password-button" : "not-visible password-button"}
-                    onClick={toggleShowPassword}></button>
-            </div>
-
-            <div className="input-label-container">
-
-                <label htmlFor="confirm-password-input">Confirm Password</label>
-
-                <input type="password"
-                    id="confirm-password-input"
-                    name="password"
-                    autoComplete="current-password"
-                    onChange={event => {
-                        setConfirmPassword(event.target.value)
-                    }}
-                    value={confirmPassword}
-                    required />
-
-                <p className="validation-message">{passwordMatchMessage}</p>
-            </div>
-
-            <div>
-                <input type="submit"
-                    className="pillbox-button"
-                    value='Sign up' />
-            </div>
-
-        </form>
-
-        <hr></hr><p className="button-separator">or</p><hr></hr>
-        <div>
-            <input type="button"
-                className="pillbox-button"
-                value='Try as guest'
-                onClick={tryAsGuest} />
         </div>
-
-    </div>
-);
-    }
+    );
+}
 

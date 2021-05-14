@@ -18,6 +18,19 @@ export const Nav = () => {
                 {
                     !user ?
                         <div>
+                            <Link to="/tryasguest">
+                                <li>try as guest</li>
+                            </Link>
+                        </div>
+                        :
+                        null
+                }
+
+                <li className="middot" >&middot;</li>
+
+                {
+                    !user ?
+                        <div>
                             <Link to="/signup">
                                 <li>sign up</li>
                             </Link>

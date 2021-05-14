@@ -515,6 +515,20 @@ input.user-input-text {
   vertical-align: middle;
 }
 
+/* Try as guest */
+.try-as-guest {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.try-as-guest p {
+  text-align: left;
+}
+
+.progress-message {
+  text-align: center !important;
+}
+
 /* My account */
 .my-account {
   max-width: 450px;
