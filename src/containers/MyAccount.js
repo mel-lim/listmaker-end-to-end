@@ -19,13 +19,16 @@ export const MyAccount = () => {
             const { response, responseBodyText } = await getAccountDetailsApi();
             setErrorMessage(null);
 
-            if (response.status === 200) {
+            if (response.ok === true) {
                 setUsername(responseBodyText.username);
                 setEmail(responseBodyText.email);
             }
+            else {
+                setErrorMessage("Something went wrong while fetching your account details. Please try again.")
+              }
         } 
         
-        catch {
+        catch(error) {
             console.error("Error in getAccountDetails function. Cannot connect to server");
 
             if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {

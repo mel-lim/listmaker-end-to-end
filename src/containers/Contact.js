@@ -21,7 +21,7 @@ export const Contact = () => {
         try {
             const { responseBodyText } = await sendMessageApi(requestBodyContent);
             setSubmissionStatusMessage(responseBodyText.message);
-        } catch {
+        } catch(error) {
             console.error("Error in contact form submission. Cannot connect to server");
         }
     }

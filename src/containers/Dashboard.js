@@ -368,7 +368,7 @@ export const Dashboard = () => {
 
     return (
         redirectOnLogout ?
-            <Redirect to="/login" /> :
+            <Redirect to="/home" /> :
             <div>
                 <main>
                     <div className="dashboard-console">
