@@ -8,13 +8,6 @@ export const Nav = () => {
     return (
         <nav id="sticky-nav">
             <ul>
-
-                <Link to="/dashboard">
-                    <li>dashboard</li>
-                </Link>
-
-                <li className="middot" >&middot;</li>
-
                 {
                     !user ?
                         <div>
@@ -23,7 +16,9 @@ export const Nav = () => {
                             </Link>
                         </div>
                         :
-                        null
+                        <Link to="/dashboard">
+                            <li>dashboard</li>
+                        </Link>
                 }
 
                 <li className="middot" >&middot;</li>
