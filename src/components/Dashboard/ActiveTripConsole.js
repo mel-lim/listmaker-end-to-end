@@ -53,7 +53,7 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, fetchTrips, editT
                     className="pillbox-button"
                     value="New list" onClick={createNewList} />
 
-                {lists.length && allListItems.length ?
+                {/* {lists.length && allListItems.length ?
                     <div>
                         <input type="button"
                             className="pillbox-button"
@@ -61,7 +61,7 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, fetchTrips, editT
                             onClick={handleClickSync} />
                     </div>
                     :
-                    null}
+                    null} */}
 
             </div>
         </div>
