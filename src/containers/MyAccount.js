@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { delay, getAccountDetailsApi } from "../api";
+import { delay, getAccountDetailsApi, submitPasswordChangeApi } from "../api";
 
 // Import config data
 import configData from "../config.json";
@@ -7,7 +7,7 @@ import configData from "../config.json";
 export const MyAccount = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
-    const [errorMessage, setErrorMessage] = useState(null);
+    const [progressMessage, setProgressMessage] = useState(null);
 
     const [changePassword, setChangePassword] = useState(false);
     const [oldPassword, setOldPassword] = useState('');
@@ -35,14 +35,14 @@ export const MyAccount = () => {
     const getAccountDetails = async (retryCount = 0) => {
         try {
             const { response, responseBodyText } = await getAccountDetailsApi();
-            setErrorMessage(null);
+            setProgressMessage(null);
 
             if (response.ok === true) {
                 setUsername(responseBodyText.username);
                 setEmail(responseBodyText.email);
             }
             else {
-                setErrorMessage("Something went wrong while fetching your account details. Please try again.")
+                setProgressMessage("Something went wrong while fetching your account details. Please try again.")
             }
         }
 
@@ -50,33 +50,83 @@ export const MyAccount = () => {
             console.error("Error in getAccountDetails function. Cannot connect to server");
 
             if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
-                setErrorMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
+                setProgressMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
                 await delay(retryCount); // Exponential backoff - see api.js
                 return getAccountDetails(retryCount + 1); // After the delay, try connecting again
             }
 
-            setErrorMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+            setProgressMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+        }
+    }
+
+    const submitPasswordChange = async (retryCount = 0) => {
+        setProgressMessage("Submitting password change...");
+
+        // Construct body of request to send to server
+        const requestBodyContent = { oldPassword, newPassword };
+
+        try {
+            // Api call to sign up new user
+            const { response, responseBodyText } = await submitPasswordChangeApi(requestBodyContent);
+
+            if (response.ok === true) {
+                // Close the change password module
+                setChangePassword(false);
+
+                // Reset all the fields
+                setOldPassword('');
+                setNewPassword('');
+                setConfirmNewPassword('');
+            }
+
+            // Show message to user
+            setProgressMessage(responseBodyText.message);
+        }
+
+        catch (error) {
+            console.error("Error in submitPasswordChange function. Cannot connect to server.");
+            setOldPassword(oldPassword);
+            setNewPassword(newPassword);
+            setConfirmNewPassword(confirmNewPassword);
+
+            if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
+                setProgressMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return submitPasswordChange(retryCount + 1); // After the delay, try connecting again
+
+            } else {
+                setProgressMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+            }
         }
     }
 
     const handleSubmit = event => {
         event.preventDefault();
 
-        // Prevent submission if any of the fields fields are empty
+        // Prevent submission if any of the fields are empty
         if (oldPassword.length === 0 || newPassword.length === 0 || confirmNewPassword.length === 0) {
             setSubmissionUnsuccessfulMessage('** All fields must be completed **');
             return;
 
         } else if (newPassword !== confirmNewPassword) { // Prevent submission if the password and confirm password fields don't match
-            setSubmissionUnsuccessfulMessage('** New passwords do not match **');
+            setSubmissionUnsuccessfulMessage('** New password and confirm new password do not match **');
             return;
-        } else if (newPassword.length < 8) {
-            setSubmissionUnsuccessfulMessage('** Passwords must be at least 8 characters long **')
+
+        } else if (newPassword.length < 8) { // Prevent submission of the new password is less than 8 chars long
+            setSubmissionUnsuccessfulMessage('** Passwords must be at least 8 characters long **');
+            return;
+
+        } else if (newPassword === oldPassword) { // Prevent submission if the new password is the same as the old password
+            setSubmissionUnsuccessfulMessage('** The new password has to be different from the old password **');
+            return;
         }
+
+        // Calls the signUpNewUser function to send new user details to the server
+        submitPasswordChange();
     }
 
+    // SHOW/HIDE FUNCTION
     const toggleShowPassword = event => {
-        event.preventDefault();
         setShowNewPassword(!showNewPassword);
     }
 
@@ -89,22 +139,23 @@ export const MyAccount = () => {
                 <p>Email: {email}</p>
 
                 <input type="button"
-                className="pillbox-button change-password-button"
-                value='Change password'
-                onClick={() => setChangePassword(!changePassword)} />
+                    className="pillbox-button change-password-button"
+                    value='Change password'
+                    onClick={() => setChangePassword(!changePassword)} />
             </div>
 
             {
                 !changePassword ?
                     null :
                     <form className="change-password-form" onSubmit={handleSubmit}>
+
                         <div className="change-password-input-div">
 
                             <label htmlFor="old-password-input">Old password</label>
 
                             <input type="password"
                                 id="old-password-input"
-                                name="password"
+                                name="old-password"
                                 minLength="8"
                                 autoComplete="current-password"
                                 onChange={event => setOldPassword(event.target.value)}
@@ -118,7 +169,7 @@ export const MyAccount = () => {
 
                             <input type={showNewPassword ? "text" : "password"}
                                 id="new-password-input"
-                                name="password"
+                                name="new-password"
                                 minLength="8"
                                 autoComplete="new-password"
                                 onChange={event => setNewPassword(event.target.value)}
@@ -135,7 +186,7 @@ export const MyAccount = () => {
 
                             <input type="password"
                                 id="confirm-new-password-input"
-                                name="password"
+                                name="confirm-new-password"
                                 autoComplete="new-password"
                                 onChange={event => {
                                     setConfirmNewPassword(event.target.value)
@@ -155,7 +206,8 @@ export const MyAccount = () => {
             }
 
             <p>{submissionUnsuccessfulMessage}</p>
-            <p>{errorMessage}</p>
+            <p>{progressMessage}</p>
+
         </div>
     );
 }

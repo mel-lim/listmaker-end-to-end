@@ -588,6 +588,10 @@ input.user-input-text {
   bottom: 2px;
 }
 
+.my-account p {
+  text-align: center;
+}
+
 /* Contact */
 
 #form-container {

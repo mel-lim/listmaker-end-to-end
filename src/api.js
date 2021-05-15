@@ -100,6 +100,7 @@ const deleteApiCall = async (url, requestBodyContent) => {
 // Exponential backoff delay function
 export const delay = retryCount => new Promise(resolve => setTimeout(resolve, parseInt(configData.EXPONENTIAL_BACKOFF_BASE) * retryCount));
 
+// Called by signUpNewUser in SignUpForm.js
 export const signUpNewUserApi = requestBodyContent => {
     return postApiCall('/api/appusers/signup', requestBodyContent);
 }
@@ -175,6 +176,11 @@ export const undoDeleteListItemApi = async (tripId, listId, itemId) => {
 // Called by getAccountDetails in MyAccount.js
 export const getAccountDetailsApi = () => {
     return getApiCall('/api/appusers/accountdetails');
+}
+
+// Called by submitPasswordChange in MyAccount.js
+export const submitPasswordChangeApi = requestBodyContent => {
+    return putApiCall('/api/appusers/changepassword', requestBodyContent);
 }
 
 // Called by logout in Logout.js
