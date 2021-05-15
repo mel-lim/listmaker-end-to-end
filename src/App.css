@@ -539,11 +539,53 @@ input.user-input-text {
   max-width: 450px;
   border: 1px solid black;
   padding: 0.5rem 0.5rem 1rem 0.5rem;
-  vertical-align: top;
   background-color: hsl(0, 0%, 95%);
-  text-align: center;
   margin: 1rem auto 2rem auto;
+}
+
+.account-details {
   text-align: center;
+}
+
+.change-password-button {
+  font-size: 0.65rem;
+}
+
+.change-password-form {
+  display: flex;
+  margin: 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.change-password-input-div {
+  display: block;
+  width: 80%;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 1rem 0;
+  position: relative;
+}
+
+.change-password-form input[type=password], .change-password-form input[type=text] {
+  width: 200px;
+  float: right;
+}
+
+.change-password-form label {
+  font-size: 0.8rem;
+}
+
+.new-eye-password-button {
+  position: absolute;
+  height: 19px;
+  width: 19px;
+  background-size: 99%;
+  background-repeat: no-repeat;
+  border: none;
+  align-self: center;
+  right: 5px;
+  bottom: 2px;
 }
 
 /* Contact */

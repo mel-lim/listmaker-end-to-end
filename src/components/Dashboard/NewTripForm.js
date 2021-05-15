@@ -99,7 +99,6 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, fetchTrips, set
                             className="pillbox-button"
                             value='New trip'
                             onClick={() => setNewTripClicked(true)} />
-
                     </div>
 
                     :

@@ -162,7 +162,7 @@ export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }
                     <input type="password"
                         id="confirm-password-input"
                         name="password"
-                        autoComplete="current-password"
+                        autoComplete="new-password"
                         onChange={event => {
                             setConfirmPassword(event.target.value)
                         }}
