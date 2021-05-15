@@ -520,10 +520,15 @@ input.user-input-text {
   vertical-align: middle;
 }
 
+.logout {
+  padding-bottom: 0.5rem;
+}
+
 /* Try as guest */
 .try-as-guest {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+  padding-bottom: 0.5rem;
 }
 
 .try-as-guest p {

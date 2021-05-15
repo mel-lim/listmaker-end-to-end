@@ -4,7 +4,7 @@ import Popup from 'reactjs-popup';
 export const ConfirmDeleteListModal = ({ list, deleteList, modalErrorMessage }) => {
 
     return (
-        <Popup trigger={<button className="delete-button ui-button delete-list-button"></button>} modal nested>
+        <Popup trigger={<button className="delete-button ui-button delete-list-button" title="delete trip"></button>} modal nested>
             {
                 !modalErrorMessage ?
                     close => (

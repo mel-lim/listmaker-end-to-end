@@ -1,10 +1,14 @@
 import React, { useRef, useContext } from "react";
 import { Link } from "react-router-dom";
-import { UserContext } from '../UserContext';
+import { GuestUserContext, UserContext } from '../UserContext';
 
 export const Home = () => {
+
     const { user } = useContext(UserContext);
+    const { isGuestUser } = useContext(GuestUserContext);
+
     const aboutRef = useRef(null);
+
     const scrollToAbout = () => {
         aboutRef.current.scrollIntoView();
     }
@@ -13,7 +17,7 @@ export const Home = () => {
         <div className="home">
 
             <div className="banner">
-                <h2>Hello {user}. {!user ? "You're here." : "Welcome back."}</h2>
+                <h2>Hello {user}. {!user ? "You're here." : (!isGuestUser ? "Welcome back." : "Welcome")}</h2>
 
                 {
                     !user ?
@@ -46,20 +50,25 @@ export const Home = () => {
 
                 <p>Looking forward, we have bold plans to build kit collab into a collaborative dashboard with a full suite of helpful expedition planning tools to help you and your team plan your next outing. Check back periodically to see our latest developments.</p>
 
-                <p>To use kit collab, please sign up with an account or try as a guest user.</p>
+                { !user ? 
+                    <div>
+                        <p>To use kit collab, please sign up with an account or try as a guest user.</p>
 
-                <div className="about-button-container">
-                    <Link to="/signup">
-                        <input type="button"
-                            className="pillbox-button about-button"
-                            value='Sign up' />
-                    </Link>
-                    <Link to="/tryasguest">
-                        <input type="button"
-                            className="pillbox-button about-button"
-                            value="Try as guest" />
-                    </Link>
-                </div>
+                        <div className="about-button-container">
+                            <Link to="/signup">
+                                <input type="button"
+                                    className="pillbox-button about-button"
+                                    value='Sign up' />
+                            </Link>
+                            <Link to="/tryasguest">
+                                <input type="button"
+                                    className="pillbox-button about-button"
+                                    value="Try as guest" />
+                            </Link>
+                        </div>
+                    </div>
+                    : null
+                }
             </div>
 
             <footer>

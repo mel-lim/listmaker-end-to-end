@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { GuestUserContext, CookieExpiryContext } from "../UserContext";
 import { delay, getAccountDetailsApi, submitPasswordChangeApi } from "../api";
+import DayJS from 'react-dayjs';
 
 // Import config data
 import configData from "../config.json";
 
 export const MyAccount = () => {
+    const { isGuestUser } = useContext(GuestUserContext);
+    const { cookieExpiry } = useContext(CookieExpiryContext);
+
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [progressMessage, setProgressMessage] = useState(null);
@@ -135,13 +140,23 @@ export const MyAccount = () => {
 
             <div className="account-details">
                 <h3>Account Details</h3>
-                <p>Username: {username}</p>
-                <p>Email: {email}</p>
-
-                <input type="button"
-                    className="pillbox-button change-password-button"
-                    value='Change password'
-                    onClick={() => setChangePassword(!changePassword)} />
+                {
+                    !isGuestUser ?
+                        <div>
+                            <p>Username: {username}</p>
+                            <p>Email: {email}</p>
+                            <input type="button"
+                                className="pillbox-button change-password-button"
+                                value='Change password'
+                                onClick={() => setChangePassword(!changePassword)} />
+                        </div>
+                        :
+                        <div>
+                            <p>Guest username: {username}</p>
+                            <p>Guest account expires: <DayJS format="HH:mm on DD-MMMM-YYYY">{cookieExpiry}</DayJS></p>
+                            <p>If you would like to sign up with a real account, please first log out of this guest user account.</p>
+                        </div>
+                }
             </div>
 
             {

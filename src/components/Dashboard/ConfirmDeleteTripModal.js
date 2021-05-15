@@ -39,7 +39,7 @@ export const ConfirmDeleteTripModal = ({ activeTrip, fetchTrips, resetTripAndLis
     }
 
     return (
-        <Popup trigger={<input type="button" className="pillbox-button" value="Delete trip" />} modal nested>
+        <Popup trigger={<input type="button" className="pillbox-button" value="Delete trip" title="delete trip" />} modal nested>
             {
                 !modalErrorMessage ?
                     close => (
