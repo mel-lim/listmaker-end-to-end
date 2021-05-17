@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Antonio&family=Lato:ital,wght@0,300;1,300&family=Roboto+Slab:wght@200&display=swap');
-
 /* Site-wide general styles */
 
 body {
@@ -23,7 +22,7 @@ body {
   width: 120px;
 }
 
-.pillbox-button:hover  {
+.pillbox-button:hover {
   color: black;
   background-color: white;
   border-color: black;
@@ -77,7 +76,6 @@ body {
 
 /* Text styles and sizing */
 
-
 h1 {
   font-family: 'Antonio', sans-serif;
   font-size: 3rem;
@@ -107,7 +105,7 @@ h5 {
   margin: 0.6rem 0;
 }
 
-p, figcaption, label, button, input[type=text], input[type=email], textarea, li , select, option {
+p, figcaption, label, button, input[type=text], input[type=email], textarea, li, select, option {
   font-size: 1rem;
   color: black;
 }
@@ -149,20 +147,25 @@ nav a, nav li {
 }
 
 nav li {
-  list-style-type: none; /* Remove bullets */
-  margin: 0; /* Remove margins */
+  list-style-type: none;
+  /* Remove bullets */
+  margin: 0;
+  /* Remove margins */
 }
 
 #sticky-nav {
   padding: 0.6em 0;
-  margin: 0; /* Remove margins */
+  margin: 0;
+  /* Remove margins */
   text-align: center;
   position: sticky;
-  position: -webkit-sticky; /* Safari */
+  position: -webkit-sticky;
+  /* Safari */
   top: 0;
   z-index: 99;
   background-color: #f9f9f9;
 }
+
 /* Note to future Mel - you solved the sticky problem by taking the nav element out of the header and putting it as child of the body element. Your problem was that the nav element was sticking only within the header element, which is not what you wanted. */
 
 #sticky-nav ul {
@@ -184,6 +187,7 @@ nav a:hover {
 }
 
 /* Hamburger navigation bar */
+
 #hamburger-navigation-panel {
   display: none;
 }
@@ -240,7 +244,7 @@ main {
 
 .dashboard-console .pillbox-button {
   font-size: 0.85rem;
-} 
+}
 
 .dashboard-greeting {
   margin-top: 2rem;
@@ -524,6 +528,7 @@ input.user-input-text {
 }
 
 /* Try as guest */
+
 .try-as-guest {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
@@ -539,6 +544,7 @@ input.user-input-text {
 }
 
 /* My account */
+
 .my-account {
   max-width: 450px;
   border: 1px solid black;
@@ -565,9 +571,13 @@ input.user-input-text {
 .change-password-input-div {
   display: block;
   width: 80%;
+  height: 25px;
   justify-content: space-between;
   align-items: baseline;
   margin: 1rem 0;
+}
+
+#new-password-input-div{
   position: relative;
 }
 
@@ -589,7 +599,7 @@ input.user-input-text {
   border: none;
   align-self: center;
   right: 5px;
-  bottom: 2px;
+  bottom: 3px;
 }
 
 .my-account p {
@@ -599,6 +609,11 @@ input.user-input-text {
 .my-account-spinner-div {
   display: flex;
   justify-content: center;
+}
+
+#my-acccount-password-match-message {
+  text-align: right;
+  margin-top: 0.5rem;
 }
 
 /* Contact */
@@ -656,16 +671,6 @@ input.user-input-text {
   justify-content: flex-end;
 }
 
-/* #contact-form input[type=submit] {
-  cursor: pointer;
-  color: hsl(0, 0%, 30%);
-  padding: 5px 20px;
-  border: 1.5px solid hsl(0, 0%, 30%);
-  border-radius: 20px;
-  background-color: #f9f9f9;
-  font-weight: bolder;
-} */
-
 /* Footer */
 
 footer {
@@ -677,101 +682,103 @@ footer {
 }
 
 @media (max-width: 550px) {
-  .dashboard-console {
+  /* Dashboard */
+  .new-trip-form {
     display: flex;
-    justify-content: center;
+    max-width: 400px;
+    justify-content: space-around;
     flex-wrap: wrap;
-    padding: 1rem;
-    margin: 1rem 0.4rem;
-  }
-  .trip-dropdown {
     margin: 0;
+    padding: 0 1rem;
   }
-
   #trip-select {
     width: 80%;
   }
-
-  .new-trip-form {
-    display: flex;
-    margin: 0;
-    max-width: 400px;
-    justify-content: space-around;
-  }
-
   .trip-question {
     justify-content: center;
     flex-wrap: wrap;
   }
-
   .radio-button-label-div {
     flex-wrap: wrap;
   }
-
+  .or-paragraph {
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
+  .trip-dropdown {
+    margin: 0;
+  }
   .active-trip-console {
     margin-top: 0;
   }
-
+  /* Lists */
   .list-container {
     margin: 1rem 0;
   }
-
+  /* Other */
   .my-account, .user-credentials {
-    margin: 1rem 0.4rem;
+    margin: 1rem auto;
   }
-
 }
-  
+
+@media (max-width: 498px) {
+  main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .dashboard-console {
+    width: 400px;
+    border: 1px solid black;
+    margin: 1rem 0;
+    padding: 15px;
+  }
+}
+
 /* Mobile breakpoint */
+
 @media (max-width: 480px) {
   /* Text styles and sizing */
   h1 {
     font-size: 3rem;
     margin: 0;
   }
-
   h2 {
     font-size: 2.5rem;
   }
-
   h3 {
     font-size: 1.5rem;
   }
-
   h4 {
     font-size: 1.5rem;
   }
-
   /* Header and hamburger menu */
   header.website-name {
     display: flex;
     justify-content: space-between;
     position: sticky;
-    position: -webkit-sticky; /* Safari */
+    position: -webkit-sticky;
+    /* Safari */
     top: 0;
     z-index: 99;
     background-color: #f9f9f9;
     align-items: flex-end;
     padding: 0.2em 0.45em;
   }
-
   #sticky-nav {
     display: none;
   }
-
   #hamburger-navigation-button {
     display: block;
     background-image: url('./resources/icons/pixel-perfect/035-hamburger.svg');
     width: 45px;
     height: 45px;
   }
-
   nav ul {
     padding: 20px;
     margin: 0;
     text-align: left;
   }
-
   #hamburger-navigation-panel {
     display: block;
     border: hsl(0, 0%, 25%) solid 2px;
@@ -780,5 +787,46 @@ footer {
     top: 62px;
     right: 0;
     z-index: 98;
+  }
+  .my-account, .user-credentials {
+    margin: 1rem 0.4rem;
+  }
+}
+
+@media (max-width: 460px) {
+
+  /* My account */
+  .change-password-form {
+    display: block;
+    text-align: center;
+  }
+  .change-password-input-div {
+    text-align: left;
+    width: 208px;
+    height: 50px;
+    margin: 1rem auto;
+    position: static;
+  }
+
+  .change-password-input-div input {
+    margin-top: 0.1rem;
+  }
+
+  #new-password-input-div{
+    position: relative;
+  }
+
+  #my-acccount-password-match-message {
+    text-align: left;
+  }
+
+  .new-eye-password-button {
+    bottom: 8px;
+  }
+}
+
+@media (max-width: 432px) {
+  .list-container {
+    width: 100%;
   }
 }

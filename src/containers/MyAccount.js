@@ -190,7 +190,7 @@ export const MyAccount = () => {
                                 required />
                         </div>
 
-                        <div className="change-password-input-div">
+                        <div className="change-password-input-div" id="new-password-input-div">
 
                             <label htmlFor="new-password-input">New password</label>
 
@@ -221,7 +221,7 @@ export const MyAccount = () => {
                                 value={confirmNewPassword}
                                 required />
 
-                            <p className="validation-message">{passwordMatchMessage}</p>
+                            <p className="validation-message" id="my-acccount-password-match-message">{passwordMatchMessage}</p>
                         </div>
 
                         <div>
