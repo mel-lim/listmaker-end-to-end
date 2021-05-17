@@ -3,7 +3,7 @@ import { SettledTripName } from "./SettledTripName";
 import { EditTripNameForm } from "./EditTripNameForm";
 import { ConfirmDeleteTripModal } from "./ConfirmDeleteTripModal";
 
-export const ActiveTripConsole = ({ activeTrip, setActiveTrip, fetchTrips, editTripDetails, resetTripAndListStates, lists, allListItems, fetchLists, createNewList, setConnectionErrorMessage }) => {
+export const ActiveTripConsole = ({ activeTrip, setActiveTrip, fetchTrips, editTripDetails, resetTripAndListStates, createNewList, setProgressMessage, setIsLoading }) => {
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -11,9 +11,13 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, fetchTrips, editT
         setIsEditing(!isEditing);
     }
 
-    const handleClickSync = event => {
+    /* const handleClickSync = event => {
         event.preventDefault();
         fetchLists(activeTrip.tripId);
+    } */
+
+    const handleClickNewList = () => {
+        createNewList();
     }
 
     return (
@@ -48,10 +52,11 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, fetchTrips, editT
                     activeTrip={activeTrip}
                     fetchTrips={fetchTrips}
                     resetTripAndListStates={resetTripAndListStates}
-                    setConnectionErrorMessage={setConnectionErrorMessage} />
+                    setProgressMessage={setProgressMessage}
+                    setIsLoading={setIsLoading} />
                 <input type="button"
                     className="pillbox-button"
-                    value="New list" onClick={createNewList} />
+                    value="New list" onClick={handleClickNewList} />
 
                 {/* {lists.length && allListItems.length ?
                     <div>

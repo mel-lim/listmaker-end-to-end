@@ -1,6 +1,6 @@
 import React from "react";
 
-export const AllTripsDropdown = ({ allTrips, activeTrip, setActiveTrip, resetTripAndListStates, fetchLists, connectionErrorMessage }) => {
+export const AllTripsDropdown = ({ allTrips, activeTrip, setActiveTrip, resetTripAndListStates, fetchLists, progressMessage }) => {
 
     const handleChange = event => {
         if (event.target.value === "select-trip") {
@@ -34,7 +34,7 @@ export const AllTripsDropdown = ({ allTrips, activeTrip, setActiveTrip, resetTri
                         allTrips.length ?
 
                             <option value="select-trip"
-                                disabled={connectionErrorMessage}>
+                                disabled={progressMessage.length}>
                                 Select trip
                             </option>
 
@@ -46,7 +46,7 @@ export const AllTripsDropdown = ({ allTrips, activeTrip, setActiveTrip, resetTri
                             trip =>
                                 <option key={trip.id}
                                     value={trip.id}
-                                    disabled={connectionErrorMessage}>
+                                    disabled={progressMessage.length}>
                                     {trip.name} / {trip.category} / {trip.duration}
                                 </option>
                         )

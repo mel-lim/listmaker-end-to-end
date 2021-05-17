@@ -4,7 +4,7 @@ import { delay, createTripApi } from "../../api";
 // Import config data
 import configData from "../../config.json";
 
-export const NewTripForm = ({ newTripClicked, setNewTripClicked, fetchTrips, setActiveTrip, configureLists, setIsFetchProcessing, setConnectionErrorMessage }) => {
+export const NewTripForm = ({ newTripClicked, setNewTripClicked, fetchTrips, setActiveTrip, configureLists, setIsFetchProcessing, setProgressMessage, setIsLoading }) => {
 
     // Dynamic user inputs for the form
     const [tripName, setTripName] = useState('');
@@ -30,14 +30,15 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, fetchTrips, set
             return;
         }
 
+        setIsLoading(true);
         setIsFetchProcessing(true);
-
+        
         try {
 
             const requestBodyContent = { tripName, tripCategory, tripDuration, requestTemplate };
 
             const { response, responseBodyText } = await createTripApi(requestBodyContent);
-            setConnectionErrorMessage(null);
+            setProgressMessage("");
 
             // Update the state that shows/hides the new trip console / questionnaire
             setNewTripClicked(false);
@@ -70,17 +71,22 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, fetchTrips, set
 
             } else {
                 console.log(responseBodyText.message);
+                setProgressMessage("** " + responseBodyText.message + " **");
             }
-        } catch {
+
+            setIsLoading(false);
+
+        } catch (error) {
             console.error("Error in createTrip function. Cannot connect to server");
 
             if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
-                setConnectionErrorMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
+                setProgressMessage(`The server not responding. Trying again...`);
                 await delay(retryCount); // Exponential backoff - see api.js
                 return createTrip(retryCount + 1); // After the delay, try connecting again
             }
             
-            setConnectionErrorMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+            setProgressMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+            setIsLoading(false);
         }
     }
 

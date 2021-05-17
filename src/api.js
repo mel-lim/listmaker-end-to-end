@@ -105,10 +105,12 @@ export const signUpNewUserApi = requestBodyContent => {
     return postApiCall('/api/appusers/signup', requestBodyContent);
 }
 
+// Called by checkUserCredentials in ValidateCredentials.js
 export const checkUserCredentialsApi = requestBodyContent => {
     return postApiCall('/api/appusers/login', requestBodyContent);
 }
 
+// Called by tryAsGuest in TryAsGuest.js
 export const tryAsGuestApi = () => {
     return postApiCall('/api/appusers/tryasguest', null);
 }

@@ -234,8 +234,7 @@ main {
   display: inline-block;
   border: 1px solid black;
   background-color: hsl(0, 0%, 95%);
-  padding-left: 2em;
-  padding-right: 2em;
+  padding: 0 2em 1em 2em;
   margin: 1rem 2rem;
 }
 
@@ -453,7 +452,7 @@ input.user-input-text {
   margin: 1rem auto 2rem auto;
 }
 
-.submission-unsuccessful-message {
+.progress-message {
   font-weight: bolder;
 }
 
@@ -528,14 +527,14 @@ input.user-input-text {
 .try-as-guest {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
-  padding-bottom: 0.5rem;
+  padding-bottom: 1rem;
 }
 
 .try-as-guest p {
   text-align: left;
 }
 
-.progress-message {
+.try-as-guest-message {
   text-align: center !important;
 }
 
@@ -595,6 +594,11 @@ input.user-input-text {
 
 .my-account p {
   text-align: center;
+}
+
+.my-account-spinner-div {
+  display: flex;
+  justify-content: center;
 }
 
 /* Contact */

@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { LoadSpinner } from "../LoadSpinner/LoadSpinner";
 
 import { delay, signUpNewUserApi } from "../../api";
 import configData from "../../config.json";
 
 export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }) => {
 
+    // State to render the spinner
+    const [isLoading, setIsLoading] = useState(false);
+
     // States for the message above the form
-    const [signingInMessage, setSigningInMessage] = useState(null);
-    const [submissionUnsuccessfulMessage, setSubmissionUnsuccessfulMessage] = useState('');
-    const [serverStatusMessage, setServerStatusMessage] = useState(null);
+    const [progressMessage, setProgressMessage] = useState("");
 
     // States for the form itself
     const [username, setUsername] = useState('');
@@ -35,7 +37,8 @@ export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }
     }, [password, confirmPassword]);
 
     const signUpNewUser = async (username, email, password, retryCount = 0) => {
-        setSigningInMessage("Signing you in...");
+        setIsLoading(true);
+        setProgressMessage("Signing you in...");
 
         // Construct body of request to send to server containing the new user details
         const requestBodyContent = { username, email, password };
@@ -47,30 +50,35 @@ export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }
             if (response.ok === true) {
                 setRegisteredAppUser(responseBodyText.appUser);
                 setIsSuccessfulRegistration(true);
+                setProgressMessage("");
 
             } else { // i.e. response.ok === false
                 setIsSuccessfulRegistration(false);
-                setSigningInMessage(null);
-                setSubmissionUnsuccessfulMessage("** " + responseBodyText.message + " **");
+                setProgressMessage("** " + responseBodyText.message + " **");
                 setUsername(username);
                 setEmail(email);
                 setPassword(password);
             }
+
+            setIsLoading(false);
+
         }
+
         catch (error) {
             console.error("Cannot connect to server");
-            setSigningInMessage(null);
             setUsername(username);
             setEmail(email);
             setPassword(password);
 
             if (retryCount < 5) {
-                setServerStatusMessage(`The server not responding. Trying again... ${retryCount}/4`);
+                setProgressMessage(`The server not responding. Trying again... ${retryCount}/4`);
                 await delay(retryCount); // Exponential backoff - see api.js
                 return signUpNewUser(username, email, password, retryCount + 1); // After the delay, try connecting again
-
-            } else {
-                setServerStatusMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+            } 
+            
+            else {
+                setProgressMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+                setIsLoading(false);
             }
         }
     }
@@ -81,15 +89,15 @@ export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }
 
         // Prevent submission if either username or email fields are empty
         if (username.length === 0 || email.length === 0 || password.length === 0 || confirmPassword.length === 0) {
-            setSubmissionUnsuccessfulMessage('** All fields must be completed **');
+            setProgressMessage('** All fields must be completed **');
             return;
 
         } else if (!usernameRegex.test(username)) { // Prevent submission if the username contains undesired characters or is too short
-            setSubmissionUnsuccessfulMessage('** Username must contain only alphanumeric characters or underscores, and be at least two characters long **');
+            setProgressMessage('** Username must contain only alphanumeric characters or underscores, and be at least two characters long **');
             return;
 
         } else if (password !== confirmPassword) { // Prevent submission if the password and confirm password fields don't match
-            setSubmissionUnsuccessfulMessage('** Passwords do not match **');
+            setProgressMessage('** Passwords do not match **');
             return;
         }
 
@@ -106,9 +114,13 @@ export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }
         <div className="user-credentials sign-up">
             <h3>Sign up</h3>
 
-            <p className="submission-unsuccessful-message">{signingInMessage}</p>
-            <p className="submission-unsuccessful-message">{submissionUnsuccessfulMessage}</p>
-            <p className="submission-unsuccessful-message">{serverStatusMessage}</p>
+            <p className="progress-message">{progressMessage}</p>
+            
+            {
+                isLoading ?
+                    <LoadSpinner />
+                    : null
+            }
 
             <form className="user-credentials-form" onSubmit={handleSubmit}>
                 <div className="input-label-container">

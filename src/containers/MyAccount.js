@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
+import { LoadSpinner } from "../components/LoadSpinner/LoadSpinner";
+
 import { GuestUserContext, CookieExpiryContext } from "../UserContext";
 import { delay, getAccountDetailsApi, submitPasswordChangeApi } from "../api";
 import DayJS from 'react-dayjs';
@@ -12,7 +14,9 @@ export const MyAccount = () => {
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
-    const [progressMessage, setProgressMessage] = useState(null);
+
+    const [progressMessage, setProgressMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const [changePassword, setChangePassword] = useState(false);
     const [oldPassword, setOldPassword] = useState('');
@@ -38,9 +42,11 @@ export const MyAccount = () => {
 
 
     const getAccountDetails = async (retryCount = 0) => {
+        setIsLoading(true);
+
         try {
             const { response, responseBodyText } = await getAccountDetailsApi();
-            setProgressMessage(null);
+            setProgressMessage("");
 
             if (response.ok === true) {
                 setUsername(responseBodyText.username);
@@ -49,22 +55,26 @@ export const MyAccount = () => {
             else {
                 setProgressMessage("Something went wrong while fetching your account details. Please try again.")
             }
+
+            setIsLoading(false);
         }
 
         catch (error) {
             console.error("Error in getAccountDetails function. Cannot connect to server");
 
             if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
-                setProgressMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
+                setProgressMessage(`The server not responding. Trying again...`);
                 await delay(retryCount); // Exponential backoff - see api.js
                 return getAccountDetails(retryCount + 1); // After the delay, try connecting again
             }
 
             setProgressMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+            setIsLoading(false);
         }
     }
 
     const submitPasswordChange = async (retryCount = 0) => {
+        setIsLoading(true);
         setProgressMessage("Submitting password change...");
 
         // Construct body of request to send to server
@@ -86,6 +96,7 @@ export const MyAccount = () => {
 
             // Show message to user
             setProgressMessage(responseBodyText.message);
+            setIsLoading(false);
         }
 
         catch (error) {
@@ -95,12 +106,13 @@ export const MyAccount = () => {
             setConfirmNewPassword(confirmNewPassword);
 
             if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
-                setProgressMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
+                setProgressMessage(`The server not responding. Trying again...`);
                 await delay(retryCount); // Exponential backoff - see api.js
                 return submitPasswordChange(retryCount + 1); // After the delay, try connecting again
 
             } else {
                 setProgressMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+                setIsLoading(false);
             }
         }
     }
@@ -222,7 +234,14 @@ export const MyAccount = () => {
 
             <p>{submissionUnsuccessfulMessage}</p>
             <p>{progressMessage}</p>
-
+            <div className="my-account-spinner-div">
+                {
+                    isLoading ?
+                        <LoadSpinner />
+                        : null
+                }
+            </div>
+            
         </div>
     );
 }

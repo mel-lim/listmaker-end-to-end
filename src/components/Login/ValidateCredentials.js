@@ -1,9 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { LoadSpinner } from "../LoadSpinner/LoadSpinner";
 
 import { UserContext, CookieExpiryContext, GuestUserContext } from "../../UserContext";
 import { delay, checkUserCredentialsApi } from "../../api";
-
 import configData from "../../config.json";
 
 export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal }) => {
@@ -13,10 +13,11 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
     const { setCookieExpiry } = useContext(CookieExpiryContext);
     const { setIsGuestUser } = useContext(GuestUserContext);
 
-    // States for the message above the form
-    const [loggingInMessage, setLoggingInMessage] = useState(null);
-    const [submissionUnsuccessfulMessage, setSubmissionUnsuccessfulMessage] = useState('');
-    const [serverStatusMessage, setServerStatusMessage] = useState(null);
+    // State to render the spinner
+    const [isLoading, setIsLoading] = useState(false);
+
+    // State for the message above the form
+    const [progressMessage, setProgressMessage] = useState("");
 
     // States for the inputs in the form
     const [userIdentity, setUserIdentity] = useState('');
@@ -36,7 +37,8 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
     }, []);
 
     const checkUserCredentials = async (userIdentity, password, retryCount = 0) => {
-        setLoggingInMessage("Logging you in...");
+        setIsLoading(true);
+        setProgressMessage("Logging you in...");
 
         // Detect whether the user identity inputted is a username or an email
         const requestBodyContent = {};
@@ -55,42 +57,51 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
         try {
             // Api call to check the user's credentials
             const { response, responseBodyText } = await checkUserCredentialsApi(requestBodyContent);
-            const username = responseBodyText.username;
 
             if (response.ok === true) {
-                if (context === "login") {
+                const username = responseBodyText.username;
+
+                if (context === "login") { // Login page
                     const lastUser = localStorage.getItem("lastUser");
 
                     // If the user that just logged in was not the last user, clear the local storage (if there is anything there)
                     if (username !== lastUser) {
                         localStorage.clear();
                     }
-                } else if (context === "confirmCredentials") {
+
+                } else if (context === "confirmCredentials") { // Confirm credentials modal
 
                     // Once the user successfully confirms their credentials, close the modal and let the user continue using the dashboard
                     setOpenConfirmCredentialsModal(false);
                 }
+
                 setUser(username);
                 setCookieExpiry(responseBodyText.cookieExpiry);
                 setIsGuestUser(false);
                 console.log("login sucessful");
 
             } else { // i.e. response.ok === false
-                setLoggingInMessage(null);
-                setSubmissionUnsuccessfulMessage("** " + responseBodyText.message + " **");
+                setProgressMessage("** " + responseBodyText.message + " **");
                 setUserIdentity(userIdentity);
             }
+
+            setIsLoading(false);
+
         }
+
         catch (error) {
             console.error("Cannot connect to server");
-            setLoggingInMessage(null);
             setUserIdentity(userIdentity);
+
             if (retryCount < 5) {
-                setServerStatusMessage(`The server not responding. Trying again... ${retryCount}/4`);
+                setProgressMessage(`The server not responding. Trying again... ${retryCount}/4`);
                 await delay(retryCount); // Exponential backoff - see api.js
                 return checkUserCredentials(userIdentity, password, retryCount + 1); // After the delay, try connecting again
-            } else {
-                setServerStatusMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+            } 
+            
+            else {
+                setProgressMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+                setIsLoading(false);
             };
         }
     }
@@ -105,10 +116,10 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
 
         // Validate user identity as either valid username or valid email
         if (!usernameRegex.test(userIdentity) && !emailRegex.test(userIdentity)) {
-            setSubmissionUnsuccessfulMessage('** Invalid username or email **');
+            setProgressMessage('** Invalid username or email **');
             return;
         } else if (password.length < 8) {
-            setSubmissionUnsuccessfulMessage('** Password needs to be greater than 8 characters **');
+            setProgressMessage('** Password needs to be greater than 8 characters **');
             return;
         }
 
@@ -125,10 +136,14 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
 
             <h3>{context === "login" ? "Log in" : "Refresh my token"}</h3>
 
-            <p className="submission-unsuccessful-message">{loggingInMessage}</p>
-            <p className="submission-unsuccessful-message">{submissionUnsuccessfulMessage}</p>
-            <p className="submission-unsuccessful-message">{serverStatusMessage}</p>
+            <p className="progress-message">{progressMessage}</p>
 
+            {
+                isLoading ?
+                    <LoadSpinner />
+                    : null
+            }
+            
             <form className="user-credentials-form" onSubmit={handleSubmit}>
 
                 <div className="input-label-container">

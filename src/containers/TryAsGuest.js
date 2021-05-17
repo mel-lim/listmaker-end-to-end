@@ -1,5 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
+import { LoadSpinner } from "../components/LoadSpinner/LoadSpinner";
+
 import { UserContext, CookieExpiryContext, GuestUserContext } from '../UserContext';
 import { delay, tryAsGuestApi } from "../api";
 
@@ -8,9 +10,14 @@ export const TryAsGuest = () => {
     const { setCookieExpiry } = useContext(CookieExpiryContext);
     const { setIsGuestUser } = useContext(GuestUserContext);
 
+    // State to render the spinner
+    const [isLoading, setIsLoading] = useState(false);
+
+    // State for the user message about submission status
     const [progressMessage, setProgressMessage] = useState(null);
 
     const tryAsGuest = async (retryCount = 0) => {
+        setIsLoading(true);
         setProgressMessage("Creating guest account...");
         setIsGuestUser(true);
 
@@ -25,6 +32,9 @@ export const TryAsGuest = () => {
             } else { // i.e. response.ok === false
                 setProgressMessage("** Something went wrong, please try again **");
             }
+
+            setIsLoading(false);
+
         } catch (error) {
             console.error("Error in tryAsGuest function", error);
 
@@ -35,6 +45,7 @@ export const TryAsGuest = () => {
 
             } else {
                 setProgressMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+                setIsLoading(false);
             }
         }
     }
@@ -64,7 +75,13 @@ export const TryAsGuest = () => {
                         value='Sign up' />
             </Link>
 
-            <p className="submission-unsuccessful-message progress-message">{progressMessage}</p>
+            <p className="progress-message try-as-guest-message">{progressMessage}</p>
+
+            {
+                isLoading ?
+                    <LoadSpinner />
+                    : null
+            }
         </div>
     )
 }

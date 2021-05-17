@@ -1,7 +1,7 @@
 import React from "react";
 import { List } from "./List/List";
 
-export const Lists = ({ tripId, lists, setLists, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems, setConnectionErrorMessage }) => {
+export const Lists = ({ tripId, lists, setLists, allListItems, setAllListItems, allDeletedItems, setAllDeletedItems, setProgressMessage, setIsLoading }) => {
 
     return (
         <article id="lists-container">
@@ -18,7 +18,8 @@ export const Lists = ({ tripId, lists, setLists, allListItems, setAllListItems, 
                             setAllListItems={setAllListItems}
                             allDeletedItems={allDeletedItems}
                             setAllDeletedItems={setAllDeletedItems}
-                            setConnectionErrorMessage={setConnectionErrorMessage} />
+                            setProgressMessage={setProgressMessage}
+                            setIsLoading={setIsLoading} />
                 )
             }
         </article>

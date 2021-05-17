@@ -6,7 +6,7 @@ import { delay, editListItemApi } from "../../../api";
 // Import config data
 import configData from "../../../config.json";
 
-export const ListItem = ({ tripId, listItem, listItems, setListItems, deleteListItem, setConnectionErrorMessage }) => { // This is a component in List
+export const ListItem = ({ tripId, listItem, listItems, setListItems, deleteListItem, setProgressMessage, setIsLoading }) => { // This is a component in List
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -15,14 +15,15 @@ export const ListItem = ({ tripId, listItem, listItems, setListItems, deleteList
     }
 
     const editListItem = async (editedItemName, retryCount = 0) => {
+        setIsLoading(true);
 
         try {
             // Make a put api call to update the db with the new list item
             const requestBodyContent = { editedItemName };
             const { response, responseBodyText } = await editListItemApi(tripId, listItem.list_id, listItem.id, requestBodyContent);
-            setConnectionErrorMessage(null);
+            setProgressMessage("");
 
-            if (response.status === 200) {
+            if (response.ok === true) {
                 // REVIEW WHETHER WE WILL NEED TO KEEP THE FOLLOWING CODE ONCE THE NEW SAVE FUNCTIONALITY IS DONE
                 const index = listItems.findIndex(item => item.id === listItem.id); // Get the index of the item we are editing
                 let editedListItems = [...listItems]; // Makes a shallow copy of the listItems array 
@@ -32,16 +33,22 @@ export const ListItem = ({ tripId, listItem, listItems, setListItems, deleteList
 
             else {
                 console.log(responseBodyText.message);
+                setProgressMessage("** " + responseBodyText.message + " **");
             }
+
+            setIsLoading(false);
+
         } catch {
             console.error("Error in editListItem function. Cannot connect to server");
             
             if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
-                setConnectionErrorMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
+                setProgressMessage(`The server not responding. Trying again...`);
                 await delay(retryCount); // Exponential backoff - see api.js
                 return editListItem(editedItemName, retryCount + 1); // After the delay, try connecting again
             }
-            setConnectionErrorMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+
+            setProgressMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+            setIsLoading(false);
         }
     }
 

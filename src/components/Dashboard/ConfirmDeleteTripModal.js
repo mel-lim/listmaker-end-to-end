@@ -1,40 +1,35 @@
 import React, { useState } from 'react';
 import Popup from 'reactjs-popup';
-import { delay, deleteTripApi } from '../../api';
+import { deleteTripApi } from '../../api';
 
-// Import config data
-import configData from "../../config.json";
-
-export const ConfirmDeleteTripModal = ({ activeTrip, fetchTrips, resetTripAndListStates, setConnectionErrorMessage }) => { // This is a component in ActiveTripConsole
+export const ConfirmDeleteTripModal = ({ activeTrip, fetchTrips, resetTripAndListStates, setProgressMessage, setIsLoading }) => { // This is a component in ActiveTripConsole
 
     const [modalErrorMessage, setModalErrorMessage] = useState(null);
 
     const deleteTrip = async (retryCount = 0) => {
+        setIsLoading(true);
         const tripId = activeTrip.tripId;
 
         try {
             const response = await deleteTripApi(tripId);
-            setConnectionErrorMessage(null);
+            setProgressMessage("");
 
-            if (response.status === 204) {
+            if (response.ok === true) {
                 console.log("trip deleted");
                 fetchTrips();
                 resetTripAndListStates(); // Call function to reset the activeTrip and lists etc. states to their initial render value (i.e. empty/clear) - this will remove the active trip console and lists from showing the just-deleted trip info
                 setModalErrorMessage(null);
+
             } else {
                 setModalErrorMessage('The trip cannot be deleted at this moment.');
             }
 
-        } catch {
+            setIsLoading(false);
+
+        } catch (error) {
             console.error("Error in deleteTrip function. Cannot connect to server");
-
-            if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
-                setConnectionErrorMessage(`The server not responding. Trying again... ${retryCount}/${parseInt(configData.MAX_RETRY_COUNT) - 1}`);
-                await delay(retryCount); // Exponential backoff - see api.js
-                return deleteTrip(retryCount + 1); // After the delay, try connecting again
-            }
-
-            setConnectionErrorMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+            setIsLoading(false);
+            setModalErrorMessage('The trip cannot be deleted at this moment. Please check your internet connection or try again later.');
         }
     }
 

@@ -3,6 +3,10 @@ import Popup from 'reactjs-popup';
 
 export const ConfirmDeleteListModal = ({ list, deleteList, modalErrorMessage }) => {
 
+    const handleClickDeleteForever = () => {
+        deleteList();
+    }
+
     return (
         <Popup trigger={<button className="delete-button ui-button delete-list-button" title="delete trip"></button>} modal nested>
             {
@@ -14,7 +18,7 @@ export const ConfirmDeleteListModal = ({ list, deleteList, modalErrorMessage }) 
 
 
                             <div className="actions">
-                                <input type="button" value="Delete forever" onClick={deleteList} />
+                                <input type="button" value="Delete forever" onClick={handleClickDeleteForever} />
                                 <input type="button" value="Keep it" onClick={close} />
                             </div>
                         </div>
