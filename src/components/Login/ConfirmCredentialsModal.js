@@ -3,12 +3,13 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 
 // Import contexts
-import { GuestUserContext } from "../../UserContext";
+import { GuestUserContext, OpenConfirmCredentialsModalContext } from "../../UserContext";
 
 import { ValidateCredentials } from "../Login/ValidateCredentials"
 
-export const ConfirmCredentialsModal = ({ openConfirmCredentialsModal, setOpenConfirmCredentialsModal }) => { // This is a component in Dashboard
+export const ConfirmCredentialsModal = () => { // This is a component in Dashboard
     const { isGuestUser } = useContext(GuestUserContext);
+    const { openConfirmCredentialsModal, setOpenConfirmCredentialsModal } = useContext(OpenConfirmCredentialsModalContext);
 
     return (
         <Popup open={openConfirmCredentialsModal} modal nested>

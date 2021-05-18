@@ -62,7 +62,7 @@ export const TryAsGuest = () => {
             <p>Please be warned, once you log out as a guest user, you will not be able to log back in again.</p>
             <p>You can start a new guest user account, but you will not have access to the data you saved in your previous guest user account.</p>
             <p>After 12 hours, any data you saved as a guest user will be deleted.</p>
-            <p>If you don't want this to happen, please sign up with a real account so we can store your trips and lists for you. It's totally free, you just have to register.</p>
+            <p>If you don't want this to happen, please sign up with an account so we can store your trips and lists for you. It's totally free, you just have to register.</p>
 
             <input type="button"
                 className="pillbox-button"

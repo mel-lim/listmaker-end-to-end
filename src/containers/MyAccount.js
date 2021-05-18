@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { LoadSpinner } from "../components/LoadSpinner/LoadSpinner";
+import { ConfirmCredentialsModal } from "../components/Login/ConfirmCredentialsModal";
 
 import { GuestUserContext, CookieExpiryContext } from "../UserContext";
 import { delay, getAccountDetailsApi, submitPasswordChangeApi } from "../api";
@@ -166,7 +167,7 @@ export const MyAccount = () => {
                         <div>
                             <p>Guest username: {username}</p>
                             <p>Guest account expires: <DayJS format="HH:mm on DD-MMMM-YYYY">{cookieExpiry}</DayJS></p>
-                            <p>If you would like to sign up with a real account, please first log out of this guest user account.</p>
+                            <p>If you would like to sign up with an actual account, please first log out of this guest user account.</p>
                         </div>
                 }
             </div>
@@ -241,7 +242,9 @@ export const MyAccount = () => {
                         : null
                 }
             </div>
-            
+
+            <ConfirmCredentialsModal />  
+
         </div>
     );
 }

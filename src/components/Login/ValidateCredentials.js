@@ -75,18 +75,17 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
                     setOpenConfirmCredentialsModal(false);
                 }
 
-                setUser(username);
-                setCookieExpiry(responseBodyText.cookieExpiry);
+                setIsLoading(false);
                 setIsGuestUser(false);
+                setCookieExpiry(responseBodyText.cookieExpiry);
+                setUser(username);
                 console.log("login sucessful");
 
             } else { // i.e. response.ok === false
                 setProgressMessage("** " + responseBodyText.message + " **");
                 setUserIdentity(userIdentity);
+                setIsLoading(false);
             }
-
-            setIsLoading(false);
-
         }
 
         catch (error) {
@@ -97,8 +96,8 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
                 setProgressMessage(`The server not responding. Trying again... ${retryCount}/4`);
                 await delay(retryCount); // Exponential backoff - see api.js
                 return checkUserCredentials(userIdentity, password, retryCount + 1); // After the delay, try connecting again
-            } 
-            
+            }
+
             else {
                 setProgressMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
                 setIsLoading(false);
@@ -143,7 +142,7 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
                     <LoadSpinner />
                     : null
             }
-            
+
             <form className="user-credentials-form" onSubmit={handleSubmit}>
 
                 <div className="input-label-container">

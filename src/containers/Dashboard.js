@@ -1,11 +1,8 @@
 // Import libraries
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { Redirect } from "react-router-dom";
-import dayjs from "dayjs";
-import Cookies from "js-cookie";
 
 // Import contexts
-import { UserContext, CookieExpiryContext, GuestUserContext } from "../UserContext";
+import { GuestUserContext, OpenConfirmCredentialsModalContext } from "../UserContext";
 
 // Import config data
 import configData from "../config.json";
@@ -17,7 +14,7 @@ import { NewTripForm } from "../components/Dashboard/NewTripForm";
 import { ActiveTripConsole } from "../components/Dashboard/ActiveTripConsole";
 import { Lists } from "../components/Lists/Lists";
 import { Footer } from "../components/Footer";
-import { ConfirmCredentialsModal } from "../components/Dashboard/ConfirmCredentialsModal";
+import { ConfirmCredentialsModal } from "../components/Login/ConfirmCredentialsModal";
 import { GuestUserModal } from "../components/Dashboard/GuestUserModal";
 import { LoadSpinner } from "../components/LoadSpinner/LoadSpinner";
 
@@ -26,9 +23,9 @@ import { delay, fetchTripsApi, createNewListApi, fetchListsApi, editTripDetailsA
 
 export const Dashboard = () => {
 
-    const { setUser } = useContext(UserContext);
-    const { cookieExpiry, setCookieExpiry } = useContext(CookieExpiryContext);
     const { isGuestUser } = useContext(GuestUserContext);
+    const { setOpenConfirmCredentialsModal } = useContext(OpenConfirmCredentialsModalContext); // This is to open and close the ConfirmCredentialsModal
+    
     const newListRef = useRef(null); // This is so that we can scroll down to a new list as soon as we have created it
 
     const [newTripClicked, setNewTripClicked] = useState(false); // When user clicks 'new trip', this will be set to 'true' engage the form for the user to input the settings to create a new trip
@@ -45,63 +42,12 @@ export const Dashboard = () => {
     const [progressMessage, setProgressMessage] = useState("");
     const [isLoading, setIsLoading] = useState("");
 
-    const [openConfirmCredentialsModal, setOpenConfirmCredentialsModal] = useState(false); // This is to open and close the ConfirmCredentialsModal
-    const [redirectOnLogout, setRedirectOnLogout] = useState(false);
     const [openGuestUserModal, setOpenGuestUserModal] = useState(false);
 
-    // PERSIST STATE OF COOKIE EXPIRY PAST REFRESH
-    useEffect(() => {
-        const storedCookieExpiry = localStorage.getItem("cookieExpiry");
-        if (storedCookieExpiry) {
-            setCookieExpiry(JSON.parse(storedCookieExpiry));
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    // When the user successfully logs in, cookieExpiry state will be set / changed, and this will be called 
-    useEffect(() => {
-        console.log("cookie expiry useEffect called");
-        if (!cookieExpiry) {
-            return;
-        }
-        else {
-            console.log('we are here at else');
-            localStorage.setItem("cookieExpiry", JSON.stringify(cookieExpiry)); // Save the cookie expiry into localStorage
-
-            const now = dayjs();
-            const timeUntilExpiry = dayjs(cookieExpiry).diff(now);
-            // Set a timer to prompt the user to confirm their credentials and refresh their token before it expires
-            const confirmCredentialsTime = timeUntilExpiry - parseInt(configData.CONFIRM_CREDENTIAL_INTERVAL); // 5 minutes before the JWT expires
-
-            const confirmCredentialsTimer = setTimeout(() => {
-                console.log("confirmCredentialsTimer is working");
-                setOpenConfirmCredentialsModal(true); // This will open the ConfirmCredentialsModal
-            }, confirmCredentialsTime);
-
-            // Set a timer to auto-logout upon the expiry of the token
-            const autoLogoutTime = timeUntilExpiry - parseInt(configData.AUTOLOGOUT_BUFFER_INTERVAL);
-            const autoLogoutTimer = setTimeout(() => {
-                Cookies.remove('username'); // Delete the username cookie
-                localStorage.clear(); // Delete localStorage data
-                setUser(null); // Clear user context
-                setRedirectOnLogout(true); // Redirect to the login page
-
-                // We won't be able to delete the JWT cookie without making an API call because it is HTTP only, but it will delete by itself, when it expires in one minute
-            }, autoLogoutTime);
-
-            return (() => { // Clear timer on unmount (dismount?)
-                clearTimeout(confirmCredentialsTimer);
-                clearTimeout(autoLogoutTimer);
-            });
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [cookieExpiry]);
-
-    // CHECK IF GUEST USER WHEN FIRST RENDER
+    // Open GuestUserModal on first render of Dashboard
     useEffect(() => {
         isGuestUser ? setOpenGuestUserModal(true) : setOpenGuestUserModal(false);
         console.log("isGuestUser", isGuestUser);
-        console.log(openGuestUserModal);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -218,7 +164,7 @@ export const Dashboard = () => {
             const { response, responseBodyText } = await fetchTripsApi();
             setProgressMessage("");
 
-            if (response.status === 200 || response.status === 304) {
+            if (response.ok === true) {
                 console.log("all trips fetched: ", responseBodyText.trips);
                 setAllTrips(responseBodyText.trips);
 
@@ -260,7 +206,7 @@ export const Dashboard = () => {
             const { response, responseBodyText } = await editTripDetailsApi(tripId, requestBodyContent);
             setProgressMessage("");
 
-            if (response.status === 200 || 304) {
+            if (response.ok === true) {
                 console.log("edited trip name saved: ", editedTripName);
                 setActiveTrip({ ...activeTrip, tripName: editedTripName });
                 fetchTrips(); // We want the dropdown list to show the updated trip name
@@ -398,8 +344,6 @@ export const Dashboard = () => {
     }
 
     return (
-        redirectOnLogout ?
-            <Redirect to="/home" /> :
             <div>
                 <main>
                     <div className="dashboard-console">
@@ -453,9 +397,7 @@ export const Dashboard = () => {
                         openGuestUserModal={openGuestUserModal}
                         setOpenGuestUserModal={setOpenGuestUserModal} />
 
-                    <ConfirmCredentialsModal
-                        openConfirmCredentialsModal={openConfirmCredentialsModal}
-                        setOpenConfirmCredentialsModal={setOpenConfirmCredentialsModal} />
+                    <ConfirmCredentialsModal />
 
                     {
                         lists.length && allListItems.length && !isFetchProcessing ?

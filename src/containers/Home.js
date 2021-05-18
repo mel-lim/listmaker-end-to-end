@@ -9,6 +9,7 @@ export const Home = () => {
 
     const aboutRef = useRef(null);
 
+    // When user clicks on "Learn more", we want the home page to scroll down to the about section
     const scrollToAbout = () => {
         aboutRef.current.scrollIntoView();
     }

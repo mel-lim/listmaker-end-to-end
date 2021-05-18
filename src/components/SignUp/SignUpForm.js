@@ -5,7 +5,7 @@ import { LoadSpinner } from "../LoadSpinner/LoadSpinner";
 import { delay, signUpNewUserApi } from "../../api";
 import configData from "../../config.json";
 
-export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }) => {
+export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }) => { // This is a component in SignUp.js that is rendered if isSuccessfulRegistration = false
 
     // State to render the spinner
     const [isLoading, setIsLoading] = useState(false);
@@ -49,8 +49,9 @@ export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }
 
             if (response.ok === true) {
                 setRegisteredAppUser(responseBodyText.appUser);
-                setIsSuccessfulRegistration(true);
                 setProgressMessage("");
+                setIsLoading(false);
+                setIsSuccessfulRegistration(true);
 
             } else { // i.e. response.ok === false
                 setIsSuccessfulRegistration(false);
@@ -58,10 +59,8 @@ export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }
                 setUsername(username);
                 setEmail(email);
                 setPassword(password);
+                setIsLoading(false);
             }
-
-            setIsLoading(false);
-
         }
 
         catch (error) {
