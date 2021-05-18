@@ -166,6 +166,17 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, fetchTrips, set
 
                                     <label htmlFor="hiking-radio">Hiking</label>
                                 </div>
+
+                                <div className="radio-button-label-div">
+                                    <input type="radio"
+                                        id="other-radio"
+                                        name="trip-category-radio"
+                                        value="other"
+                                        className="radio-buttons"
+                                        onClick={event => setTripCategory(event.target.value)} />
+
+                                    <label htmlFor="other-radio">Other</label>
+                                </div>
                             </div>
 
 
@@ -231,4 +242,3 @@ export const NewTripForm = ({ newTripClicked, setNewTripClicked, fetchTrips, set
         </div>
     );
 }
-
