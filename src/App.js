@@ -160,12 +160,15 @@ function App() {
                 <Nav />
                 <Switch>
                   <Route path="/" exact component={Home} />
-                  <ProtectedLoggedIn path="/dashboard" component={Dashboard} />
+
                   <ProtectedLoggedOut path="/tryasguest" component={TryAsGuest} />
                   <ProtectedLoggedOut path="/signup" component={SignUp} />
                   <ProtectedLoggedOut path="/login" component={Login} />
+
+                  <ProtectedLoggedIn path="/dashboard" exact component={Dashboard} />
                   <ProtectedLoggedIn path="/myaccount" component={MyAccount} />
-                  <ProtectedLoggedIn path="/logout" component={Logout} />
+                  <Route path="/logout" component={Logout} />
+
                   <Route path="/contact" component={Contact} />
                 </Switch>
               </OpenConfirmCredentialsModalContext.Provider>

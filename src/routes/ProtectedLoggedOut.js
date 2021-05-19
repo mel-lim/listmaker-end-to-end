@@ -7,12 +7,15 @@ export const ProtectedLoggedOut = ({ component: Component, ...rest }) => {
   const { user } = useContext(UserContext);
 
   return (
-    <Route {...rest} render={() => !user ? (
-      <Component />
-    ) :
-      (
-        <Redirect to="/dashboard" />
-      )
-    } />
+    <Route {...rest}
+      render={
+        () => !user ?
+          (
+            <Component />
+          ) :
+          (
+            <Redirect to="/dashboard" />
+          )
+      } />
   )
 }
