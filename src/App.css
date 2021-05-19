@@ -13,7 +13,7 @@ body {
   cursor: pointer;
   color: hsl(0, 0%, 30%);
   margin: 0.5rem;
-  padding: 5px 20px;
+  padding: 5px 0px;
   border: 1.5px solid hsl(0, 0%, 30%);
   border-radius: 20px;
   background-color: hsl(0, 0%, 95%);
@@ -31,8 +31,7 @@ body {
 /* UI buttons */
 
 .ui-button {
-  background-size: 99%;
-  /*background-size: contain;*/
+  background-size: contain;
   /* Note to self - background-size: contain sometimes still cropping the edit button background image, but not all the time. Buggy? Not sure why. */
   background-repeat: no-repeat;
   flex-shrink: 0;
@@ -472,16 +471,25 @@ input.user-input-text {
   margin: 0 auto 1.8rem auto;
 }
 
+#password-input-label-container {
+  position: relative;
+}
+
+#password-input {
+  padding-right: 30px;
+}
+
 .password-button {
+  position: absolute;
   height: 20px;
   width: 20px;
-  background-size: 99%;
+  background-size: contain;
   background-repeat: no-repeat;
   flex-shrink: 0;
   border: none;
   display: inline;
   margin-left: -25px;
-  vertical-align: middle;
+  bottom: 4px;
 }
 
 .visible {
@@ -497,9 +505,10 @@ input.user-input-text {
 }
 
 .user-credentials input[type=text], .user-credentials input[type=email], .user-credentials input[type=password] {
+  box-sizing: border-box;
   padding: 5px 10px;
-  width: 250px;
-  height: 16px;
+  width: 274px;
+  height: 30px;
 }
 
 .user-credentials label {
@@ -577,12 +586,13 @@ input.user-input-text {
   margin: 1rem 0;
 }
 
-#new-password-input-div{
+#new-password-input-div {
   position: relative;
 }
 
 .change-password-form input[type=password], .change-password-form input[type=text] {
-  width: 200px;
+  box-sizing: border-box;
+  width: 208px;
   float: right;
 }
 
@@ -590,11 +600,15 @@ input.user-input-text {
   font-size: 0.8rem;
 }
 
+#new-password-input {
+  padding-right: 25px;
+}
+
 .new-eye-password-button {
   position: absolute;
   height: 19px;
   width: 19px;
-  background-size: 99%;
+  background-size: contain;
   background-repeat: no-repeat;
   border: none;
   align-self: center;
@@ -794,8 +808,8 @@ footer {
 }
 
 @media (max-width: 460px) {
-
   /* My account */
+  /* This is where the label and text input box go on separate lines */
   .change-password-form {
     display: block;
     text-align: center;
@@ -807,20 +821,20 @@ footer {
     margin: 1rem auto;
     position: static;
   }
-
   .change-password-input-div input {
     margin-top: 0.1rem;
   }
-
-  #new-password-input-div{
+  #new-password-input-div {
     position: relative;
   }
-
   #my-acccount-password-match-message {
     text-align: left;
   }
-
   .new-eye-password-button {
+    height: 18px;
+    width: 18px;
+    padding-right: 0;
+    right: 4px; /* This is for iphone which seems to add a lot of padding on the right here */
     bottom: 8px;
   }
 }

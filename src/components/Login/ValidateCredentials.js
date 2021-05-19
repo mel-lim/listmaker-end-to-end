@@ -162,7 +162,7 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
                     }
                 </div>
 
-                <div className="input-label-container">
+                <div className="input-label-container" id="password-input-label-container">
 
                     <label htmlFor="password-input">Password</label>
 

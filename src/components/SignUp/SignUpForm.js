@@ -148,7 +148,7 @@ export const SignUpForm = ({ setRegisteredAppUser, setIsSuccessfulRegistration }
                         required />
                 </div>
 
-                <div className="input-label-container">
+                <div className="input-label-container" id="password-input-label-container">
 
                     <label htmlFor="password-input">Password (minimum 8 characters)</label>
 
