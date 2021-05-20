@@ -80,6 +80,7 @@ export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal })
                 setCookieExpiry(responseBodyText.cookieExpiry);
                 setUser(username);
                 console.log("login sucessful");
+                console.log("Oh hello there! Thanks for looking.");
 
             } else { // i.e. response.ok === false
                 setProgressMessage("** " + responseBodyText.message + " **");

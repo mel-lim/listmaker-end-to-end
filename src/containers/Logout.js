@@ -39,6 +39,8 @@ export const Logout = () => {
         setUser(null);
         }, 5);
 
+        console.log("You're come back later, right?");
+
         setIsLoading(false);
         
         // Cause the redirect to Home
