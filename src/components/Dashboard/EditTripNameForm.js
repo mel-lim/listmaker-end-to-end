@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 
-export const EditTripNameForm = ({ activeTrip, setActiveTrip, toggleEdit, setTripDetailsHaveChangedSinceLastSave }) => {
+export const EditTripNameForm = ({ activeTrip, setActiveTrip, toggleEdit, editTripDetails }) => { // This is a component in ActiveTripConsole
 
     const [editedTripName, setEditedTripName] = useState(activeTrip.tripName);
 
     const handleSubmit = event => {
-        event.preventDefault();
-        toggleEdit();
+        event.preventDefault(); 
+        toggleEdit(); // This will show the trip name in its 'settled' or fixed appearance, rather than as an input box
         if (editedTripName !== activeTrip.tripName) {
-            setActiveTrip({...activeTrip, tripName: editedTripName});
-            setTripDetailsHaveChangedSinceLastSave(true);
+            editTripDetails(editedTripName); // This calls the editTripDetails function - see Dashboard.js
         }
     }
 

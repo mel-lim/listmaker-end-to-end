@@ -8,10 +8,18 @@ export const Nav = () => {
     return (
         <nav id="sticky-nav">
             <ul>
-
-                <Link to="/dashboard">
-                    <li>dashboard</li>
-                </Link>
+                {
+                    !user ?
+                        <div>
+                            <Link to="/tryasguest">
+                                <li>try as guest</li>
+                            </Link>
+                        </div>
+                        :
+                        <Link to="/dashboard">
+                            <li>dashboard</li>
+                        </Link>
+                }
 
                 <li className="middot" >&middot;</li>
 

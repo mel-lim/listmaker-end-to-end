@@ -1,16 +1,14 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 
-export const EditItemForm = ({ listItem, listItems, setListItems, toggleEdit, setListItemsHaveChangedSinceLastSave }) => {
+export const EditItemForm = ({ listItem, toggleEdit, editListItem }) => { // This is a component in of ListItem
     const [editedItemName, setEditedItemName] = useState(listItem.name);
 
     const handleSubmit = event => {
         event.preventDefault();
-        toggleEdit();
-        const index = listItems.findIndex(item => item.id === listItem.id);
-        let editedListItems = [...listItems];
-        editedListItems[index].name = editedItemName;
-        setListItems(editedListItems);
-        setListItemsHaveChangedSinceLastSave(true);
+        toggleEdit(); // This will show the list item in its 'settled' or fixed appearance, rather than as an input box
+        if (editedItemName !== listItem.name) {
+            editListItem(editedItemName); // This calls the editListItem function - see ListItem.js
+        }
     }
 
     return (

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { SettledTripName } from "./SettledTripName";
 import { EditTripNameForm } from "./EditTripNameForm";
-import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
+import { ConfirmDeleteTripModal } from "./ConfirmDeleteTripModal";
 
-export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListItems, fetchLists, saveListChanges, saveTripDetails, saveTripDetailsMessage, saveListsMessage, setTripDetailsHaveChangedSinceLastSave, toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown, resetOnDelete, addNewList }) => {
+export const ActiveTripConsole = ({ activeTrip, setActiveTrip, fetchTrips, editTripDetails, resetTripAndListStates, createNewList, setProgressMessage, setIsLoading }) => {
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -11,15 +11,13 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
         setIsEditing(!isEditing);
     }
 
-    const handleClickSave = event => {
-        event.preventDefault();
-        saveListChanges(); // This calls the savelists request to the server - the code can be found in Dashboard.js
-        saveTripDetails(); // This calls the savetripdetails request to the server - the code can be found in Dashboard.js
-    }
-
-    const handleClickRevert = event => {
+    /* const handleClickSync = event => {
         event.preventDefault();
         fetchLists(activeTrip.tripId);
+    } */
+
+    const handleClickNewList = () => {
+        createNewList();
     }
 
     return (
@@ -39,7 +37,8 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
                                 activeTrip={activeTrip}
                                 setActiveTrip={setActiveTrip}
                                 toggleEdit={toggleEdit}
-                                setTripDetailsHaveChangedSinceLastSave={setTripDetailsHaveChangedSinceLastSave} />
+                                editTripDetails={editTripDetails}
+                            />
                     }
                 </div>
 
@@ -49,32 +48,25 @@ export const ActiveTripConsole = ({ activeTrip, setActiveTrip, lists, allListIte
             </div>
 
             <div className="save-button-container">
-                <ConfirmDeleteModal
+                <ConfirmDeleteTripModal
                     activeTrip={activeTrip}
-                    toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
-                    setToggleRefreshAllTripsDropdown={setToggleRefreshAllTripsDropdown}
-                    resetOnDelete={resetOnDelete} />
+                    fetchTrips={fetchTrips}
+                    resetTripAndListStates={resetTripAndListStates}
+                    setProgressMessage={setProgressMessage}
+                    setIsLoading={setIsLoading} />
                 <input type="button"
                     className="pillbox-button"
-                    value="New list" onClick={addNewList} />
+                    value="New list" onClick={handleClickNewList} />
 
-                {lists.length && allListItems.length ?
+                {/* {lists.length && allListItems.length ?
                     <div>
                         <input type="button"
                             className="pillbox-button"
-                            value="Revert"
-                            onClick={handleClickRevert} />
-
-                        <input type="button"
-                            className="pillbox-button"
-                            value="Save"
-                            onClick={handleClickSave} />
+                            value="Sync"
+                            onClick={handleClickSync} />
                     </div>
                     :
-                    null}
-
-                <p>{saveTripDetailsMessage}</p>
-                <p>{saveListsMessage}</p>
+                    null} */}
 
             </div>
         </div>

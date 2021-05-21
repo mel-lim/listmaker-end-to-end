@@ -1,11 +1,8 @@
 // Import libraries
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { Redirect } from "react-router-dom";
-import dayjs from "dayjs";
-import Cookies from "js-cookie";
 
 // Import contexts
-import { UserContext, CookieExpiryContext } from "../UserContext";
+import { GuestUserContext, OpenConfirmCredentialsModalContext } from "../UserContext";
 
 // Import config data
 import configData from "../config.json";
@@ -17,98 +14,61 @@ import { NewTripForm } from "../components/Dashboard/NewTripForm";
 import { ActiveTripConsole } from "../components/Dashboard/ActiveTripConsole";
 import { Lists } from "../components/Lists/Lists";
 import { Footer } from "../components/Footer";
-import { ConfirmCredentialsModal } from "../components/Dashboard/ConfirmCredentialsModal";
+import { ConfirmCredentialsModal } from "../components/Login/ConfirmCredentialsModal";
+import { GuestUserModal } from "../components/Dashboard/GuestUserModal";
+import { LoadSpinner } from "../components/LoadSpinner/LoadSpinner";
 
 // Import api calls
-import { fetchListsApi, saveTripDetailsApi, saveListChangesApi } from "../api";
+import { delay, fetchTripsApi, createNewListApi, fetchListsApi, editTripDetailsApi } from "../api";
 
 export const Dashboard = () => {
 
-    const { setUser } = useContext(UserContext);
-    const { cookieExpiry, setCookieExpiry } = useContext(CookieExpiryContext);
-    const newListRef = useRef(null);
+    const { isGuestUser } = useContext(GuestUserContext);
+    const { setOpenConfirmCredentialsModal } = useContext(OpenConfirmCredentialsModalContext); // This is to open and close the ConfirmCredentialsModal
+    
+    const newListRef = useRef(null); // This is so that we can scroll down to a new list as soon as we have created it
 
+    const [newTripClicked, setNewTripClicked] = useState(false); // When user clicks 'new trip', this will be set to 'true' engage the form for the user to input the settings to create a new trip
+    const [allTrips, setAllTrips] = useState([]); // This holds a list of all the pre-existing trips for this user, and populates the trip dropdown list
     const initialActiveTripState = { tripId: '', tripName: '', tripCategory: '', tripDuration: '' };
-    const [activeTrip, setActiveTrip] = useState(initialActiveTripState); // If the post request to create a new trip is successful, the activeTrip variable will contain the details of the new trip provided in the response
+    const [activeTrip, setActiveTrip] = useState(initialActiveTripState); //  This populates the ActiveTripConsole holds the detail about the selected trip
 
     const [lists, setLists] = useState([]); // This will sit empty until the data is fetched from the server
     const [allListItems, setAllListItems] = useState([]); // This will sit empty until the data is fetched from the server
     const [allDeletedItems, setAllDeletedItems] = useState([]); // This will sit empty until the user starts deleting items from their lists
-
-    const [newTripClicked, setNewTripClicked] = useState(false); // When user clicks 'new trip', this will be set to 'true' engage the form for the user to input the settings to create a new trip
-
-    const [toggleRefreshAllTripsDropdown, setToggleRefreshAllTripsDropdown] = useState(false); // When a trip is created or deleted, or the trip name is updated and saved, this will get toggled and activate the hook to re-fetch all trips and show the updated list of all trips in the dropdown.
-
-    const [newTripNeedsSaving, setNewTripNeedsSaving] = useState(false); // When a new trip is created and this will get set to true, and activate a hook to call saveListChanges to save the new lists, once the new lists and allListItems states have resolved
-    const [tripDetailsHaveChangedSinceLastSave, setTripDetailsHaveChangedSinceLastSave] = useState(false); // This will be set to true if the user edits the trip name
-    const [saveTripDetailsMessage, setSaveTripDetailsMessage] = useState('');
-
-    const [listItemsHaveChangedSinceLastSave, setListItemsHaveChangedSinceLastSave] = useState(false); // This is set to true when the user adds, edits or deletes a list item and reset to false upon a successful save
-    const [saveListsMessage, setSaveListsMessage] = useState('');
     const [nextListIdNum, setNextListIdNum] = useState(0);
 
-    const [isFetchProcessing, setIsFetchProcessing] = useState(false);
+    const [isFetchProcessing, setIsFetchProcessing] = useState(false); // This prevents the component from racing to render before the fetch call is completed and the relevant states are set
+    const [progressMessage, setProgressMessage] = useState("");
+    const [isLoading, setIsLoading] = useState("");
 
-    const [openModal, setOpenModal] = useState(false); // This is to open and close the ConfirmCredentialsModal
-    const [redirectOnLogout, setRedirectOnLogout] = useState(false);
+    const [openGuestUserModal, setOpenGuestUserModal] = useState(false);
 
-    // PERSIST STATE OF COOKIE EXPIRY PAST REFRESH
+    // Open GuestUserModal on first render of Dashboard
     useEffect(() => {
-        const storedCookieExpiry = localStorage.getItem("cookieExpiry");
-        if (storedCookieExpiry) {
-            setCookieExpiry(JSON.parse(storedCookieExpiry));
-        }
+        isGuestUser ? setOpenGuestUserModal(true) : setOpenGuestUserModal(false);
+        console.log("isGuestUser", isGuestUser);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // When the user successfully logs in, cookieExpiry state will be set / changed, and this will be called 
+    // FETCH TRIPS FROM SERVER ON FIRST RENDER
     useEffect(() => {
-        console.log("useEffect called");
-        console.log(cookieExpiry);
-        if (!cookieExpiry) {
-            return;
-        }
-        else {
-            localStorage.setItem("cookieExpiry", JSON.stringify(cookieExpiry)); // Save the cookie expiry into localStorage
-
-            const now = dayjs();
-            const timeUntilExpiry = dayjs(cookieExpiry).diff(now);
-            console.log(timeUntilExpiry);
-
-            // Set a timer to prompt the user to confirm their credentials and refresh their token before it expires
-            const confirmCredentialsTime = timeUntilExpiry - parseInt(configData.CONFIRM_CREDENTIAL_INTERVAL); // 5 minutes before the JWT expires
-            console.log(confirmCredentialsTime);
-
-            const confirmCredentialsTimer = setTimeout(() => {
-
-                console.log("confirmCredentialsTimer is working");
-
-                setOpenModal(true); // This will open the ConfirmCredentialsModal
-            }, confirmCredentialsTime);
-
-            // Set a timer to auto-logout upon the expiry of the token
-            const autoLogoutTime = timeUntilExpiry - parseInt(configData.AUTOLOGOUT_BUFFER_INTERVAL);
-            console.log(autoLogoutTime);
-            const autoLogoutTimer = setTimeout(() => {
-
-                console.log("autoLogoutTimer is working");
-
-                Cookies.remove('username'); // Delete the username cookie
-                localStorage.clear(); // Delete localStorage data
-                setUser(null); // Clear user context
-                setRedirectOnLogout(true); // Redirect to the login page
-
-                // We won't be able to delete the JWT cookie without making an API call because it is HTTP only, but it will delete by itself, when it expires in one minute
-
-            }, autoLogoutTime);
-
-            return (() => { // Clear timer on unmount (dismount?)
-                clearTimeout(confirmCredentialsTimer);
-                clearTimeout(autoLogoutTimer);
-            });
-        }
+        fetchTrips();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [cookieExpiry]);
+    }, []);
+
+    // PERSIST STATE OF ALLTRIPS PAST REFRESH
+    useEffect(() => {
+        const storedAllTrips = localStorage.getItem("allTrips");
+        if (storedAllTrips) {
+            setAllTrips(JSON.parse(storedAllTrips));
+        }
+    }, []);
+
+    // When the allTrips state is updated, store it in localStorage
+    useEffect(() => {
+        localStorage.setItem("allTrips", JSON.stringify(allTrips));
+    }, [allTrips]);
 
     // PERSIST STATE OF newTripClicked PAST REFRESH
     useEffect(() => {
@@ -123,7 +83,7 @@ export const Dashboard = () => {
         localStorage.setItem("newTripClicked", JSON.stringify(newTripClicked));
     }, [newTripClicked]);
 
-    // Upon browser refresh, this will get the activeTrip data that we stored in localstorage, so we can persist the activeTrip state
+    // PERSIST STATE OF ACTIVETRIP PAST REFRESH USING LOCAL STORAGE
     useEffect(() => {
         const storedActiveTrip = localStorage.getItem("activeTrip");
         if (storedActiveTrip) {
@@ -136,7 +96,7 @@ export const Dashboard = () => {
         localStorage.setItem("activeTrip", JSON.stringify(activeTrip));
     }, [activeTrip]);
 
-    // Upon browser refresh, this will get the lists data that we stored in localstorage, so we can persist it
+    // PERSIST STATE OF LISTS PAST REFRESH
     useEffect(() => {
         const storedLists = localStorage.getItem("lists");
         if (storedLists) {
@@ -149,7 +109,7 @@ export const Dashboard = () => {
         localStorage.setItem("lists", JSON.stringify(lists));
     }, [lists]);
 
-    // Upon browser refresh, this will get the nextListIdNum that we stored in localstorage, so we can persist it
+    // PERSIST STATE OF NEXTLISTIDNUM PAST REFRESH
     useEffect(() => {
         const storedNextListIdNum = localStorage.getItem("nextListIdNum");
         if (storedNextListIdNum) {
@@ -162,7 +122,7 @@ export const Dashboard = () => {
         localStorage.setItem("nextListIdNum", JSON.stringify(nextListIdNum));
     }, [nextListIdNum]);
 
-    // Upon browser refresh, this will get the allListItems data that we stored in localstorage, so we can persist it
+    // PERSIST STATE OF ALLLISTITEMS PAST REFRESH
     useEffect(() => {
         const storedAllListItems = localStorage.getItem("allListItems");
         if (storedAllListItems) {
@@ -175,7 +135,7 @@ export const Dashboard = () => {
         localStorage.setItem("allListItems", JSON.stringify(allListItems));
     }, [allListItems]);
 
-    // Upon browser refresh, this will get the allDeletedItems data that we stored in localstorage, so we can persist it
+    // PERSIST STATE OF ALLDELETEDITEMS PAST REFRESH
     useEffect(() => {
         const storedAllDeletedItems = localStorage.getItem("allDeletedItems");
         if (storedAllDeletedItems) {
@@ -188,30 +148,91 @@ export const Dashboard = () => {
         localStorage.setItem("allDeletedItems", JSON.stringify(allDeletedItems));
     }, [allDeletedItems]);
 
-    // NEW TRIP SAVE HOOK
-    useEffect(() => {
-        console.log("new trip save hook triggered");
-        if (newTripNeedsSaving && lists.length && allListItems.length) {
-            saveListChanges(); // If successful, the saveListChanges block will set the newTripNeedsSaving state to false
-            console.log("new trip lists saved");
+    // Function to reset the activeTrip and lists etc. states to their values on initial render
+    const resetTripAndListStates = () => {
+        setActiveTrip({ ...initialActiveTripState });
+        setLists([]);
+        setAllListItems([]);
+        setAllDeletedItems([]);
+    }
+
+    // FETCH ALL TRIPS FOR THIS USER
+    const fetchTrips = async (retryCount = 0) => {
+        setIsLoading(true);
+
+        try {
+            const { response, responseBodyText } = await fetchTripsApi();
+            setProgressMessage("");
+
+            if (response.ok === true) {
+                console.log("all trips fetched: ", responseBodyText.trips);
+                setAllTrips(responseBodyText.trips);
+
+            } else {
+                console.log(responseBodyText.message);
+                setProgressMessage("** " + responseBodyText.message + " **");
+            }
+
+            setIsLoading(false);
+
+        } catch (error) {
+            console.error("Error in fetchTrips function. Cannot connect to server");
+
+            if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
+                setProgressMessage(`The server not responding. Trying again...`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return fetchTrips(retryCount + 1); // After the delay, try connecting again
+            }
+
+            setProgressMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+            setIsLoading(false);
         }
-        return;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [newTripNeedsSaving, lists, allListItems]); // This hook will get called everytime the newTripNeedsSaving state is updated (i.e. when a new trip is created) and everytime the lists or list items change (in case this is called before the lists or allListItems are defined, then get subsequently defined)
+    }
 
-    // AUTOSAVE HOOK
-    useEffect(() => {
-        console.log("autosave hook triggered");
-        const timer = setTimeout(() => {
-            saveTripDetails();
-            saveListChanges();
-            console.log("autosave function run");
-        }, parseInt(configData.AUTOSAVE_INTERVAL)); // 10 minutes
-        return () => clearTimeout(timer);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [listItemsHaveChangedSinceLastSave, tripDetailsHaveChangedSinceLastSave]);
+    // EDIT TRIP DETAILS
+    // For now, only the trip name can be edited
+    const editTripDetails = async (editedTripName, retryCount = 0) => {
+        setIsLoading(true);
 
-    // Reuseable block to set the lists and allListItems state for the current/active trip, and initialise the allDeletedItems state
+        // If the trip name is blank / empty, replace it with "Untitled"
+        if (!editedTripName) {
+            editedTripName = "Untitled";
+        }
+
+        const tripId = activeTrip.tripId;
+        const requestBodyContent = { editedTripName };
+
+        try {
+            const { response, responseBodyText } = await editTripDetailsApi(tripId, requestBodyContent);
+            setProgressMessage("");
+
+            if (response.ok === true) {
+                console.log("edited trip name saved: ", editedTripName);
+                setActiveTrip({ ...activeTrip, tripName: editedTripName });
+                fetchTrips(); // We want the dropdown list to show the updated trip name
+
+            } else {
+                console.log(responseBodyText.message);
+                setProgressMessage("** " + responseBodyText.message + " **");
+            }
+
+            setIsLoading(false);
+
+        } catch (error) {
+            console.error("Error in editTripDetails function. Cannot connect to server");
+
+            if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
+                setProgressMessage(`The server not responding. Trying again...`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return editTripDetails(editedTripName, retryCount + 1); // After the delay, try connecting again
+            }
+
+            setProgressMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+            setIsLoading(false);
+        }
+    }
+
+    // Function to set the lists and allListItems state for the current/active trip, and initialise the allDeletedItems state
     const configureLists = (currentLists, currentAllLists) => {
         // Set the lists and allListItems to their initial values provided by our get request
         setLists(currentLists);
@@ -229,146 +250,121 @@ export const Dashboard = () => {
         setIsFetchProcessing(false);
     }
 
-    // Function to reset the activeTrip and lists etc. states to their values on initial render
-    const resetOnDelete = () => {
-        setActiveTrip({ ...initialActiveTripState });
-        setLists([]);
-        setAllListItems([]);
-        setAllDeletedItems([]);
-    }
-
-    const generateTempListId = () => {
-        const tempListId = `tempList-${nextListIdNum}`;
-        setNextListIdNum(prev => prev + 1);
-        return tempListId;
-    }
-
-    // ADD NEW LIST
-    const addNewList = () => {
-        const tempListId = generateTempListId();
-        setLists(prev => [...prev, {id: tempListId, title: "New list" }]);
-        setAllListItems(prev => [...prev, []]);
-        newListRef.current.scrollIntoView();
-    }
-
-    const saveTripDetails = async () => {
-
-        // If the trip name has not been changed since the last save, exit
-        if (!tripDetailsHaveChangedSinceLastSave) {
-            return;
-        }
-
-        const tripName = activeTrip.tripName;
-
-        // If the trip name is blank / empty
-        if (!tripName || !tripName.length) {
-            setSaveTripDetailsMessage("Unable to save edited trip name: trip name can't be blank");
-        }
-
-        console.log("save trip request starting");
-        const tripId = activeTrip.tripId;
-        const requestBodyContent = { tripName };
-
-        const { response, responseBodyText } = await saveTripDetailsApi(tripId, requestBodyContent);
-
-        setSaveTripDetailsMessage(responseBodyText.message);
-
-        if (response.status === 200 || 304) {
-            console.log("response status is 200 or 304");
-            setTripDetailsHaveChangedSinceLastSave(false); // Reset to false once saved
-            setToggleRefreshAllTripsDropdown(!toggleRefreshAllTripsDropdown); // This will trigger the hook to re-fetch the all trips data and re-populate the drop down list with the updated trip name
-        }
-    }
-
-    // Post data to db to save the users changes
-    const saveListChanges = async () => {
-
-        // If the lists have not changed since the last save, exit
-        if (!newTripNeedsSaving && !listItemsHaveChangedSinceLastSave) {
-            return;
-        }
-
-        if (!lists || !lists.length) { 
-            setSaveListsMessage('Unable to save: please add at least one list');
-            return;
-        }
-
-        // At the moment, any empty lists causes the server to crash, so for now, we are preventing the saving of any empty lists
-        let isEmptyList;
-        allListItems.forEach(listItems => {
-            if (!listItems.length) {
-                isEmptyList = true;
-                return;
-            }
-        });
-
-        if (isEmptyList) {
-            setSaveListsMessage('Unable to save: please add at least one item to each list before saving');
-            return;
-        }
-
-        console.log("save getting called");
-        const tripId = activeTrip.tripId;
-        const requestBodyContent = { lists, allListItems };
-
-        const { response, responseBodyText } = await saveListChangesApi(tripId, requestBodyContent);
-
-        if (response.status === 201) {
-            fetchLists(tripId);
-            setListItemsHaveChangedSinceLastSave(false);
-            if (newTripNeedsSaving) {
-                setNewTripNeedsSaving(false); // This will be reset to false once the new lists are successfully saved for the first time
-            }
-        }
-
-        setSaveListsMessage(responseBodyText.message);
-        console.log(responseBodyText.message);
-    }
-
-    // Fetch list data from the db and sync to page
-    const fetchLists = async (tripId) => {
-        console.log("fetch lists called");
-        // This will ensure that the render function doesn't race past the completion of the fetch request. 
+    // FETCH LISTS AND LIST ITEMS FOR TRIP
+    const fetchLists = async (tripId, retryCount = 0) => {
+        setIsLoading(true);
+        setIsFetchProcessing(true); // This will ensure that the render function doesn't race past the completion of the fetch request. 
         // While this is true, the renderer will render "Loading...". We will set it back to false at the end of the request to re-render the updated lists as fetched from the db.
-        setIsFetchProcessing(true);
 
-        const { response, responseBodyText } = await fetchListsApi(tripId);
+        try {
+            const { response, responseBodyText } = await fetchListsApi(tripId);
+            setProgressMessage("");
 
-        if (response.status === 200 || response.status === 304) {
-            // Configure the list and allListItems states
-            configureLists(responseBodyText.lists, responseBodyText.allListItems);
+            if (response.ok === true) {
+                // Configure the list and allListItems states
+                configureLists(responseBodyText.lists, responseBodyText.allListItems);
+                // Note the setIsFetchProcessing(false) is located within the configureLists function
+                console.log("lists and list items fetched");
 
-        } else if (response.status === 401) {
-            setOpenModal(true);
-            console.log(responseBodyText.message);
-        } else {
-            console.log(responseBodyText.message);
+            } else if (response.status === 401) {
+                setOpenConfirmCredentialsModal(true);
+                console.log(responseBodyText.message);
+                setProgressMessage("** " + responseBodyText.message + " **");
+
+            } else {
+                console.log(responseBodyText.message);
+                setProgressMessage("** " + responseBodyText.message + " **");
+            }
+
+            setIsLoading(false);
+
+        } catch (error) {
+            console.error("Error in fetchLists function. Cannot connect to server");
+
+            if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
+                setProgressMessage(`The server not responding. Trying again...`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return fetchLists(tripId, retryCount + 1); // After the delay, try connecting again
+            }
+
+            setProgressMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+            setIsLoading(false);
+        }
+    }
+
+    // Keep in case useful for development of offline mode
+    /*     const generateTempListId = () => {
+            const tempListId = `tempList-${nextListIdNum}`;
+            // Increment the next list id number for the temp list id
+            setNextListIdNum(prev => prev + 1);
+            return tempListId;
+        } */
+
+    // CREATE NEW LIST
+    const createNewList = async (retryCount = 0) => {
+        setIsLoading(true);
+
+        try {
+            // Make post api call to save new list to db
+            const { response, responseBodyText } = await createNewListApi(activeTrip.tripId);
+            setProgressMessage("");
+
+            if (response.ok === true) {
+                // Add new list to the lists state
+                setLists(prev => [...prev, responseBodyText]);
+
+                // Add an empty array to the allListItems array, to hold the new list items
+                setAllListItems(prev => [...prev, []]);
+
+                // Scroll down to the new list
+                newListRef.current.scrollIntoView();
+
+                console.log("New untitled list created");
+            }
+
+            else {
+                console.log(responseBodyText.message);
+                setProgressMessage("** " + responseBodyText.message + " **");
+            }
+
+            setIsLoading(false);
+
+        } catch {
+            console.error("Error in createNewList function. Cannot connect to server");
+
+            if (retryCount < parseInt(configData.MAX_RETRY_COUNT)) {
+                setProgressMessage(`The server not responding. Trying again...`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return createNewList(retryCount + 1); // After the delay, try connecting again
+            }
+
+            setProgressMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+            setIsLoading(false);
         }
     }
 
     return (
-        redirectOnLogout ?
-            <Redirect to="/login" /> :
             <div>
                 <main>
                     <div className="dashboard-console">
                         <GreetUser />
-                        <AllTripsDropdown
-                            fetchLists={fetchLists}
-                            activeTrip={activeTrip}
-                            setActiveTrip={setActiveTrip}
-                            toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
-                            setOpenModal={setOpenModal}
-                        />
                         <NewTripForm
                             newTripClicked={newTripClicked}
                             setNewTripClicked={setNewTripClicked}
                             setIsFetchProcessing={setIsFetchProcessing}
                             setActiveTrip={setActiveTrip}
-                            toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
-                            setToggleRefreshAllTripsDropdown={setToggleRefreshAllTripsDropdown}
+                            fetchTrips={fetchTrips}
                             configureLists={configureLists}
-                            setNewTripNeedsSaving={setNewTripNeedsSaving}
+                            setProgressMessage={setProgressMessage}
+                            setIsLoading={setIsLoading}
+                        />
+                        <AllTripsDropdown
+                            allTrips={allTrips}
+                            activeTrip={activeTrip}
+                            setActiveTrip={setActiveTrip}
+                            resetTripAndListStates={resetTripAndListStates}
+                            fetchLists={fetchLists}
+                            progressMessage={progressMessage}
                         />
                         {
                             (activeTrip.tripId) ? // I removed the condition && !isFetchProcessing - if it stays in, everytime we save the lists we get this blinky, glitchy effect. I think it's uncessary - the only thing in active trip console that requires on the fetch request is the save attempt message, and it seems to work fine. Keep and eye on this though. There might have been an edge case error that I put the condition in to address originally. 
@@ -377,42 +373,51 @@ export const Dashboard = () => {
                                     setNewTripClicked={setNewTripClicked}
                                     activeTrip={activeTrip}
                                     setActiveTrip={setActiveTrip}
-                                    lists={lists}
-                                    allListItems={allListItems}
+                                    fetchTrips={fetchTrips}
+                                    editTripDetails={editTripDetails}
+                                    resetTripAndListStates={resetTripAndListStates}
                                     fetchLists={fetchLists}
-                                    saveListChanges={saveListChanges}
-                                    saveTripDetails={saveTripDetails}
-                                    saveTripDetailsMessage={saveTripDetailsMessage}
-                                    saveListsMessage={saveListsMessage}
-                                    setTripDetailsHaveChangedSinceLastSave={setTripDetailsHaveChangedSinceLastSave}
-                                    toggleRefreshAllTripsDropdown={toggleRefreshAllTripsDropdown}
-                                    setToggleRefreshAllTripsDropdown={setToggleRefreshAllTripsDropdown}
-                                    resetOnDelete={resetOnDelete}
-                                    addNewList={addNewList}
+                                    createNewList={createNewList}
+                                    setProgressMessage={setProgressMessage}
+                                    setIsLoading={setIsLoading}
                                 />
                                 : null
                         }
+
+                        <p>{progressMessage}</p>
+                        {
+                            isLoading ?
+                                <LoadSpinner />
+                                : null
+                        }
+
                     </div>
 
-                    <ConfirmCredentialsModal openModal={openModal} setOpenModal={setOpenModal} />
+                    <GuestUserModal
+                        openGuestUserModal={openGuestUserModal}
+                        setOpenGuestUserModal={setOpenGuestUserModal} />
+
+                    <ConfirmCredentialsModal />
 
                     {
                         lists.length && allListItems.length && !isFetchProcessing ?
                             <Lists
+                                tripId={activeTrip.tripId}
                                 lists={lists}
                                 setLists={setLists}
                                 allListItems={allListItems}
                                 setAllListItems={setAllListItems}
                                 allDeletedItems={allDeletedItems}
                                 setAllDeletedItems={setAllDeletedItems}
-                                setListItemsHaveChangedSinceLastSave={setListItemsHaveChangedSinceLastSave} /> 
+                                setProgressMessage={setProgressMessage}
+                                setIsLoading={setIsLoading} />
                             : null
                     }
 
                 </main>
 
                 <span ref={newListRef}></span>
-                
+
                 <Footer />
             </div>
     );

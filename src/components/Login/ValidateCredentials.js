@@ -1,27 +1,34 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { UserContext, CookieExpiryContext } from "../../UserContext";
-import { checkUserCredentialsApi } from "../../api";
+import { LoadSpinner } from "../LoadSpinner/LoadSpinner";
 
+import { UserContext, CookieExpiryContext, GuestUserContext } from "../../UserContext";
+import { delay, checkUserCredentialsApi } from "../../api";
 import configData from "../../config.json";
 
-export const ValidateCredentials = ({ context, setOpenModal }) => {
+export const ValidateCredentials = ({ context, setOpenConfirmCredentialsModal }) => {
 
+    // Contexts for user and cookie expiry
     const { user, setUser } = useContext(UserContext);
     const { setCookieExpiry } = useContext(CookieExpiryContext);
+    const { setIsGuestUser } = useContext(GuestUserContext);
 
-    const [attemptedAppUser, setAttemptedAppUser] = useState(null);
-    const [isFailedLogin, setIsFailedLogin] = useState(false);
+    // State to render the spinner
+    const [isLoading, setIsLoading] = useState(false);
 
+    // State for the message above the form
+    const [progressMessage, setProgressMessage] = useState("");
+
+    // States for the inputs in the form
     const [userIdentity, setUserIdentity] = useState('');
     const [password, setPassword] = useState('');
-    const [show, setShow] = useState(false);
-    const [submissionUnsuccessfulMessage, setSubmissionUnsuccessfulMessage] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
+    // Regex expressions for username and email
     const usernameRegex = new RegExp(configData.USERNAME_REGEX);
     const emailRegex = new RegExp(configData.EMAIL_REGEX);
 
-    // If this we are rendering the confirm credentials modal, we only want the current user to be able to confirm their credentials, so we lock the userIdentity to the user in the pre-existing cookie
+    // If this we are rendering the confirm credentials modal, we only want the current user to be able to confirm their credentials, so we lock the userIdentity field to be the user in the pre-existing cookie
     useEffect(() => {
         if (context === "confirmCredentials") {
             setUserIdentity(user);
@@ -29,20 +36,12 @@ export const ValidateCredentials = ({ context, setOpenModal }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // If the user submits a login attempt that fails, it will repopulate the form with previously typed inputs
-    useEffect(() => {
-        if (isFailedLogin && attemptedAppUser) {
-            setSubmissionUnsuccessfulMessage("** " + attemptedAppUser.errorMessage + " **");
-            setUserIdentity(attemptedAppUser.userIdentity);
-        }
-    }, [isFailedLogin, attemptedAppUser]);
-
-
-    const checkUserCredentials = async (userIdentity, password) => {
+    const checkUserCredentials = async (userIdentity, password, retryCount = 0) => {
+        setIsLoading(true);
+        setProgressMessage("Logging you in...");
 
         // Detect whether the user identity inputted is a username or an email
         const requestBodyContent = {};
-
         if (usernameRegex.test(userIdentity)) {
             requestBodyContent.username = userIdentity;
             requestBodyContent.email = '';
@@ -55,32 +54,55 @@ export const ValidateCredentials = ({ context, setOpenModal }) => {
         // Add the password to the body content
         requestBodyContent.password = password;
 
-        const { response, responseBodyText } = await checkUserCredentialsApi(requestBodyContent);
-        const username = responseBodyText.username;
+        try {
+            // Api call to check the user's credentials
+            const { response, responseBodyText } = await checkUserCredentialsApi(requestBodyContent);
 
-        if (response.status === 200) {
-            if (context === "login") {
-                const lastUser = localStorage.getItem("lastUser");
+            if (response.ok === true) {
+                const username = responseBodyText.username;
 
-                // If the user that just logged in was not the last user, clear the local storage (if there is anything there)
-                if (username !== lastUser) {
-                    localStorage.clear();
+                if (context === "login") { // Login page
+                    const lastUser = localStorage.getItem("lastUser");
+
+                    // If the user that just logged in was not the last user, clear the local storage (if there is anything there)
+                    if (username !== lastUser) {
+                        localStorage.clear();
+                    }
+
+                } else if (context === "confirmCredentials") { // Confirm credentials modal
+
+                    // Once the user successfully confirms their credentials, close the modal and let the user continue using the dashboard
+                    setOpenConfirmCredentialsModal(false);
                 }
-            } else if (context === "confirmCredentials") {
 
-                // Once the user successfully confirms their credentials, close the modal and let the user continue using the dashboard
-                setOpenModal(false);
+                setIsLoading(false);
+                setIsGuestUser(false);
+                setCookieExpiry(responseBodyText.cookieExpiry);
+                setUser(username);
+                console.log("login sucessful");
+                console.log("Oh hello there! Thanks for looking.");
+
+            } else { // i.e. response.ok === false
+                setProgressMessage("** " + responseBodyText.message + " **");
+                setUserIdentity(userIdentity);
+                setIsLoading(false);
             }
-            setUser(username);
-            setCookieExpiry(responseBodyText.cookieExpiry);
-            console.log("login sucessful");
+        }
 
-        } else if (response.status === 400) {
-            setAttemptedAppUser({
-                errorMessage: responseBodyText.message,
-                userIdentity: userIdentity
-            });
-            setIsFailedLogin(true);
+        catch (error) {
+            console.error("Cannot connect to server");
+            setUserIdentity(userIdentity);
+
+            if (retryCount < 5) {
+                setProgressMessage(`The server not responding. Trying again... ${retryCount}/4`);
+                await delay(retryCount); // Exponential backoff - see api.js
+                return checkUserCredentials(userIdentity, password, retryCount + 1); // After the delay, try connecting again
+            }
+
+            else {
+                setProgressMessage('Sorry, our server is not responding. Please check your internet connection or come back later.');
+                setIsLoading(false);
+            };
         }
     }
 
@@ -94,23 +116,19 @@ export const ValidateCredentials = ({ context, setOpenModal }) => {
 
         // Validate user identity as either valid username or valid email
         if (!usernameRegex.test(userIdentity) && !emailRegex.test(userIdentity)) {
-            setSubmissionUnsuccessfulMessage('** Invalid username or email **');
+            setProgressMessage('** Invalid username or email **');
             return;
         } else if (password.length < 8) {
-            setSubmissionUnsuccessfulMessage('** Password needs to be greater than 8 characters **');
+            setProgressMessage('** Password needs to be greater than 8 characters **');
             return;
         }
 
         checkUserCredentials(userIdentity, password);
-        setUserIdentity('');
-        setPassword('');
-        setSubmissionUnsuccessfulMessage('');
-        console.log("submit clicked");
     }
 
     const toggleShowPassword = event => {
         event.preventDefault();
-        setShow(!show);
+        setShowPassword(!showPassword);
     }
 
     return (
@@ -118,7 +136,13 @@ export const ValidateCredentials = ({ context, setOpenModal }) => {
 
             <h3>{context === "login" ? "Log in" : "Refresh my token"}</h3>
 
-            <p className="submission-unsuccessful-message">{submissionUnsuccessfulMessage}</p>
+            <p className="progress-message">{progressMessage}</p>
+
+            {
+                isLoading ?
+                    <LoadSpinner />
+                    : null
+            }
 
             <form className="user-credentials-form" onSubmit={handleSubmit}>
 
@@ -129,7 +153,8 @@ export const ValidateCredentials = ({ context, setOpenModal }) => {
                             id="user-identity-input"
                             name="userIdentity"
                             onChange={event => setUserIdentity(event.target.value)}
-                            value={userIdentity} /> :
+                            value={userIdentity}
+                            autoComplete="username" /> :
                         <input type="text"
                             id="user-identity-input"
                             name="userIdentity"
@@ -138,11 +163,11 @@ export const ValidateCredentials = ({ context, setOpenModal }) => {
                     }
                 </div>
 
-                <div className="input-label-container">
+                <div className="input-label-container" id="password-input-label-container">
 
                     <label htmlFor="password-input">Password</label>
 
-                    <input type={show ? "text" : "password"}
+                    <input type={showPassword ? "text" : "password"}
                         id="password-input"
                         name="password"
                         minLength="8"
@@ -151,7 +176,7 @@ export const ValidateCredentials = ({ context, setOpenModal }) => {
                         value={password}
                         required />
                     <button type="button"
-                        className={show ? "visible password-button" : "not-visible password-button"}
+                        className={showPassword ? "visible password-button" : "not-visible password-button"}
                         onClick={toggleShowPassword}></button>
 
                 </div>
@@ -172,7 +197,6 @@ export const ValidateCredentials = ({ context, setOpenModal }) => {
                 </div>
 
             </form>
-
             {
                 context === "login" ?
                     <div>
@@ -188,6 +212,7 @@ export const ValidateCredentials = ({ context, setOpenModal }) => {
                     </div>
                     : null
             }
+
         </div>
     );
 }

@@ -1,20 +1,13 @@
 import React, { useState } from "react";
 
-export const EditListTitleForm = ({ list, lists, setLists, index, toggleEditListTitle, setListItemsHaveChangedSinceLastSave }) => {
+export const EditListTitleForm = ({ list, editListTitle, toggleEditListTitle }) => { // This is a component in List 
 
     const [editedListTitle, setEditedListTitle] = useState(list.title);
 
     const handleSubmit = event => {
         event.preventDefault();
-        toggleEditListTitle();
-        if (editedListTitle !== list.title) {
-            const currentList = Object.assign({}, list);
-            currentList.title = editedListTitle;
-            const currentLists = [...lists];
-            currentLists[index] = currentList;
-            setLists(currentLists);
-            setListItemsHaveChangedSinceLastSave(true);
-        }
+        toggleEditListTitle(); // This will show the list title in its 'settled' or fixed appearance, rather than as an input box.
+        editListTitle(editedListTitle); // This calls the editListTitle function defined in List.js
     }
 
     return (
